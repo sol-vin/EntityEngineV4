@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C713674E-D5EC-44BC-AF48-81BF46FFDC2C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>EntityEngineV4</RootNamespace>
+    <AssemblyName>EntityEngineV4</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="MonoGame.Framework.Linux, Version=2.5.1.0, Culture=neutral">
+      <Private>False</Private>
+      <Package>monogame</Package>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
+      <Private>False</Private>
+      <Package>opentk</Package>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Engine\IComponent.cs" />
+    <Compile Include="Engine\Component.cs" />
+    <Compile Include="Engine\Entity.cs" />
+    <Compile Include="Engine\EntityState.cs" />
+    <Compile Include="Engine\EntityGame.cs" />
+    <Compile Include="Engine\Service.cs" />
+    <Compile Include="Input\DoubleInput.cs" />
+    <Compile Include="Input\GamePadInput.cs" />
+    <Compile Include="Input\Input.cs" />
+    <Compile Include="Input\InputHandler.cs" />
+    <Compile Include="Input\KeyboardInput.cs" />
+    <Compile Include="Data\Assets.cs" />
+    <Compile Include="Components\Body.cs" />
+    <Compile Include="Components\Physics.cs" />
+    <Compile Include="Components\Timer.cs" />
+    <Compile Include="Components\Sound.cs" />
+    <Compile Include="Components\Health.cs" />
+    <Compile Include="Components\Rendering\Render.cs" />
+    <Compile Include="Components\Rendering\ImageRender.cs" />
+    <Compile Include="Components\Rendering\TextRender.cs" />
+    <Compile Include="Components\Rendering\Animation.cs" />
+    <Compile Include="Input\Mouse\MouseHandler.cs" />
+    <Compile Include="Input\Mouse\MouseEntity.cs" />
+    <Compile Include="GUI\GUIHandler.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Engine\" />
+    <Folder Include="Input\" />
+    <Folder Include="Components\" />
+    <Folder Include="Data\" />
+    <Folder Include="Components\Rendering\" />
+    <Folder Include="Input\Mouse\" />
+    <Folder Include="GUI\" />
+  </ItemGroup>
+</Project>
