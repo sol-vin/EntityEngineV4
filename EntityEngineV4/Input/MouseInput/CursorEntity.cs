@@ -7,7 +7,7 @@ using EntityEngineV4.Data;
 
 namespace EntityEngineV4.Input.MouseInput
 {
-	public class MouseEntity : Entity
+	public class CursorEntity : Entity
 	{
 		//Link to the containing service
 		public MouseHandler MouseHandler;
@@ -24,14 +24,10 @@ namespace EntityEngineV4.Input.MouseInput
 			set {
 				Body.Position.X = value.X;
 				Body.Position.Y = value.Y;
-
-				//If the mouse isn't locked to the screen then we should change it's position as well 
-				if(!MouseHandler.LockMouse)
-					MouseHandler.SetPositon(value);
 			}
 		}
 
-		public MouseEntity(EntityState stateref, IComponent parent, string name, MouseHandler mh) 
+		public CursorEntity(EntityState stateref, IComponent parent, string name, MouseHandler mh) 
 			: base(stateref, parent, name)
 		{
 			MouseHandler = mh;
@@ -43,14 +39,27 @@ namespace EntityEngineV4.Input.MouseInput
 			Render.Layer = 1f;
 			Render.Scale = Vector2.One * 100;
 
-			TextRender = new TextRender(this, "TextRender", new Body(this, "TextRender.Body", new Vector2(400,400)));
+			var body =  new Body(this, "TextRender.Body", new Vector2(200,200));
+
+			TextRender = new TextRender(this, "TextRender", body);
 			TextRender.LoadFont(@"TestState/font");
 			TextRender.Color = Color.Black;
+			TextRender.Text = MouseHandler.GetPositon().ToString();
+			TextRender.Layer = .9f;
 		}
 
 
 		public override void Update (GameTime gt)
 		{
+			TextRender.Text = MouseHandler.GetPositon().ToString() + 
+                "\n Mouse Lock:" + MouseHandler.LockMouse.ToString();
+
+			Render.Color = Color.White;
+			if (MouseHandler.IsMouseButtonDown(MouseButton.LeftButton))
+				Render.Color = Color.Red;
+
+			if (MouseHandler.IsMouseButtonPressed(MouseButton.RightButton))
+				MouseHandler.LockMouse = !MouseHandler.LockMouse;
 			base.Update (gt);
 		}
 	}

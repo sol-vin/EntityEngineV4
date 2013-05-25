@@ -1,0 +1,5 @@
+C:\Users\Ian\Documents\GitHub\EntityEngineV4\EntityEngineV4\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Ian\Documents\GitHub\EntityEngineV4\EntityEngineV4\bin\Debug\EntityEngineV4.dll
+C:\Users\Ian\Documents\GitHub\EntityEngineV4\EntityEngineV4\bin\Debug\EntityEngineV4.pdb
+C:\Users\Ian\Documents\GitHub\EntityEngineV4\EntityEngineV4\obj\Debug\EntityEngineV4.dll
+C:\Users\Ian\Documents\GitHub\EntityEngineV4\EntityEngineV4\obj\Debug\EntityEngineV4.pdb

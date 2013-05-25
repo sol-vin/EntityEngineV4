@@ -74,7 +74,7 @@ namespace EntityEngineV4.Engine
         {
 			Game.GraphicsDevice.Clear(BackgroundColor); Game.GraphicsDevice.Clear(BackgroundColor);
             SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
-                              DepthStencilState.Default, RasterizerState.CullNone);
+                              DepthStencilState.None, RasterizerState.CullNone);
 
             CurrentState.Draw(SpriteBatch);
 
