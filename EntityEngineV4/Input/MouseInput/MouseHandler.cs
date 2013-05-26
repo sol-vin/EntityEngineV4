@@ -8,7 +8,7 @@ namespace EntityEngineV4.Input.MouseInput
 {
 	public class MouseHandler : Service
 	{
-		public CursorEntity CursorEntity;
+		public Cursor Cursor;
 		private static MouseState _mousestate;
 		public static MouseState MouseState {
 			get { return _mousestate;}
@@ -18,41 +18,50 @@ namespace EntityEngineV4.Input.MouseInput
 			get { return _lastmousestate;}
 		}
 
-		public bool LockMouse = false;
+	    public bool LockMouse;
 
 		public MouseHandler (EntityState stateref) : base(stateref)
 		{
-			CursorEntity = new CursorEntity(stateref, stateref, "CursorEntity", this);
-			stateref.AddEntity(CursorEntity);
+			Cursor = new Cursor(stateref, stateref, "Cursor", this);
 		}
 
 		public override void Update(GameTime gt)
 		{
-			_lastmousestate = _mousestate;
+			Flush();
 			_mousestate = Mouse.GetState();
-			if (_lastmousestate == _mousestate) return; //The mouse was the same, no need to do anything.
 
-			//After we get our states, we can reset the Mouse with no problems!
-			if(LockMouse)
-				Mouse.SetPosition(EntityGame.Viewport.Width/2,EntityGame.Viewport.Height/2);
-
-			//Calc our distance and add it to our cursor.
-			Point distance = new Point(_lastmousestate.X - _mousestate.X, _lastmousestate.Y - _mousestate.Y);
-			CursorEntity.Position = new Point(CursorEntity.Position.X - distance.X, CursorEntity.Position.Y - distance.Y);
+			if (LockMouse)
+			{
+				int lockx = EntityGame.Viewport.Width/2;
+				int locky = EntityGame.Viewport.Height/2;
+				
+				//After we get our states, we can reset the Mouse with no problems!
+				SetPosition(lockx, locky);
+				Point distance = new Point(lockx - _mousestate.X, locky - _mousestate.Y);
+				Cursor.Position = new Point(Cursor.Position.X - distance.X, Cursor.Position.Y - distance.Y);
+			}
+			else
+			{
+				//Calc our distance and add it to our cursor.
+				Point distance = new Point(_lastmousestate.X - _mousestate.X, _lastmousestate.Y - _mousestate.Y);
+				Cursor.Position = new Point(Cursor.Position.X - distance.X, Cursor.Position.Y - distance.Y);
+			}
+			Cursor.Update(gt);
 		}
 
 		public override void Draw(SpriteBatch sb)
 		{
+			Cursor.Draw(sb);
 		}
 
-		public Point GetPositon()
+		public Point GetPosition()
 		{
 			return new Point(_mousestate.X, _mousestate.Y);
 		}
 
-		public void SetPositon(Point p)
+		public void SetPosition(int x, int y)
 		{
-			Mouse.SetPosition(p.X, p.Y);
+			Mouse.SetPosition(x, y);
 		}
 
 		public void Flush()

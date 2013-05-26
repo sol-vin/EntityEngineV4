@@ -7,7 +7,7 @@ using EntityEngineV4.Data;
 
 namespace EntityEngineV4.Input.MouseInput
 {
-	public class CursorEntity : Entity
+	public class Cursor : Entity
 	{
 		//Link to the containing service
 		public MouseHandler MouseHandler;
@@ -27,14 +27,14 @@ namespace EntityEngineV4.Input.MouseInput
 			}
 		}
 
-		public CursorEntity(EntityState stateref, IComponent parent, string name, MouseHandler mh) 
+		public Cursor(EntityState stateref, IComponent parent, string name, MouseHandler mh) 
 			: base(stateref, parent, name)
 		{
 			MouseHandler = mh;
 
 			Body = new Body(this, "Body");
 
-			//Default rendering is a single black pixel.
+			//Default rendering is a single white pixel.
 			Render = new ImageRender(this, "ImageRender", Assets.Pixel, Body);
 			Render.Layer = 1f;
 			Render.Scale = Vector2.One * 100;
@@ -44,15 +44,15 @@ namespace EntityEngineV4.Input.MouseInput
 			TextRender = new TextRender(this, "TextRender", body);
 			TextRender.LoadFont(@"TestState/font");
 			TextRender.Color = Color.Black;
-			TextRender.Text = MouseHandler.GetPositon().ToString();
+			TextRender.Text = MouseHandler.GetPosition().ToString();
 			TextRender.Layer = .9f;
 		}
 
 
 		public override void Update (GameTime gt)
 		{
-			TextRender.Text = MouseHandler.GetPositon().ToString() + 
-                "\n Mouse Lock:" + MouseHandler.LockMouse.ToString();
+			TextRender.Text = MouseHandler.GetPosition().ToString() + 
+				"\n Mouse Lock:" + MouseHandler.LockMouse.ToString();
 
 			Render.Color = Color.White;
 			if (MouseHandler.IsMouseButtonDown(MouseButton.LeftButton))
