@@ -69,7 +69,7 @@
     <Compile Include="Components\Rendering\Animation.cs" />
     <Compile Include="Input\MouseInput\MouseHandler.cs" />
     <Compile Include="Input\MouseInput\Cursor.cs" />
-    <Compile Include="GUI\GUIHandler.cs" />
+    <Compile Include="GUI\ControlHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

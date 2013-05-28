@@ -1,7 +1,6 @@
-using System;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using EntityEngineV4.Engine;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Components.Rendering
 {
@@ -27,14 +26,14 @@ namespace EntityEngineV4.Components.Rendering
             get { return new Rectangle(0, 0, Texture.Width, Texture.Height); }
         }
 
-		//Dependencies
-		protected Body Body;
+        //Dependencies
+        protected Body Body;
 
         public ImageRender(Entity e, string name, Body body)
             : base(e, name)
         {
             Origin = Vector2.Zero;
-			Body = body;
+            Body = body;
         }
 
         public ImageRender(Entity e, string name, Texture2D texture, Body body)
@@ -42,7 +41,7 @@ namespace EntityEngineV4.Components.Rendering
         {
             Texture = texture;
             Origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
-			Body = body;
+            Body = body;
         }
 
         public override void Draw(SpriteBatch sb)
@@ -57,4 +56,3 @@ namespace EntityEngineV4.Components.Rendering
         }
     }
 }
-

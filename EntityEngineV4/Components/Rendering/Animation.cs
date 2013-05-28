@@ -1,18 +1,19 @@
-using System;
 using EntityEngineV4.Components.Rendering;
-using Microsoft.Xna.Framework;
-using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Components.Render
 {
-public class Animation : ImageRender
+    public class Animation : ImageRender
     {
         public Vector2 TileSize;
         public int FramesPerSecond;
+
         public int CurrentFrame { get; set; }
+
         public event Timer.TimerEvent LastFrameEvent;
+
         public Timer FrameTimer;
 
         public bool HitLastFrame
@@ -35,10 +36,10 @@ public class Animation : ImageRender
             get
             {
                 return new Rectangle(
-					(int)(TileSize.X * CurrentFrame), 
-					0, 
-					(int)TileSize.X, 
-					(int)TileSize.Y);
+                    (int)(TileSize.X * CurrentFrame),
+                    0,
+                    (int)TileSize.X,
+                    (int)TileSize.Y);
             }
         }
 
@@ -56,7 +57,7 @@ public class Animation : ImageRender
         }
 
         public Animation(Entity e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond, Body body)
-            : base(e, name, texture,body)
+            : base(e, name, texture, body)
         {
             TileSize = tileSize;
             FramesPerSecond = framesPerSecond;
@@ -115,4 +116,3 @@ public class Animation : ImageRender
         }
     }
 }
-

@@ -54,7 +54,8 @@ namespace EntityEngineV4.Input
 
         #region Constructor Region
 
-        public InputHandler(EntityState stateref) : base (stateref)
+        public InputHandler(EntityState stateref)
+            : base(stateref)
         {
             _keyboardState = Keyboard.GetState();
             _gamePadStates = new GamePadState[Enum.GetValues(typeof(PlayerIndex)).Length];

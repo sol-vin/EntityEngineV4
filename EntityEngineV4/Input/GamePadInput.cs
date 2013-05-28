@@ -127,7 +127,9 @@ namespace EntityEngineV4.Input
         public PlayerIndex PlayerIndex;
         public Triggers Trigger;
         public float Threshold = .7f;
+
         public float Value { get; private set; }
+
         private float _lastvalue;
 
         public GamePadTrigger(Entity entity, string name)
@@ -161,7 +163,6 @@ namespace EntityEngineV4.Input
         {
             return Value <= Threshold;
         }
-
 
         public override void Update(GameTime gt)
         {

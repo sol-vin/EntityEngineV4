@@ -7,13 +7,13 @@ namespace EntityEngineV4.Engine
     {
         public bool Active;
         public bool Visible;
-		public EntityState StateRef;
+        public EntityState StateRef;
 
-		public Service (EntityState stateref)
-    	{
-    		StateRef = stateref;
-    	}
-    	
+        public Service(EntityState stateref)
+        {
+            StateRef = stateref;
+        }
+
         public delegate void EventHandler(Service s);
 
         public event EventHandler DestroyEvent;

@@ -4,29 +4,29 @@ using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Components
 {
-public class Physics : Component
+    public class Physics : Component
     {
         public float AngularVelocity;
         public float AngularVelocityDrag = 1f;
         public Vector2 Velocity = Vector2.Zero;
         public float Drag = 1f;
         public Vector2 Acceleration = Vector2.Zero;
-		private Vector2 _force = Vector2.Zero;
+        private Vector2 _force = Vector2.Zero;
 
-		//Dependencies
-		private Body _body;
+        //Dependencies
+        private Body _body;
 
         public Physics(Entity e, string name, Body body)
             : base(e, name)
         {
-			_body = body;
+            _body = body;
         }
 
         public override void Update(GameTime gt)
         {
             Velocity += Acceleration;
-			Velocity += _force;
-			_force = Vector2.Zero;
+            Velocity += _force;
+            _force = Vector2.Zero;
             Velocity *= Drag;
             AngularVelocity *= AngularVelocityDrag;
 
@@ -56,10 +56,10 @@ public class Physics : Component
             _body.Angle = (float)Math.Atan2(velocity.X, velocity.Y);
         }
 
-		public void AddForce (Vector2 force)
-		{
-			_force += force;
-		}
+        public void AddForce(Vector2 force)
+        {
+            _force += force;
+        }
 
         public Physics Clone()
         {
@@ -73,4 +73,3 @@ public class Physics : Component
         }
     }
 }
-

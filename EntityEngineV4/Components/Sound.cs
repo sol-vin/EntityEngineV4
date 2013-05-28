@@ -1,10 +1,9 @@
-using System;
-using Microsoft.Xna.Framework.Audio;
 using EntityEngineV4.Engine;
+using Microsoft.Xna.Framework.Audio;
 
 namespace EntityEngineV4.Components
 {
-public class Sound : Component
+    public class Sound : Component
     {
         /// <summary>
         /// The sound to process
@@ -102,4 +101,3 @@ public class Sound : Component
         }
     }
 }
-

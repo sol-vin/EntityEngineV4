@@ -1,67 +1,65 @@
-using System;
-using EntityEngineV4.Engine;
-using Microsoft.Xna.Framework;
 using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
+using EntityEngineV4.Engine;
+using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Input.MouseInput
 {
-	public class Cursor : Entity
-	{
-		//Link to the containing service
-		public MouseHandler MouseHandler;
+    public class Cursor : Entity
+    {
+        //Link to the containing service
+        public MouseHandler MouseHandler;
 
-		//Hidden because we don't want people messing with it all willy nilly
-		protected Body Body;
-		public Render Render;
-		public TextRender TextRender;
+        //Hidden because we don't want people messing with it all willy nilly
+        protected Body Body;
 
-		public Point Position {
-			get {
-				return new Point ((int)Body.Position.X, (int)Body.Position.Y);
-			}
-			set {
-				Body.Position.X = value.X;
-				Body.Position.Y = value.Y;
-			}
-		}
+        public Render Render;
 
-		public Cursor(EntityState stateref, IComponent parent, string name, MouseHandler mh) 
-			: base(stateref, parent, name)
-		{
-			MouseHandler = mh;
+        public Point Position
+        {
+            get
+            {
+                return new Point((int)Body.Position.X, (int)Body.Position.Y);
+            }
+            set
+            {
+                Body.Position.X = value.X;
+                Body.Position.Y = value.Y;
+            }
+        }
 
-			Body = new Body(this, "Body");
+        public Cursor(EntityState stateref, string name, MouseHandler mh)
+            : base(stateref, stateref, name)
+        {
+            MouseHandler = mh;
 
-			//Default rendering is a single white pixel.
-			Render = new ImageRender(this, "ImageRender", Assets.Pixel, Body);
-			Render.Layer = 1f;
-			Render.Scale = Vector2.One * 100;
+            Body = new Body(this, "Body");
+            Body.Position = new Vector2(400, 300);
 
-			var body =  new Body(this, "TextRender.Body", new Vector2(200,200));
+            //Default rendering is a single white pixel.
+            Render = new ImageRender(this, "ImageRender", Assets.Pixel, Body);
+            Render.Layer = 1f;
+            Render.Scale = Vector2.One * 3f;
+            Render.Color = Color.Black;
 
-			TextRender = new TextRender(this, "TextRender", body);
-			TextRender.LoadFont(@"TestState/font");
-			TextRender.Color = Color.Black;
-			TextRender.Text = MouseHandler.GetPosition().ToString();
-			TextRender.Layer = .9f;
-		}
+            Body.Bounds = Render.Scale;
+        }
 
+        public override void Update(GameTime gt)
+        {
+            Position = new Point(Position.X - MouseHandler.Delta.X, Position.Y - MouseHandler.Delta.Y);
 
-		public override void Update (GameTime gt)
-		{
-			TextRender.Text = MouseHandler.GetPosition().ToString() + 
-				"\n Mouse Lock:" + MouseHandler.LockMouse.ToString();
+            //Keep it from leaving the bounds of the window.
+            if (Body.Position.X < 0) Body.Position.X = 0;
+            else if (Body.BoundingRect.Right > EntityGame.Viewport.Width)
+                Body.Position.X = EntityGame.Viewport.Width - Body.Bounds.X;
 
-			Render.Color = Color.White;
-			if (MouseHandler.IsMouseButtonDown(MouseButton.LeftButton))
-				Render.Color = Color.Red;
+            if (Body.Position.Y < 0) Body.Position.Y = 0;
+            else if (Body.BoundingRect.Bottom > EntityGame.Viewport.Height)
+                Body.Position.Y = EntityGame.Viewport.Height - Body.Bounds.Y;
 
-			if (MouseHandler.IsMouseButtonPressed(MouseButton.RightButton))
-				MouseHandler.LockMouse = !MouseHandler.LockMouse;
-			base.Update (gt);
-		}
-	}
+            base.Update(gt);
+        }
+    }
 }
-

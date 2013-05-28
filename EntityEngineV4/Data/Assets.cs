@@ -6,6 +6,7 @@ namespace EntityEngineV4.Data
     public struct Assets
     {
         public static Texture2D Pixel;
+        public static SpriteFont Font;
 
         public static void LoadConent(Game game)
         {
@@ -13,6 +14,8 @@ namespace EntityEngineV4.Data
             Color[] pixeldata = new Color[1];
             pixeldata[0] = Color.White;
             Pixel.SetData(pixeldata);
+
+            Font = game.Content.Load<SpriteFont>(@"EntityEngine/font");
         }
     }
 }

@@ -1,10 +1,9 @@
-using System;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Components
 {
-public class Timer : Component
+    public class Timer : Component
     {
         public bool Alive { get; private set; }
 
@@ -34,10 +33,10 @@ public class Timer : Component
         /// </summary>
         public double TickTime { get; protected set; }
 
-		/// <summary>
-		/// Milliseconds before the timer shoudl reset.
-		/// </summary>
-		public int Milliseconds;
+        /// <summary>
+        /// Milliseconds before the timer shoudl reset.
+        /// </summary>
+        public int Milliseconds;
 
         private bool _tr;
 
@@ -128,4 +127,3 @@ public class Timer : Component
         }
     }
 }
-

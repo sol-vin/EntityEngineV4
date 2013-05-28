@@ -1,11 +1,10 @@
-using System;
 using EntityEngineV4.Engine;
 
 namespace EntityEngineV4.Components
 {
-public class Health : Component
+    public class Health : Component
     {
-		public int HitPoints { get; set; }
+        public int HitPoints { get; set; }
 
         public bool Alive
         {
@@ -13,6 +12,7 @@ public class Health : Component
         }
 
         public event Entity.EventHandler HurtEvent;
+
         public event Entity.EventHandler DiedEvent;
 
         public Health(Entity e, string name)
@@ -25,8 +25,6 @@ public class Health : Component
         {
             HitPoints = hp;
         }
-
-
 
         public void Hurt(int points)
         {
@@ -44,4 +42,3 @@ public class Health : Component
         }
     }
 }
-

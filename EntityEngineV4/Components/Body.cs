@@ -1,15 +1,14 @@
-using System;
-using Microsoft.Xna.Framework;
 using EntityEngineV4.Engine;
+using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Components
 {
-public class Body : Component
+    public class Body : Component
     {
         public float Angle;
         public Vector2 Position;
         public Vector2 Bounds;
-        
+
         public Rectangle BoundingRect
         {
             get
@@ -22,6 +21,7 @@ public class Body : Component
                 Bounds = new Vector2(value.Width, value.Height);
             }
         }
+
         public Body(Entity e, string name)
             : base(e, name)
         {
@@ -42,4 +42,3 @@ public class Body : Component
         }
     }
 }
-
