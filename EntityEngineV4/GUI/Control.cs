@@ -8,6 +8,7 @@ namespace EntityEngineV4.GUI
 {
     public abstract class Control : Entity
     {
+        public delegate void EmptyEventHandler();
         public Body Body;
 
         /// <summary>
@@ -30,6 +31,7 @@ namespace EntityEngineV4.GUI
 
         public bool HasFocus;
         public bool Enabled = true;
+        public bool Selectable = true;
 
         private TabStop _tabstop;
 
@@ -45,7 +47,7 @@ namespace EntityEngineV4.GUI
             }
         }
 
-        public event ControlEventHandler Selected;
+        public event EmptyEventHandler Selected;
 
         protected Control(EntityState stateref, string name)
             : base(stateref, stateref, name)
@@ -76,15 +78,16 @@ namespace EntityEngineV4.GUI
             HasFocus = false;
         }
 
-        public virtual void OnFocusGain(Control c = null)
+        public virtual void OnFocusGain(Control c)
         {
             HasFocus = true;
         }
 
         public virtual void Select()
         {
+            if (!Selectable) return;
             if (Selected != null)
-                Selected(this);
+                Selected();
         }
     }
 

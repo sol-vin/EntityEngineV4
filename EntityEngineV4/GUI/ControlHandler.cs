@@ -39,7 +39,7 @@ namespace EntityEngineV4.GUI
         {
             foreach (var c in _controls)
             {
-                if (c.Active)
+                if (c != null && c.Active)
                     c.Update(gt);
             }
         }
@@ -48,7 +48,7 @@ namespace EntityEngineV4.GUI
         {
             foreach (var c in _controls)
             {
-                if (c.Visible)
+                if (c != null && c.Visible)
                     c.Draw(sb);
             }
         }
@@ -100,8 +100,8 @@ namespace EntityEngineV4.GUI
                 _currentcontrol.Y--;
                 if (_currentcontrol.Y < 0)
                     _currentcontrol.Y = MaxTabY;
-            } while (_controls[_currentcontrol.X, _currentcontrol.Y] == null);
-            OnFocusChange(_controls[_currentcontrol.X, _currentcontrol.Y]);
+            } while (CurrentControl == null || !CurrentControl.Selectable);
+            OnFocusChange(CurrentControl);
         }
 
         public void DownControl()
@@ -113,8 +113,8 @@ namespace EntityEngineV4.GUI
                 _currentcontrol.Y++;
                 if (_currentcontrol.Y > MaxTabY)
                     _currentcontrol.Y = 0;
-            } while (_controls[_currentcontrol.X, _currentcontrol.Y] == null);
-            OnFocusChange(_controls[_currentcontrol.X, _currentcontrol.Y]);
+            } while (CurrentControl == null || !CurrentControl.Selectable);
+            OnFocusChange(CurrentControl);
         }
 
         public void LeftControl()
@@ -126,8 +126,8 @@ namespace EntityEngineV4.GUI
                 _currentcontrol.X--;
                 if (_currentcontrol.X < 0)
                     _currentcontrol.X = MaxTabX;
-            } while (_controls[_currentcontrol.X, _currentcontrol.Y] == null);
-            OnFocusChange(_controls[_currentcontrol.X, _currentcontrol.Y]);
+            } while (CurrentControl == null || !CurrentControl.Selectable);
+            OnFocusChange(CurrentControl);
         }
 
         public void RightControl()
@@ -139,8 +139,13 @@ namespace EntityEngineV4.GUI
                 _currentcontrol.X++;
                 if (_currentcontrol.X > MaxTabX)
                     _currentcontrol.X = 0;
-            } while (_controls[_currentcontrol.X, _currentcontrol.Y] == null);
-            OnFocusChange(_controls[_currentcontrol.X, _currentcontrol.Y]);
+            } while (CurrentControl == null || !CurrentControl.Selectable);
+            OnFocusChange(CurrentControl);
+        }
+
+        public void Select()
+        {
+            CurrentControl.Select();
         }
     }
 }

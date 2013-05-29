@@ -8,9 +8,6 @@ namespace EntityEngineV4.Input.MouseInput
 {
     public class Cursor : Entity
     {
-        //Link to the containing service
-        public MouseHandler MouseHandler;
-
         //Hidden because we don't want people messing with it all willy nilly
         protected Body Body;
 
@@ -32,8 +29,6 @@ namespace EntityEngineV4.Input.MouseInput
         public Cursor(EntityState stateref, string name, MouseHandler mh)
             : base(stateref, stateref, name)
         {
-            MouseHandler = mh;
-
             Body = new Body(this, "Body");
             Body.Position = new Vector2(400, 300);
 

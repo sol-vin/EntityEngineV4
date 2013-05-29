@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -10,6 +11,10 @@ namespace EntityEngineV4.Engine
         public EntityGame Parent { get; private set; }
 
         public event Entity.EventHandler EntityAdded, EntityRemoved;
+
+        public delegate void EventHandler(string name);
+
+        public event EventHandler ChangeState;
 
         public string Name { get; private set; }
 
@@ -33,6 +38,23 @@ namespace EntityEngineV4.Engine
             Services = new List<Service>();
         }
 
+
+        public T GetEntity<T>(string name) where T : Entity
+        {
+            var result = this.FirstOrDefault(entity => entity.Name == name);
+            if (result == null)
+                throw new Exception("Entity " + name + " does not exist!");
+            return (T)result;
+        }
+
+        public T GetEntity<T>(int id) where T : Entity
+        {
+            var result = this.FirstOrDefault(entity => entity.Id == id);
+            if (result == null)
+                throw new Exception("Entity ID " + id + " does not exist!");
+            return (T)result;
+        }
+
         public virtual void Start()
         {
         }
@@ -40,6 +62,22 @@ namespace EntityEngineV4.Engine
         public virtual void Show()
         {
             Parent.CurrentState = this;
+        }
+
+        public virtual void ChangeToState(string name)
+        {
+            if (ChangeState != null)
+                ChangeState(name);
+            else
+            {
+                throw new Exception("Called" + Name + ".ChangeToState(" + name + ") while there were no states to change to i n ChangeState!");
+            }
+        }
+
+        public virtual void Show(string name)
+        {
+            if (name == Name)
+                Show();
         }
 
         public virtual void Hide()
@@ -91,7 +129,7 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public virtual void AddEntity(Entity e)
+        public void AddEntity(Entity e)
         {
             Add(e);
             e.DestroyEvent += RemoveEntity;
@@ -100,7 +138,7 @@ namespace EntityEngineV4.Engine
                 EntityAdded(e);
         }
 
-        public virtual void RemoveEntity(Entity e)
+        public void RemoveEntity(Entity e)
         {
             Remove(e);
             if (EntityRemoved != null)

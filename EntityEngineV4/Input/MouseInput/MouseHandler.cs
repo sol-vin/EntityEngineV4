@@ -8,7 +8,7 @@ namespace EntityEngineV4.Input.MouseInput
 {
     public class MouseHandler : Service
     {
-        public Cursor Cursor;
+        public static Cursor Cursor;
         private static MouseState _mousestate;
 
         public static MouseState MouseState
@@ -23,17 +23,20 @@ namespace EntityEngineV4.Input.MouseInput
             get { return _lastmousestate; }
         }
 
-        public bool LockMouse = true;
+        public static bool LockMouse = true;
         private readonly int _lockx = EntityGame.Viewport.Width / 2;
         private readonly int _locky = EntityGame.Viewport.Height / 2;
 
-        public Point Delta { get; private set; }
+        public static Point Delta { get; private set; }
 
         public MouseHandler(EntityState stateref, bool usedefaultcursor)
             : base(stateref)
         {
             if (usedefaultcursor)
                 Cursor = new Cursor(stateref, "Cursor", this);
+
+            _mousestate = Mouse.GetState();
+            Flush();
         }
 
         public override void Update(GameTime gt)
@@ -61,22 +64,22 @@ namespace EntityEngineV4.Input.MouseInput
             Cursor.Draw(sb);
         }
 
-        public Point GetPosition()
+        public static Point GetPosition()
         {
             return new Point(_mousestate.X, _mousestate.Y);
         }
 
-        public void SetPosition(int x, int y)
+        public static void SetPosition(int x, int y)
         {
             Mouse.SetPosition(x, y);
         }
 
-        public void Flush()
+        public static void Flush()
         {
             _lastmousestate = _mousestate;
         }
 
-        public bool IsMouseButtonDown(MouseButton mb)
+        public static bool IsMouseButtonDown(MouseButton mb)
         {
             switch (mb)
             {
@@ -94,7 +97,7 @@ namespace EntityEngineV4.Input.MouseInput
             throw new Exception("MouseButton does not exist!");
         }
 
-        public bool IsMouseButtonPressed(MouseButton mb)
+        public static bool IsMouseButtonPressed(MouseButton mb)
         {
             switch (mb)
             {
@@ -112,7 +115,7 @@ namespace EntityEngineV4.Input.MouseInput
             throw new Exception("MouseButton does not exist!");
         }
 
-        public bool IsMouseButtonUp(MouseButton mb)
+        public static bool IsMouseButtonUp(MouseButton mb)
         {
             switch (mb)
             {
@@ -130,7 +133,7 @@ namespace EntityEngineV4.Input.MouseInput
             throw new Exception("MouseButton does not exist!");
         }
 
-        public bool IsMouseButtonReleased(MouseButton mb)
+        public static bool IsMouseButtonReleased(MouseButton mb)
         {
             switch (mb)
             {

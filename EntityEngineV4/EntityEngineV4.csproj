@@ -52,6 +52,7 @@
     <Compile Include="Engine\EntityGame.cs" />
     <Compile Include="Engine\Service.cs" />
     <Compile Include="GUI\Control.cs" />
+    <Compile Include="GUI\LinkLabel.cs" />
     <Compile Include="Input\DoubleInput.cs" />
     <Compile Include="Input\GamePadInput.cs" />
     <Compile Include="Input\Input.cs" />
