@@ -9,24 +9,12 @@ using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.GUI
 {
-    public class LinkLabel : Control
+    public class LinkLabel : Label
     {
         public Color SelectedColor = Color.Red;
-        public Color Color = Color.Black;
-
-        public string Text
-        {
-            get { return TextRender.Text; }
-            set { TextRender.Text = value; }
-        }
-
-        //Components
-        private TextRender TextRender;
 
         public LinkLabel(EntityState stateref, string name) : base(stateref, name)
         {
-            TextRender = new TextRender(this, "TextRender", Assets.Font, name, Body);
-            TextRender.Color = Color.Black;
             Selectable = true;
         }
 
