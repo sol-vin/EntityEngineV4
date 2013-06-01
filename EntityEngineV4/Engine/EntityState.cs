@@ -55,6 +55,32 @@ namespace EntityEngineV4.Engine
             return (T)result;
         }
 
+        public bool CheckEntity<T>(int id) where T : Entity
+        {
+            var result = this.FirstOrDefault(entity => entity.Id == id);
+            return result != null;
+        }
+
+        public bool CheckEntity<T>(string name) where T : Entity
+        {
+            var result = this.FirstOrDefault(entity => entity.Name == name);
+            return result != null;
+        }
+
+        public T GetService<T>() where T : Service
+        {
+            var result = Services.FirstOrDefault(service => service.GetType() == typeof(T));
+            if (result == null)
+                throw new Exception("Service " + typeof(T) + " does not exist!");
+            return (T)result;
+        }
+
+        public bool CheckService<T>() where T : Service
+        {
+            var result = Services.FirstOrDefault(service => service.GetType() == typeof(T));
+            return result != null;
+        }
+
         public virtual void Start()
         {
         }

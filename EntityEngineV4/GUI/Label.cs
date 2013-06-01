@@ -16,7 +16,11 @@ namespace EntityEngineV4.GUI
         public string Text
         {
             get { return TextRender.Text; }
-            set { TextRender.Text = value; }
+            set
+            {
+                TextRender.Text = value;
+                Body.Bounds = TextRender.Font.MeasureString(TextRender.Text);
+            }
         }
 
         //Components
@@ -25,6 +29,7 @@ namespace EntityEngineV4.GUI
         public Label(EntityState stateref, string name) : base(stateref, name)
         {
             TextRender = new TextRender(this, "TextRender", Assets.Font, name, Body);
+            Body.Bounds = TextRender.Font.MeasureString(Text);
             TextRender.Color = Color.Black;
             Selectable = false;
         }

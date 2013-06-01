@@ -1,4 +1,5 @@
 using EntityEngineV4.Engine;
+using EntityEngineV4.Input.MouseInput;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -9,6 +10,8 @@ namespace EntityEngineV4.GUI
     public class ControlHandler : Service
     {
         private Control[,] _controls;
+
+        public bool UseMouse = true;
 
         public int MaxTabX
         {
@@ -37,10 +40,19 @@ namespace EntityEngineV4.GUI
 
         public override void Update(GameTime gt)
         {
-            foreach (var c in _controls)
+            foreach (var control in _controls)
             {
-                if (c != null && c.Active)
-                    c.Update(gt);
+                if (control == null || !control.Active) continue;
+
+                control.Update(gt);
+                if (control.Selectable && TestMouseCollision(control))
+                {
+                    CurrentControl.OnFocusLost(CurrentControl);
+                    _currentcontrol = control.TabPosition;
+                    control.OnFocusGain(control);
+                    if (MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton))
+                        control.Select();
+                }
             }
         }
 
@@ -146,6 +158,30 @@ namespace EntityEngineV4.GUI
         public void Select()
         {
             CurrentControl.Select();
+        }
+
+        public void MouseCollisionUpdate()
+        {
+            foreach (var control in _controls)
+            {
+                if (control.Selectable && TestMouseCollision(control))
+                {
+                    control.OnFocusGain(control);
+                    if(MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton))
+                        control.Select();
+                    break;
+                }
+                if(control.Selectable && control.HasFocus)
+                    control.OnFocusLost(control);
+
+                
+            }
+        }
+
+        public bool TestMouseCollision(Control c)
+        {
+            return c.Body.BoundingRect.Contains(MouseHandler.Cursor.Position);
+
         }
     }
 }
