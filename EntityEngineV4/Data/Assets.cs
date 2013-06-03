@@ -11,7 +11,7 @@ namespace EntityEngineV4.Data
         public static void LoadConent(Game game)
         {
             Pixel = new Texture2D(game.GraphicsDevice, 1, 1);
-            Color[] pixeldata = new Color[1];
+            var pixeldata = new Color[1];
             pixeldata[0] = Color.White;
             Pixel.SetData(pixeldata);
 

@@ -29,12 +29,10 @@ namespace EntityEngineV4.Input.MouseInput
 
         public static Point Delta { get; private set; }
 
-        public MouseHandler(EntityState stateref, bool usedefaultcursor)
+        public MouseHandler(EntityState stateref)
             : base(stateref)
         {
-            if (usedefaultcursor)
-                Cursor = new Cursor(stateref, "Cursor", this);
-
+            Cursor = new Cursor(stateref, "Cursor");
             _mousestate = Mouse.GetState();
             Flush();
         }

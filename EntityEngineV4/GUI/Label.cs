@@ -19,16 +19,19 @@ namespace EntityEngineV4.GUI
             set
             {
                 TextRender.Text = value;
+
                 Body.Bounds = TextRender.Font.MeasureString(TextRender.Text);
             }
         }
 
         //Components
-        protected TextRender TextRender;
+        public TextRender TextRender;
 
         public Label(EntityState stateref, string name) : base(stateref, name)
         {
             TextRender = new TextRender(this, "TextRender", Assets.Font, name, Body);
+            TextRender.Text = name;
+            TextRender.Layer = 1f;
             Body.Bounds = TextRender.Font.MeasureString(Text);
             TextRender.Color = Color.Black;
             Selectable = false;

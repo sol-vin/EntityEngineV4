@@ -8,7 +8,6 @@ namespace EntityEngineV4.GUI
 {
     public abstract class Control : Entity
     {
-        public delegate void EmptyEventHandler();
         public Body Body;
 
         /// <summary>
@@ -47,7 +46,7 @@ namespace EntityEngineV4.GUI
             }
         }
 
-        public event EmptyEventHandler Selected;
+        public event ControlEventHandler Selected;
 
         protected Control(EntityState stateref, string name)
             : base(stateref, stateref, name)
@@ -87,7 +86,7 @@ namespace EntityEngineV4.GUI
         {
             if (!Selectable) return;
             if (Selected != null)
-                Selected();
+                Selected(this);
         }
     }
 

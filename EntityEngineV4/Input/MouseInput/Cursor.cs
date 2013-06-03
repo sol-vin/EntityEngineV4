@@ -13,20 +13,16 @@ namespace EntityEngineV4.Input.MouseInput
 
         public Render Render;
 
-        public Point Position
+        public Vector2 Position
         {
             get
             {
-                return new Point((int)Body.Position.X, (int)Body.Position.Y);
+                return Body.Position;
             }
-            set
-            {
-                Body.Position.X = value.X;
-                Body.Position.Y = value.Y;
-            }
+            set { Body.Position = value; }
         }
 
-        public Cursor(EntityState stateref, string name, MouseHandler mh)
+        public Cursor(EntityState stateref, string name)
             : base(stateref, stateref, name)
         {
             Body = new Body(this, "Body");
@@ -43,7 +39,7 @@ namespace EntityEngineV4.Input.MouseInput
 
         public override void Update(GameTime gt)
         {
-            Position = new Point(Position.X - MouseHandler.Delta.X, Position.Y - MouseHandler.Delta.Y);
+            Position = new Vector2(Position.X - MouseHandler.Delta.X, Position.Y - MouseHandler.Delta.Y);
 
             //Keep it from leaving the bounds of the window.
             if (Body.Position.X < 0) Body.Position.X = 0;

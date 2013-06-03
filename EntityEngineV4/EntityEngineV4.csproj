@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Components\Collision\BasicCollision.cs" />
+    <Compile Include="Components\Rendering\TileRender.cs" />
+    <Compile Include="Object\Particle.cs" />
     <Compile Include="Engine\IComponent.cs" />
     <Compile Include="Engine\Component.cs" />
     <Compile Include="Engine\Entity.cs" />

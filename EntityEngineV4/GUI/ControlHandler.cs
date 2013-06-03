@@ -180,7 +180,7 @@ namespace EntityEngineV4.GUI
 
         public bool TestMouseCollision(Control c)
         {
-            return c.Body.BoundingRect.Contains(MouseHandler.Cursor.Position);
+            return c.Body.BoundingRect.Contains(new Point((int)MouseHandler.Cursor.Position.X, (int)MouseHandler.Cursor.Position.Y));
 
         }
     }

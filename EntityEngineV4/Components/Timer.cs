@@ -10,7 +10,6 @@ namespace EntityEngineV4.Components
         /// <summary>
         /// The event delegate that will be used for event functions
         /// </summary>
-        /// <param name="sender">The sender.</param>
         public delegate void TimerEvent();
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace EntityEngineV4.Components
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClxTimer"/> class.
+        /// Initializes a new instance of the <see cref="Timer"/> class.
         /// </summary>
         public Timer(Entity e, string name)
             : base(e, name)

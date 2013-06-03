@@ -14,7 +14,7 @@ namespace EntityEngineV4.Engine
 
         public delegate void EventHandler(Entity e);
 
-        public event EventHandler DestroyEvent, CreateEvent;
+        public event EventHandler DestroyEvent;
 
         public event Component.EventHandler ComponentAdded, ComponentRemoved;
 
@@ -71,12 +71,6 @@ namespace EntityEngineV4.Engine
             {
                 component.Destroy();
             }
-        }
-
-        public void AddEntity(Entity e)
-        {
-            if (CreateEvent != null)
-                CreateEvent(e);
         }
 
         public T GetComponent<T>(string name) where T : IComponent

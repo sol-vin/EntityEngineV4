@@ -103,14 +103,14 @@ namespace EntityEngineV4.Input
             {
                 case Sticks.Left:
                     Position = new Vector2(InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Left.X,
-                                           -InputHandler.GamePadStates[0].ThumbSticks.Left.Y);
+                                           InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Left.Y);
                     break;
 
                 case Sticks.Right:
                     Position =
                         Position =
                         new Vector2(InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.X,
-                                    -InputHandler.GamePadStates[0].ThumbSticks.Right.Y);
+                                    InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.Y);
                     break;
             }
         }

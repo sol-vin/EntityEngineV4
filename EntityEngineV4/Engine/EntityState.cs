@@ -159,7 +159,6 @@ namespace EntityEngineV4.Engine
         {
             Add(e);
             e.DestroyEvent += RemoveEntity;
-            e.CreateEvent += AddEntity;
             if (EntityAdded != null)
                 EntityAdded(e);
         }
