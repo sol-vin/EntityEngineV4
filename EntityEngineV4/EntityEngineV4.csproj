@@ -45,6 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Collision\Collision.cs" />
+    <Compile Include="Collision\CollisionHandler.cs" />
+    <Compile Include="Collision\Pair.cs" />
+    <Compile Include="Collision\ICollideable.cs" />
     <Compile Include="Components\Collision\BasicCollision.cs" />
     <Compile Include="Components\Rendering\TileRender.cs" />
     <Compile Include="Object\Particle.cs" />
@@ -78,5 +82,7 @@
     <Compile Include="GUI\ControlHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Collision\Shapes\" />
+  </ItemGroup>
 </Project>

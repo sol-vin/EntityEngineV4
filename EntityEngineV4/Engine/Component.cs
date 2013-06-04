@@ -25,6 +25,7 @@ namespace EntityEngineV4.Engine
             Name = name;
 
             parent.AddComponent(this);
+            Id = Parent.StateRef.GetId();
         }
 
         public virtual void Update(GameTime gt)

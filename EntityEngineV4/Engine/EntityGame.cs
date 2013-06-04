@@ -6,7 +6,7 @@ namespace EntityEngineV4.Engine
 {
     public class EntityGame
     {
-        public bool Paused { get; protected set; }
+        public static bool Paused { get; protected set; }
 
         public static Game Game { get; private set; }
 

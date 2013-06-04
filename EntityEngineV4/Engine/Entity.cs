@@ -108,6 +108,7 @@ namespace EntityEngineV4.Engine
             Add(c);
 
             c.DestroyEvent += RemoveComponent;
+            
 
             if (ComponentAdded != null)
                 ComponentAdded(c);
