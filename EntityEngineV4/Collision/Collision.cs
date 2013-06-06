@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EntityEngineV4.Collision.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
@@ -14,28 +15,6 @@ namespace EntityEngineV4.Collision
         public delegate void EventHandler(Collision c);
         public event EventHandler CollideEvent;
 
-        //Dependencies
-        private CollisionHandler _collisionHandler;
-        public Body CollisionBody;
-
-        public Rectangle BoundingRect 
-        { 
-            get { return CollisionBody.BoundingRect; } 
-            set { CollisionBody.BoundingRect = value; } 
-        }
-
-        public Vector2 Position
-        {
-            get { return CollisionBody.Position; }
-            set { CollisionBody.Position = value; }
-        }
-
-        public Vector2 Bounds
-        {
-            get { return CollisionBody.Bounds; }
-            set { CollisionBody.Bounds = value; }
-        }
-
         /// <summary>
         /// The group mask is the bit mask used to determine which groups the component is a part of.
         /// The CollisionHandler will pair all components with the same mask.
@@ -43,7 +22,7 @@ namespace EntityEngineV4.Collision
         /// <value>
         /// The group mask.
         /// </value>
-        public int GroupMask { get; protected set; }
+        public Bitmask GroupMask { get; protected set; }
 
         /// <summary>
         /// The pair mask is the bit mask used to determine which groups the component will pair with.
@@ -52,58 +31,112 @@ namespace EntityEngineV4.Collision
         /// <value>
         /// The pair mask.
         /// </value>
-        public int PairMask { get; protected set; }
+        public Bitmask PairMask { get; protected set; }
 
-        public Collision(Entity parent, string name, Body collisionBody) : base(parent, name)
+        /// <summary>
+        /// The resolution mask is the bit mask which will determine which groups will physically collide with each other
+        /// </summary>
+        public Bitmask ResolutionGroupMask { get; protected set; }
+
+        /// <summary>
+        /// The resolution mask is the bit mask which will determine which pairs will physically collide with each other
+        /// </summary>
+        public Bitmask ResolutionPairMask { get; protected set; }
+
+        //Collision Related Values
+
+        //// <summary>
+        /// Backing field for Mass.
+        /// </summary>
+        private float _mass = 1f;
+        /// <summary>
+        /// The mass of the object.
+        /// </summary>
+        /// <value>
+        /// The mass.
+        /// </value>
+        public float Mass
         {
-            CollisionBody = collisionBody;
+            get { return _mass; }
+            set
+            {
+                if (value < 0) throw new Exception("Mass cannot be less than zero!");
+                _mass = value;
+
+                if (Math.Abs(value - 0) < .00001f)
+                    InvertedMass = 0;
+                else
+                    InvertedMass = 1 / _mass;
+            }
+        }
+
+        /// <summary>
+        /// Gets one divided by mass (1/mass).
+        /// </summary>
+        /// <value>
+        /// The inverted mass.
+        /// </value>
+        public float InvertedMass { get; private set; }
+
+        /// <summary>
+        /// Bounciness of this object
+        /// </summary>
+        public float Restitution = 0f;
+
+        public Shape Shape;
+
+        //Dependencies
+        private CollisionHandler _collisionHandler;
+        private Body _collisionBody;
+        private Physics _collisionPhysics;
+
+
+        //Properties
+
+        public Rectangle BoundingRect
+        {
+            get { return _collisionBody.BoundingRect; }
+            set { _collisionBody.BoundingRect = value; }
+        }
+
+        public Vector2 Position
+        {
+            get { return _collisionBody.Position; }
+            set { _collisionBody.Position = value; }
+        }
+
+        public Vector2 Bounds
+        {
+            get { return _collisionBody.Bounds; }
+            set { _collisionBody.Bounds = value; }
+        }
+
+        public Vector2 Velocity
+        {
+            get { return _collisionPhysics.Velocity; }
+            set { _collisionPhysics.Velocity = value; }
+        }
+
+        public Collision(Entity parent, string name, Shape shape, Body collisionBody) : base(parent, name)
+        {
+            _collisionBody = collisionBody;
             _collisionHandler = parent.StateRef.GetService<CollisionHandler>();
+
+            _collisionPhysics = new Physics(Parent, name + ".Physics", _collisionBody);
+
+            Shape = shape;
+            Shape.Collision = this;
+
+            GroupMask = new Bitmask();
+            PairMask = new Bitmask();
+            ResolutionGroupMask = new Bitmask();
+            ResolutionPairMask = new Bitmask();
         }
 
         public void OnCollision(Collision c)
         {
             if (CollideEvent != null)
                 CollideEvent(c);
-        }
-
-        /// <summary> 
-        /// Toggles a specified bit to on in the GroupMask
-        /// </summary>
-        /// <param name="maskDepth">Which bit should be toggled</param>
-        public void AddGroupMask(int maskDepth)
-        {
-            int mask = 1 << maskDepth;
-            GroupMask = GroupMask | mask;
-        }
-
-        /// <summary>
-        /// Toggles a specified bit to off in the GroupMask
-        /// </summary>
-        /// <param name="maskDepth">Which bit should be toggled</param>
-        public void RemoveGroupMask(int maskDepth)
-        {
-            int mask = 1 << maskDepth;
-            GroupMask = GroupMask | mask;
-        }
-
-        /// <summary>
-        /// Toggles a specified bit to on in the PairMask
-        /// </summary>
-        /// <param name="maskDepth">Which bit should be toggled</param>
-        public void AddPairMask(int maskDepth)
-        {
-            int mask = 1 << maskDepth;
-            PairMask = PairMask | mask;
-        }
-
-        /// <summary>
-        /// Toggles a specified bit to off in the PairMask
-        /// </summary>
-        /// <param name="maskDepth">Which bit should be toggled</param>
-        public void RemovePairMask(int maskDepth)
-        {
-            int mask = 1 << maskDepth;
-            PairMask = PairMask | mask;
         }
 
         public void AddToHandler()

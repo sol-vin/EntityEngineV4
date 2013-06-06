@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
-    public class EntityState : List<Entity>, IComponent
+    public class EntityState : HashSet<Entity>, IComponent
     {
         public EntityGame Parent { get; private set; }
 
@@ -123,7 +123,7 @@ namespace EntityEngineV4.Engine
                 service.Update(gt);
             }
 
-            foreach (var entity in ToArray().Where(e => e.Active))
+            foreach (var entity in this.ToArray().Where(e => e.Active))
             {
                 entity.Update(gt);
             }
@@ -136,7 +136,7 @@ namespace EntityEngineV4.Engine
                 service.Draw(sb);
             }
 
-            foreach (var entity in ToArray().Where(e => e.Visible))
+            foreach (var entity in this.ToArray().Where(e => e.Visible))
             {
                 entity.Draw(sb);
             }
@@ -144,7 +144,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent i = null)
         {
-            foreach (var entity in ToArray())
+            foreach (var entity in this.ToArray())
             {
                 entity.Destroy();
             }

@@ -1,4 +1,6 @@
+using System;
 using EntityEngineV4.Data;
+using EntityEngineV4.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -20,6 +22,18 @@ namespace EntityEngineV4.Engine
 
         public Color BackgroundColor = Color.Silver;
 
+        public int FrameRate { get; private set; }
+        private int _frameCounter = 0;
+        private TimeSpan _elapsedTime = TimeSpan.Zero;
+        private Label _fpslabel;
+
+        public bool ShowFPS
+        {
+            get { return _fpslabel.Visible; }
+            set { _fpslabel.Visible = value; }
+        }
+
+
         /// <summary>
         /// The time in between each physics update
         /// </summary>
@@ -30,6 +44,9 @@ namespace EntityEngineV4.Engine
             Game = game;
             SpriteBatch = spriteBatch;
             Assets.LoadConent(game);
+
+            _fpslabel = new Label(null,"FPSLabel");
+            _fpslabel.Visible = false;
         }
 
         public EntityGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)
@@ -39,6 +56,9 @@ namespace EntityEngineV4.Engine
             Viewport = viewport;
             Assets.LoadConent(game);
 
+            _fpslabel = new Label(new EntityState(this, "FakeState"), "FPSLabel");
+            _fpslabel.Visible = false;
+
             MakeWindow(g, viewport);
         }
 
@@ -46,14 +66,30 @@ namespace EntityEngineV4.Engine
         {
             GameTime = gt;
             CurrentState.Update(gt);
+            
+            _elapsedTime += gt.ElapsedGameTime;
+
+            if (_elapsedTime > TimeSpan.FromSeconds(1))
+            {
+                _elapsedTime -= TimeSpan.FromSeconds(1);
+                FrameRate = _frameCounter;
+                _frameCounter = 0;
+            }
+
+            _fpslabel.Update(gt);
+            _fpslabel.Text = FrameRate.ToString();
+            _fpslabel.Body.Position = new Vector2(Viewport.Width - _fpslabel.Body.Bounds.X - 10, Viewport.Height - _fpslabel.Body.Bounds.Y - 10);
         }
 
         public virtual void Draw()
         {
+            _frameCounter++;
+
             Game.GraphicsDevice.Clear(BackgroundColor); Game.GraphicsDevice.Clear(BackgroundColor);
             SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
                               DepthStencilState.None, RasterizerState.CullNone);
-
+            if(_fpslabel.Visible)
+                _fpslabel.Draw(SpriteBatch);
             CurrentState.Draw(SpriteBatch);
 
             SpriteBatch.End();

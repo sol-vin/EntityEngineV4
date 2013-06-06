@@ -29,6 +29,7 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Avatar, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -45,12 +46,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Collision\Bitmask.cs" />
     <Compile Include="Collision\Collision.cs" />
     <Compile Include="Collision\CollisionHandler.cs" />
+    <Compile Include="Collision\Manifold.cs" />
     <Compile Include="Collision\Pair.cs" />
     <Compile Include="Collision\ICollideable.cs" />
+    <Compile Include="Collision\Shapes\AABB.cs" />
+    <Compile Include="Collision\Shapes\Shape.cs" />
     <Compile Include="Components\Collision\BasicCollision.cs" />
     <Compile Include="Components\Rendering\TileRender.cs" />
+    <Compile Include="Engine\PhysicsMath.cs" />
     <Compile Include="Object\Particle.cs" />
     <Compile Include="Engine\IComponent.cs" />
     <Compile Include="Engine\Component.cs" />
@@ -82,7 +88,5 @@
     <Compile Include="GUI\ControlHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Collision\Shapes\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
