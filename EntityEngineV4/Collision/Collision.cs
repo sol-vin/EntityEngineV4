@@ -133,6 +133,23 @@ namespace EntityEngineV4.Collision
             ResolutionPairMask = new Bitmask();
         }
 
+        public Collision(Entity parent, string name, Shape shape, Body collisionBody, Physics collisionPhysics)
+            : base(parent, name)
+        {
+            _collisionBody = collisionBody;
+            _collisionHandler = parent.StateRef.GetService<CollisionHandler>();
+
+            _collisionPhysics = collisionPhysics;
+
+            Shape = shape;
+            Shape.Collision = this;
+
+            GroupMask = new Bitmask();
+            PairMask = new Bitmask();
+            ResolutionGroupMask = new Bitmask();
+            ResolutionPairMask = new Bitmask();
+        }
+
         public void OnCollision(Collision c)
         {
             if (CollideEvent != null)

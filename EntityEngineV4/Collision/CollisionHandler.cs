@@ -133,7 +133,7 @@ namespace EntityEngineV4.Collision
 
         public static void ResolveCollision(Manifold m)
         {
-            Vector2 relVelocity = m.A.Velocity - m.A.Velocity;
+            Vector2 relVelocity = m.B.Velocity - m.A.Velocity;
             //Finds out if the objects are moving towards each other.
             //We only need to resolve collisions that are moving towards, not away.
             float velAlongNormal = PhysicsMath.DotProduct(relVelocity, m.Normal);
@@ -196,7 +196,7 @@ namespace EntityEngineV4.Collision
                         else
                             fixnormal = Vector2.UnitX;
 
-                        m.Normal = PhysicsMath.GetNormal(a.Position, a.Position) * fixnormal.X;
+                        m.Normal = PhysicsMath.GetNormal(a.Position, b.Position) * fixnormal.X;
                         m.PenetrationDepth = xExtent;	
                     }
                     else {
@@ -204,7 +204,7 @@ namespace EntityEngineV4.Collision
                              fixnormal = -Vector2.UnitY;
                         else
                             fixnormal= Vector2.UnitY;
-                        m.Normal = PhysicsMath.GetNormal(a.Position, a.Position) * fixnormal.Y;
+                        m.Normal = PhysicsMath.GetNormal(a.Position, b.Position) * fixnormal.Y;
                         m.PenetrationDepth = yExtent;
                     }
                     m.AreColliding = true;
