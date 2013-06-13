@@ -9,10 +9,23 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Collision
 {
+    /// <summary>
+    /// A state-side service for handling collisions and dealing with the resolution of those collisions.
+    /// </summary>
     public class CollisionHandler : Service
     {
+        /// <summary>
+        /// List of colliding members on this state. 
+        /// </summary>
         private List<Collision> _collideables;
+
+        /// <summary>
+        /// Pairs to be sent in for testing. 
+        /// </summary>
         private HashSet<Pair> _pairs;
+        /// <summary>
+        /// The mairs that have already collided and generated a manifold as a result.
+        /// </summary>
         private HashSet<Manifold> _manifolds;
 
         public CollisionHandler(EntityState stateref) : base(stateref)
@@ -45,6 +58,7 @@ namespace EntityEngineV4.Collision
             _manifolds.Clear();
         }
         
+
         public void AddCollision(Collision c)
         {
             //Check if the Collision is already in the list.
@@ -55,6 +69,9 @@ namespace EntityEngineV4.Collision
             GeneratePairs();
         }
 
+        /// <summary>
+        /// Generates the pairs used for testing collision.
+        /// </summary>
         public void GeneratePairs()
         {
             if (_collideables.Count() <= 1) return;
@@ -128,12 +145,12 @@ namespace EntityEngineV4.Collision
         public static bool CanObjectsResolve(Collision resolver, Collision other)
         {
             return resolver.ResolutionGroupMask.HasMatchingBit(other.ResolutionGroupMask) || //Compare the group masks.
-                    resolver.ResolutionPairMask.HasMatchingBit(other.ResolutionGroupMask);
+                    resolver.ResolutionPairMask.HasMatchingBit(other.ResolutionGroupMask); //Compare the pair mask one sided.
         }
 
         public static void ResolveCollision(Manifold m)
         {
-            Vector2 relVelocity = m.B.Velocity - m.A.Velocity;
+            Vector2 relVelocity = m.B.LastVelocity - m.A.LastVelocity;
             //Finds out if the objects are moving towards each other.
             //We only need to resolve collisions that are moving towards, not away.
             float velAlongNormal = PhysicsMath.DotProduct(relVelocity, m.Normal);
@@ -219,12 +236,10 @@ namespace EntityEngineV4.Collision
 
         public static Manifold CheckCollision(Shape a, Shape b)
         {
-            return collide((dynamic) a, (dynamic) b);
-        }
+            if (a is AABB && b is AABB)
+                return AABBvsAABB((AABB)a, (AABB)b);
 
-        private static Manifold collide(AABB a, AABB b)
-        {
-            return AABBvsAABB(a, b);
+            throw new Exception("No existing methods for this kind of collision!");
         }
 
     }

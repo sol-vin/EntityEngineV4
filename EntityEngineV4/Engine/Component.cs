@@ -23,7 +23,8 @@ namespace EntityEngineV4.Engine
         {
             Parent = parent;
             Name = name;
-
+            Active = true;
+            Visible = true;
             parent.AddComponent(this);
             Id = Parent.StateRef.GetId();
         }

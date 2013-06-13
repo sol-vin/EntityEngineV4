@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using EntityEngineV4.Collision.Shapes;
 using EntityEngineV4.Components;
+using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
@@ -84,6 +85,18 @@ namespace EntityEngineV4.Collision
         public float Restitution = 0f;
 
         public Shape Shape;
+        public bool _enabled = true;
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                if (_enabled == value) return; //Opt out if the value isn't actually changing
+
+                _enabled = value;
+                _collisionHandler.GeneratePairs();
+            }
+        }
 
         //Dependencies
         private CollisionHandler _collisionHandler;
@@ -117,6 +130,16 @@ namespace EntityEngineV4.Collision
             set { _collisionPhysics.Velocity = value; }
         }
 
+        public Vector2 LastVelocity
+        {
+            get { return _collisionPhysics.LastVelocity; }
+        }
+
+        public Vector2 LastPosition
+        {
+            get { return Position - LastVelocity; }
+        }
+
         public Collision(Entity parent, string name, Shape shape, Body collisionBody) : base(parent, name)
         {
             _collisionBody = collisionBody;
@@ -128,9 +151,15 @@ namespace EntityEngineV4.Collision
             Shape.Collision = this;
 
             GroupMask = new Bitmask();
+            GroupMask.BitmaskChanged += bm => _collisionHandler.GeneratePairs();
+
             PairMask = new Bitmask();
+            PairMask.BitmaskChanged += bm => _collisionHandler.GeneratePairs();
+
             ResolutionGroupMask = new Bitmask();
             ResolutionPairMask = new Bitmask();
+
+            _collisionHandler.AddCollision(this);
         }
 
         public Collision(Entity parent, string name, Shape shape, Body collisionBody, Physics collisionPhysics)
@@ -145,20 +174,21 @@ namespace EntityEngineV4.Collision
             Shape.Collision = this;
 
             GroupMask = new Bitmask();
+            GroupMask.BitmaskChanged += bm => _collisionHandler.GeneratePairs();
+
             PairMask = new Bitmask();
+            PairMask.BitmaskChanged += bm => _collisionHandler.GeneratePairs();
+
             ResolutionGroupMask = new Bitmask();
             ResolutionPairMask = new Bitmask();
+
+            _collisionHandler.AddCollision(this);
         }
 
         public void OnCollision(Collision c)
         {
             if (CollideEvent != null)
                 CollideEvent(c);
-        }
-
-        public void AddToHandler()
-        {
-            _collisionHandler.AddCollision(this);
         }
     }
 }

@@ -46,16 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Collision\Bitmask.cs" />
+    <Compile Include="Data\Bitmask.cs" />
     <Compile Include="Collision\Collision.cs" />
     <Compile Include="Collision\CollisionHandler.cs" />
     <Compile Include="Collision\Manifold.cs" />
     <Compile Include="Collision\Pair.cs" />
-    <Compile Include="Collision\ICollideable.cs" />
     <Compile Include="Collision\Shapes\AABB.cs" />
     <Compile Include="Collision\Shapes\Shape.cs" />
-    <Compile Include="Components\Collision\BasicCollision.cs" />
     <Compile Include="Components\Rendering\TileRender.cs" />
+    <Compile Include="Data\Color.cs" />
     <Compile Include="Engine\PhysicsMath.cs" />
     <Compile Include="Object\Particle.cs" />
     <Compile Include="Engine\IComponent.cs" />

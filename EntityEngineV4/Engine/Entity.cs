@@ -48,7 +48,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Update(GameTime gt)
         {
-            foreach (var component in ToArray())
+            foreach (var component in ToArray().Where(c => c.Active))
             {
                 component.Update(gt);
             }
@@ -56,7 +56,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Draw(SpriteBatch sb)
         {
-            foreach (var component in ToArray())
+            foreach (var component in ToArray().Where(c => c.Visible))
             {
                 component.Draw(sb);
             }
