@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using EntityEngineV4.Collision.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Data;
@@ -14,6 +11,7 @@ namespace EntityEngineV4.Collision
     {
         //Delegates and events
         public delegate void EventHandler(Collision c);
+
         public event EventHandler CollideEvent;
 
         /// <summary>
@@ -50,6 +48,7 @@ namespace EntityEngineV4.Collision
         /// Backing field for Mass.
         /// </summary>
         private float _mass = 1f;
+
         /// <summary>
         /// The mass of the object.
         /// </summary>
@@ -86,6 +85,7 @@ namespace EntityEngineV4.Collision
 
         public Shape Shape;
         public bool _enabled = true;
+
         public bool Enabled
         {
             get { return _enabled; }
@@ -100,9 +100,9 @@ namespace EntityEngineV4.Collision
 
         //Dependencies
         private CollisionHandler _collisionHandler;
+
         private Body _collisionBody;
         private Physics _collisionPhysics;
-
 
         //Properties
 
@@ -140,7 +140,8 @@ namespace EntityEngineV4.Collision
             get { return Position - LastVelocity; }
         }
 
-        public Collision(Entity parent, string name, Shape shape, Body collisionBody) : base(parent, name)
+        public Collision(Entity parent, string name, Shape shape, Body collisionBody)
+            : base(parent, name)
         {
             _collisionBody = collisionBody;
             _collisionHandler = parent.StateRef.GetService<CollisionHandler>();

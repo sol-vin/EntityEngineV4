@@ -8,11 +8,14 @@ namespace EntityEngineV4.Components
     {
         public float AngularVelocity;
         public float AngularVelocityDrag = 1f;
+
         /// <summary>
         /// The velcocity if the object measured in px/frame
         /// </summary>
         public Vector2 Velocity = Vector2.Zero;
+
         public Vector2 LastVelocity { get; private set; }
+
         public float Drag = 1f;
         public Vector2 Acceleration = Vector2.Zero;
         private Vector2 _force = Vector2.Zero;

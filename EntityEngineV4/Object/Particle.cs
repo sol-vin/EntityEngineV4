@@ -15,24 +15,17 @@ namespace EntityEngineV4.Object
         }
 
         public Emitter Emitter;
-        public TileRender TileRender;
         public Body Body;
-        public Physics Physics;
         protected Timer TimeToLiveTimer;
 
-        public Particle(EntityState stateref, IComponent parent, Vector2 position, int ttl, Emitter e)
-            : base(stateref, parent, e.Name + ".Particle")
+        public Particle(EntityState stateref, Vector2 position, int ttl, Emitter e)
+            : base(stateref, e, e.Name + ".Particle")
         {
             Name = Name + Id;
 
             Body = new Body(this, "Body", position);
 
-            TileRender = new TileRender(this, "TileRender", e.Texture, e.TileSize, Body);
-
-            Physics = new Physics(this, "Physics", Body);
-
             Emitter = e;
-            
 
             TimeToLiveTimer = new Timer(this, "Timer");
             TimeToLive = ttl;
@@ -40,16 +33,12 @@ namespace EntityEngineV4.Object
             TimeToLiveTimer.LastEvent += () => Destroy();
         }
 
-        public Particle(EntityState stateref, IComponent parent, int ttl, Emitter e)
-            : base(stateref, parent, e.Name + ".Particle")
+        public Particle(EntityState stateref, int ttl, Emitter e)
+            : base(stateref, e, e.Name + ".Particle")
         {
             Name = Name + Id;
 
             Body = new Body(this, "Body");
-
-            TileRender = new TileRender(this, "TileRender", e.Texture, e.TileSize, Body);
-
-            Physics = new Physics(this, "Physics", Body);
 
             Emitter = e;
 
@@ -65,19 +54,18 @@ namespace EntityEngineV4.Object
         }
     }
 
-
-
     public class FadeParticle : Particle
     {
         public int FadeAge;
+        public Render Render;
 
-        public FadeParticle(EntityState stateref, IComponent parent, int ttl, Emitter e)
-            : base(stateref, parent, ttl, e)
+        public FadeParticle(EntityState stateref, int ttl, Emitter e)
+            : base(stateref, ttl, e)
         {
         }
 
-        public FadeParticle(EntityState stateref, IComponent parent, Vector2 position, int fadeage, int ttl, Emitter e)
-            : base(stateref, parent,  position, ttl, e)
+        public FadeParticle(EntityState stateref, Vector2 position, int fadeage, int ttl, Emitter e)
+            : base(stateref, position, ttl, e)
         {
             FadeAge = fadeage;
         }
@@ -90,9 +78,9 @@ namespace EntityEngineV4.Object
                 int totalsteps = TimeToLive - FadeAge;
                 int currentstep = (int)TimeToLiveTimer.TickTime - FadeAge;
                 if (currentstep > totalsteps) currentstep = totalsteps;
-                float step = currentstep/(totalsteps*1f);
+                float step = currentstep / (totalsteps * 1f);
 
-                TileRender.Alpha = 1f - 1f*step;
+                Render.Alpha = 1f - 1f * step;
             }
         }
     }
@@ -106,19 +94,15 @@ namespace EntityEngineV4.Object
         public bool AutoEmit;
         public int AutoEmitAmount = 1;
 
-        protected Body Body;
-
-        public Emitter(Entity parent, string name, Body body) : base(parent, name)
+        public Emitter(Entity parent, string name)
+            : base(parent, name)
         {
-            Body = body;
         }
 
-        public Emitter(Entity e, string name, Texture2D texture, Vector2 tilesize, Body body)
+        public Emitter(Entity e, string name, Texture2D texture)
             : base(e, name)
         {
             Texture = texture;
-            TileSize = tilesize;
-            Body = body;
         }
 
         public override void Update(GameTime gt)
@@ -129,7 +113,7 @@ namespace EntityEngineV4.Object
 
         protected virtual Particle GenerateNewParticle()
         {
-            var p = new Particle(Parent.StateRef, Parent.StateRef, Body.Position / 2, 30, this) { Physics = { Velocity = Vector2.Zero } };
+            var p = new Particle(Parent.StateRef, 30, this);
             return p;
         }
 

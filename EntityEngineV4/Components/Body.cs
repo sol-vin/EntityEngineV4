@@ -22,6 +22,14 @@ namespace EntityEngineV4.Components
             }
         }
 
+        public float Top { get { return Position.Y; } }
+
+        public float Left { get { return Position.X; } }
+
+        public float Right { get { return Position.X + Bounds.X; } }
+
+        public float Bottom { get { return Position.Y + Bounds.Y; } }
+
         public Body(Entity e, string name)
             : base(e, name)
         {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EntityEngineV4.Components.Rendering;
+﻿using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
@@ -27,7 +23,8 @@ namespace EntityEngineV4.GUI
         //Components
         public TextRender TextRender;
 
-        public Label(EntityState stateref, string name) : base(stateref, name)
+        public Label(EntityState stateref, string name)
+            : base(stateref, name)
         {
             TextRender = new TextRender(this, "TextRender", Assets.Font, name, Body);
             TextRender.Text = name;

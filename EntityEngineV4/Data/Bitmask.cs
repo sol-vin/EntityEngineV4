@@ -22,7 +22,7 @@ namespace EntityEngineV4.Data
 
         public void RemoveMask(int maskDepth)
         {
-            if(maskDepth < 0) throw new Exception("Mask cannot be negative!");
+            if (maskDepth < 0) throw new Exception("Mask cannot be negative!");
             if (maskDepth > 31) throw new Exception("Mask cannot be larger than 31!");
             var mask = 1u << maskDepth;
             Mask = Mask | mask;
@@ -41,7 +41,7 @@ namespace EntityEngineV4.Data
             var mask = 1u << maskDepth;
             Mask = Mask | mask;
 
-            if (BitmaskChanged != null) 
+            if (BitmaskChanged != null)
                 BitmaskChanged(this);
         }
 

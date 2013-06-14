@@ -38,7 +38,6 @@ namespace EntityEngineV4.Engine
             Services = new List<Service>();
         }
 
-
         public T GetEntity<T>(string name) where T : Entity
         {
             var result = this.FirstOrDefault(entity => entity.Name == name);

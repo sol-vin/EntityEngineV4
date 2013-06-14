@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Collision
 {
@@ -23,9 +19,10 @@ namespace EntityEngineV4.Collision
             get { return _pair.B; }
         }
 
-        public Manifold(Collision a, Collision b) : this()
+        public Manifold(Collision a, Collision b)
+            : this()
         {
-            _pair = new Pair(a,b);
+            _pair = new Pair(a, b);
         }
     }
 }

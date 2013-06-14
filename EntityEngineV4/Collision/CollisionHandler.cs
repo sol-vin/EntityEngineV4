@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using EntityEngineV4.Collision.Shapes;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
@@ -15,20 +14,22 @@ namespace EntityEngineV4.Collision
     public class CollisionHandler : Service
     {
         /// <summary>
-        /// List of colliding members on this state. 
+        /// List of colliding members on this state.
         /// </summary>
         private List<Collision> _collideables;
 
         /// <summary>
-        /// Pairs to be sent in for testing. 
+        /// Pairs to be sent in for testing.
         /// </summary>
         private HashSet<Pair> _pairs;
+
         /// <summary>
         /// The mairs that have already collided and generated a manifold as a result.
         /// </summary>
         private HashSet<Manifold> _manifolds;
 
-        public CollisionHandler(EntityState stateref) : base(stateref)
+        public CollisionHandler(EntityState stateref)
+            : base(stateref)
         {
             _collideables = new List<Collision>();
             _pairs = new HashSet<Pair>();
@@ -49,7 +50,6 @@ namespace EntityEngineV4.Collision
                     ResolveCollision(manifold);
                     PositionalCorrection(manifold);
                 }
-                
             }
         }
 
@@ -57,7 +57,6 @@ namespace EntityEngineV4.Collision
         {
             _manifolds.Clear();
         }
-        
 
         public void AddCollision(Collision c)
         {
@@ -85,7 +84,7 @@ namespace EntityEngineV4.Collision
                     if (a.Equals(b)) continue;
                     if (CanObjectsPair(a, b))
                     {
-                        var p = new Pair(a,b);
+                        var p = new Pair(a, b);
                         _pairs.Add(p);
                     }
                 }
@@ -103,7 +102,7 @@ namespace EntityEngineV4.Collision
                 float aExtent = pair.A.BoundingRect.Width / 2f;
                 float bExtent = pair.B.BoundingRect.Width / 2f;
 
-                //Calculate the overlap. 
+                //Calculate the overlap.
                 float xExtent = aExtent + bExtent - Math.Abs(normal.X);
 
                 //If the overlap is greater than 0
@@ -164,7 +163,7 @@ namespace EntityEngineV4.Collision
             Vector2 impulse = j * m.Normal;
             if (CanObjectsResolve(m.A, m.B))
                 m.A.Velocity -= m.A.InvertedMass * impulse;
-            if(CanObjectsResolve(m.B, m.A))
+            if (CanObjectsResolve(m.B, m.A))
                 m.B.Velocity += m.B.InvertedMass * impulse;
         }
 
@@ -178,7 +177,7 @@ namespace EntityEngineV4.Collision
         }
 
         /// <summary>
-        /// Compares bounding boxes using Seperating Axis Thereom. 
+        /// Compares bounding boxes using Seperating Axis Thereom.
         /// </summary>
         public static Manifold AABBvsAABB(AABB a, AABB b)
         {
@@ -190,7 +189,7 @@ namespace EntityEngineV4.Collision
             float aExtent = a.Width / 2f;
             float bExtent = b.Width / 2f;
 
-            //Calculate the overlap. 
+            //Calculate the overlap.
             float xExtent = aExtent + bExtent - Math.Abs(m.Normal.X);
 
             //If the overlap is greater than 0
@@ -205,22 +204,24 @@ namespace EntityEngineV4.Collision
 
                 if (yExtent > 0)
                 {
-                                        //Find which axis has the biggest penetration ;D
+                    //Find which axis has the biggest penetration ;D
                     Vector2 fixnormal;
-                    if (xExtent > yExtent){
-                        if(m.Normal.X < 0)
+                    if (xExtent > yExtent)
+                    {
+                        if (m.Normal.X < 0)
                             fixnormal = -Vector2.UnitX;
                         else
                             fixnormal = Vector2.UnitX;
 
                         m.Normal = PhysicsMath.GetNormal(a.Position, b.Position) * fixnormal.X;
-                        m.PenetrationDepth = xExtent;	
+                        m.PenetrationDepth = xExtent;
                     }
-                    else {
-                        if(m.Normal.Y < 0)
-                             fixnormal = -Vector2.UnitY;
+                    else
+                    {
+                        if (m.Normal.Y < 0)
+                            fixnormal = -Vector2.UnitY;
                         else
-                            fixnormal= Vector2.UnitY;
+                            fixnormal = Vector2.UnitY;
                         m.Normal = PhysicsMath.GetNormal(a.Position, b.Position) * fixnormal.Y;
                         m.PenetrationDepth = yExtent;
                     }
@@ -241,6 +242,5 @@ namespace EntityEngineV4.Collision
 
             throw new Exception("No existing methods for this kind of collision!");
         }
-
     }
 }

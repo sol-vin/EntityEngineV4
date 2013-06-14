@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace EntityEngineV4.Collision
+﻿namespace EntityEngineV4.Collision
 {
     public class Pair
     {
@@ -16,14 +11,14 @@ namespace EntityEngineV4.Collision
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == this.GetType() && Equals((Pair) obj);
+            return obj.GetType() == this.GetType() && Equals((Pair)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (A != null ? A.GetHashCode() : 0)*(B != null ? B.GetHashCode() : 0);
+                return (A != null ? A.GetHashCode() : 0) * (B != null ? B.GetHashCode() : 0);
             }
         }
 
@@ -39,7 +34,7 @@ namespace EntityEngineV4.Collision
         {
             if (ReferenceEquals(a, b))
                 return true;
-            
+
             if ((object)a == null || (object)b == null)
                 return false;
 

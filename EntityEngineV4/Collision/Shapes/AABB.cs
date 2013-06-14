@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Collision.Shapes
 {
     public class AABB : Shape
     {
-        public override Vector2 Position 
-        { 
-            get { return Collision.Position; } 
+        public override Vector2 Position
+        {
+            get { return Collision.Position; }
             set { Collision.Position = value; }
         }
 
@@ -27,8 +23,11 @@ namespace EntityEngineV4.Collision.Shapes
         }
 
         public float Top { get { return Position.Y; } }
+
         public float Left { get { return Position.X; } }
+
         public float Right { get { return Position.X + Collision.Bounds.X; } }
+
         public float Bottom { get { return Position.Y + Collision.Bounds.Y; } }
 
         public override Rectangle BoundingBox
@@ -41,7 +40,8 @@ namespace EntityEngineV4.Collision.Shapes
             }
         }
 
-        public AABB() : base()
+        public AABB()
+            : base()
         {
         }
     }

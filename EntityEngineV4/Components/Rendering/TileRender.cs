@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EntityEngineV4.Engine;
+﻿using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -69,7 +65,8 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(Texture, DrawRect, SourceRectangle, Color * Alpha, Parent.GetComponent<Body>().Angle, Origin, Flip, Layer);
+            if (EntityGame.Viewport.Intersects(DrawRect))
+                sb.Draw(Texture, DrawRect, SourceRectangle, Color * Alpha, Body.Angle, Origin, Flip, Layer);
         }
     }
 }

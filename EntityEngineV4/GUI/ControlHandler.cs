@@ -167,21 +167,18 @@ namespace EntityEngineV4.GUI
                 if (control.Selectable && TestMouseCollision(control))
                 {
                     control.OnFocusGain(control);
-                    if(MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton))
+                    if (MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton))
                         control.Select();
                     break;
                 }
-                if(control.Selectable && control.HasFocus)
+                if (control.Selectable && control.HasFocus)
                     control.OnFocusLost(control);
-
-                
             }
         }
 
         public bool TestMouseCollision(Control c)
         {
             return c.Body.BoundingRect.Contains(new Point((int)MouseHandler.Cursor.Position.X, (int)MouseHandler.Cursor.Position.Y));
-
         }
     }
 }
