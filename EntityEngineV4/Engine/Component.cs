@@ -39,6 +39,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent i = null)
         {
+            Parent.RemoveComponent(this);
             if (DestroyEvent != null)
                 DestroyEvent(this);
         }

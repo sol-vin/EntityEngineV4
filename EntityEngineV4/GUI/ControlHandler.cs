@@ -7,6 +7,7 @@ namespace EntityEngineV4.GUI
 {
     public delegate void ControlEventHandler(Control c);
 
+    //TODO: Remove TabPosition, controls do not need to know their own tab position!
     public class ControlHandler : Service
     {
         private Control[,] _controls;

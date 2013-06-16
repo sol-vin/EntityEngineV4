@@ -55,7 +55,7 @@
     <Compile Include="Collision\Shapes\Shape.cs" />
     <Compile Include="Components\Rendering\TileRender.cs" />
     <Compile Include="Data\Color.cs" />
-    <Compile Include="Engine\PhysicsMath.cs" />
+    <Compile Include="Data\PhysicsMath.cs" />
     <Compile Include="Object\Particle.cs" />
     <Compile Include="Engine\IComponent.cs" />
     <Compile Include="Engine\Component.cs" />

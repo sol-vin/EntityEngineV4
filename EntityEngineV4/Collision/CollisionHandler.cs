@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EntityEngineV4.Collision.Shapes;
+using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -24,7 +25,7 @@ namespace EntityEngineV4.Collision
         private HashSet<Pair> _pairs;
 
         /// <summary>
-        /// The mairs that have already collided and generated a manifold as a result.
+        /// The pairs that have already collided and generated a manifold as a result.
         /// </summary>
         private HashSet<Manifold> _manifolds;
 
@@ -65,7 +66,31 @@ namespace EntityEngineV4.Collision
             _collideables.Add(c);
 
             //Generate our pairs
-            GeneratePairs();
+            ReconfigurePairs(c);
+        }
+
+        /// <summary>
+        /// Reconfigures the pairs for a Collision c
+        /// </summary>
+        /// <param name="c">A collision.</param>
+        public void ReconfigurePairs(Collision c)
+        {
+            //Remove pairs with this collision in it
+            foreach (var pair in _pairs.ToArray().Where(pair => pair.A.Equals(c) || pair.B.Equals(c)))
+            {
+                _pairs.Remove(pair);
+            }
+
+            //Recalculate pairs with this new collision
+            foreach (var other in _collideables)
+            {
+                if (c.Equals(other)) continue;
+                if (CanObjectsPair(c, other))
+                {
+                    var p = new Pair(c, other);
+                    _pairs.Add(p);
+                }
+            }
         }
 
         /// <summary>
@@ -136,8 +161,7 @@ namespace EntityEngineV4.Collision
         /// <returns>Whether or not the the two objects should be paired</returns>
         public static bool CanObjectsPair(Collision a, Collision b)
         {
-            return a.GroupMask.HasMatchingBit(b.GroupMask) || //Compare the group masks.
-                   a.GroupMask.HasMatchingBit(b.PairMask) || //Compare the pair masks to the group masks.
+            return a.GroupMask.HasMatchingBit(b.PairMask) || //Compare the pair masks to the group masks.
                     a.PairMask.HasMatchingBit(b.GroupMask);
         }
 

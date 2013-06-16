@@ -16,7 +16,7 @@ namespace EntityEngineV4.Collision
 
         /// <summary>
         /// The group mask is the bit mask used to determine which groups the component is a part of.
-        /// The CollisionHandler will pair all components with the same mask.
+        /// The CollisionHandler will pair all components with the same pair mask.
         /// </summary>
         /// <value>
         /// The group mask.
@@ -152,10 +152,10 @@ namespace EntityEngineV4.Collision
             Shape.Collision = this;
 
             GroupMask = new Bitmask();
-            GroupMask.BitmaskChanged += bm => _collisionHandler.GeneratePairs();
+            GroupMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
             PairMask = new Bitmask();
-            PairMask.BitmaskChanged += bm => _collisionHandler.GeneratePairs();
+            PairMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
             ResolutionGroupMask = new Bitmask();
             ResolutionPairMask = new Bitmask();
@@ -175,10 +175,10 @@ namespace EntityEngineV4.Collision
             Shape.Collision = this;
 
             GroupMask = new Bitmask();
-            GroupMask.BitmaskChanged += bm => _collisionHandler.GeneratePairs();
+            GroupMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
             PairMask = new Bitmask();
-            PairMask.BitmaskChanged += bm => _collisionHandler.GeneratePairs();
+            PairMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
             ResolutionGroupMask = new Bitmask();
             ResolutionPairMask = new Bitmask();

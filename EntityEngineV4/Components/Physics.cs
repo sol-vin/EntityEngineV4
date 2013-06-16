@@ -31,14 +31,13 @@ namespace EntityEngineV4.Components
 
         public override void Update(GameTime gt)
         {
-            LastVelocity = Velocity;
-
             Velocity += Acceleration;
             Velocity += _force;
             _force = Vector2.Zero;
             Velocity *= Drag;
             AngularVelocity *= AngularVelocityDrag;
 
+            LastVelocity = Velocity;
             _body.Position += Velocity;
             _body.Angle += AngularVelocity;
         }
