@@ -28,6 +28,8 @@ namespace EntityEngineV4.Engine
 
         public int LastId { get; private set; }
 
+        public bool Debug { get; set; }
+
         public List<Service> Services;
 
         public EntityState(EntityGame eg, string name)

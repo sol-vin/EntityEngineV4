@@ -14,8 +14,6 @@ namespace EntityEngineV4.Components
         /// </summary>
         public Vector2 Velocity = Vector2.Zero;
 
-        public Vector2 LastVelocity { get; private set; }
-
         public float Drag = 1f;
         public Vector2 Acceleration = Vector2.Zero;
         private Vector2 _force = Vector2.Zero;
@@ -37,7 +35,6 @@ namespace EntityEngineV4.Components
             Velocity *= Drag;
             AngularVelocity *= AngularVelocityDrag;
 
-            LastVelocity = Velocity;
             _body.Position += Velocity;
             _body.Angle += AngularVelocity;
         }

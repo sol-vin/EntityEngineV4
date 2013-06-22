@@ -19,6 +19,8 @@ namespace EntityEngineV4.Engine
 
         public bool Visible { get; set; }
 
+        public bool Debug { get; set; }
+
         public Component(Entity parent, string name)
         {
             Parent = parent;

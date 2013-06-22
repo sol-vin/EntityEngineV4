@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using EntityEngineV4.Collision.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Collision
 {
@@ -13,6 +16,18 @@ namespace EntityEngineV4.Collision
         public delegate void EventHandler(Collision c);
 
         public event EventHandler CollideEvent;
+
+        public Bitmask CollisionDirection = new Bitmask();
+
+
+        public Bitmask AllowCollisionDirection = new Bitmask(CollisionHandler.ALL);
+
+        private List<Collision> _collidedWith = new List<Collision>(); 
+        public List<Collision> CollidedWith
+        {
+            get { return _collidedWith.ToList(); }
+        }
+        public bool IsColliding { get { return CollidedWith.Count > 0; } }
 
         /// <summary>
         /// The group mask is the bit mask used to determine which groups the component is a part of.
@@ -36,11 +51,6 @@ namespace EntityEngineV4.Collision
         /// The resolution mask is the bit mask which will determine which groups will physically collide with each other
         /// </summary>
         public Bitmask ResolutionGroupMask { get; protected set; }
-
-        /// <summary>
-        /// The resolution mask is the bit mask which will determine which pairs will physically collide with each other
-        /// </summary>
-        public Bitmask ResolutionPairMask { get; protected set; }
 
         //Collision Related Values
 
@@ -83,9 +93,12 @@ namespace EntityEngineV4.Collision
         /// </summary>
         public float Restitution = 0f;
 
-        public Shape Shape;
-        public bool _enabled = true;
+        public Color DebugColor = Color.Magenta;
 
+        public Shape Shape;
+
+        //TODO: Add this to the collision handler when pairing
+        private bool _enabled = true;
         public bool Enabled
         {
             get { return _enabled; }
@@ -94,9 +107,11 @@ namespace EntityEngineV4.Collision
                 if (_enabled == value) return; //Opt out if the value isn't actually changing
 
                 _enabled = value;
-                _collisionHandler.GeneratePairs();
+                _collisionHandler.ReconfigurePairs(this);
             }
         }
+
+        public bool Immovable;
 
         //Dependencies
         private CollisionHandler _collisionHandler;
@@ -130,14 +145,19 @@ namespace EntityEngineV4.Collision
             set { _collisionPhysics.Velocity = value; }
         }
 
-        public Vector2 LastVelocity
+        public Vector2 PositionDelta
         {
-            get { return _collisionPhysics.LastVelocity; }
+            get { return _collisionBody.Delta; }
         }
 
         public Vector2 LastPosition
         {
-            get { return Position - LastVelocity; }
+            get { return _collisionBody.LastPosition; }
+        }
+
+        public Vector2 Delta
+        {
+            get { return _collisionBody.Delta; }
         }
 
         public Collision(Entity parent, string name, Shape shape, Body collisionBody)
@@ -158,7 +178,6 @@ namespace EntityEngineV4.Collision
             PairMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
             ResolutionGroupMask = new Bitmask();
-            ResolutionPairMask = new Bitmask();
 
             _collisionHandler.AddCollision(this);
         }
@@ -181,13 +200,51 @@ namespace EntityEngineV4.Collision
             PairMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
             ResolutionGroupMask = new Bitmask();
-            ResolutionPairMask = new Bitmask();
 
             _collisionHandler.AddCollision(this);
         }
 
+        public override void Destroy(IComponent i = null)
+        {
+            base.Destroy(i);
+            _collisionHandler.RemoveCollision(this);
+        }
+
+        public override void Update(GameTime gt)
+        {
+            base.Update(gt);
+        }
+
+        public override void Draw(SpriteBatch sb)
+        {
+            base.Draw(sb);
+            if (Debug)
+            {
+                //Draw our debug bounds.
+                Rectangle drawwindow;
+                //Draw top
+                drawwindow = new Rectangle(BoundingRect.X, BoundingRect.Y, BoundingRect.Width, 1);
+                sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
+
+                //Draw bottom
+                drawwindow = new Rectangle(BoundingRect.X, BoundingRect.Bottom, BoundingRect.Width, 1);
+                sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
+
+                //Draw left
+                drawwindow = new Rectangle(BoundingRect.X, BoundingRect.Y, 1, BoundingRect.Height);
+                sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
+
+                //Draw right
+                drawwindow = new Rectangle(BoundingRect.Right, BoundingRect.Y, 1, BoundingRect.Height);
+                sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
+            }
+            _collidedWith.Clear();
+        }
+
         public void OnCollision(Collision c)
         {
+            //TODO: Add direction mask code
+            _collidedWith.Add(c);
             if (CollideEvent != null)
                 CollideEvent(c);
         }

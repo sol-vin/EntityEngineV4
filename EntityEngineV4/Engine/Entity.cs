@@ -28,6 +28,8 @@ namespace EntityEngineV4.Engine
 
         public bool Visible { get; set; }
 
+        public bool Debug { get; set; }
+
         public Entity(EntityState stateref, IComponent parent, string name)
         {
             StateRef = stateref;

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EntityEngineV4.Data;
+using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Collision
 {

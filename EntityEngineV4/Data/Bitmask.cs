@@ -8,7 +8,16 @@ namespace EntityEngineV4.Data
 
         public event EventHandler BitmaskChanged;
 
-        public uint Mask { get; private set; }
+        private uint _mask = 0;
+        public uint Mask
+        {
+            get { return _mask; }
+            set 
+        { 
+            _mask = value;
+            if (BitmaskChanged != null) BitmaskChanged(this);
+        }
+        }
 
         public Bitmask()
         {
@@ -45,9 +54,24 @@ namespace EntityEngineV4.Data
                 BitmaskChanged(this);
         }
 
+        public void CombineMask(uint mask)
+        {
+            Mask |= mask;
+        }
+
+        public void CombineMask(Bitmask mask)
+        {
+            Mask |= mask.Mask;
+        }
+
         public bool HasMatchingBit(Bitmask other)
         {
             return (other.Mask & Mask) > 0;
+        }
+
+        public bool HasMatchingBit(uint mask)
+        {
+            return (mask & Mask) > 0;
         }
 
         public bool CheckBit(int depth)

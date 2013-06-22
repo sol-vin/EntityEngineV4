@@ -13,6 +13,8 @@ namespace EntityEngineV4.Engine
 
         bool Visible { get; }
 
+        bool Debug { get; set; }
+
         void Update(GameTime gt);
 
         void Draw(SpriteBatch sb);
