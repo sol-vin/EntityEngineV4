@@ -46,10 +46,10 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            if (DrawRect.Top < EntityGame.Viewport.Height || 
-                DrawRect.Bottom > EntityGame.Viewport.X || 
-                DrawRect.Right > EntityGame.Viewport.Y || 
-                DrawRect.Left < EntityGame.Viewport.Width)
+            if (DrawRect.Top < EntityGame.CurrentCamera.ScreenSpace.Height ||
+                DrawRect.Bottom > EntityGame.CurrentCamera.ScreenSpace.X ||
+                DrawRect.Right > EntityGame.CurrentCamera.ScreenSpace.Y ||
+                DrawRect.Left < EntityGame.CurrentCamera.ScreenSpace.Width)
                 sb.Draw(Texture, DrawRect, null, Color * Alpha, Body.Angle, Origin, Flip, Layer);
         }
 

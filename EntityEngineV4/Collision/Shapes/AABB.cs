@@ -44,5 +44,12 @@ namespace EntityEngineV4.Collision.Shapes
             : base()
         {
         }
+
+        public static AABB CreateAABB(Rectangle r, Collision c)
+        {
+            AABB a = new AABB();
+            a.Collision = c;
+            return a;
+        }
     }
 }

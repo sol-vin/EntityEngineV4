@@ -41,14 +41,18 @@ namespace EntityEngineV4.Input.MouseInput
         {
             Position = new Vector2(Position.X - MouseHandler.Delta.X, Position.Y - MouseHandler.Delta.Y);
 
-            //Keep it from leaving the bounds of the window.
-            if (Body.Position.X < 0) Body.Position.X = 0;
-            else if (Body.BoundingRect.Right > EntityGame.Viewport.Width)
-                Body.Position.X = EntityGame.Viewport.Width - Body.Bounds.X;
+            //Move it with the camera.
+            Position += EntityGame.CurrentCamera.Delta;
 
-            if (Body.Position.Y < 0) Body.Position.Y = 0;
-            else if (Body.BoundingRect.Bottom > EntityGame.Viewport.Height)
-                Body.Position.Y = EntityGame.Viewport.Height - Body.Bounds.Y;
+            //Keep it from leaving the bounds of the window.
+            if (Body.Position.X < EntityGame.CurrentCamera.ScreenSpace.Left) Body.Position.X = EntityGame.CurrentCamera.ScreenSpace.Left;
+            else if (Body.BoundingRect.Right > EntityGame.CurrentCamera.ScreenSpace.Right)
+                Body.Position.X = EntityGame.CurrentCamera.ScreenSpace.Right - Body.Bounds.X;
+
+            if (Body.Position.Y < EntityGame.CurrentCamera.ScreenSpace.Top) Body.Position.Y = EntityGame.CurrentCamera.ScreenSpace.Top;
+            else if (Body.BoundingRect.Bottom > EntityGame.CurrentCamera.ScreenSpace.Bottom)
+                Body.Position.Y = EntityGame.CurrentCamera.ScreenSpace.Bottom - Body.Bounds.Y;
+
 
             base.Update(gt);
         }

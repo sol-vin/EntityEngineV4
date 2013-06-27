@@ -143,33 +143,22 @@ namespace EntityEngineV4.Collision
             //Do a basic SAT test
             foreach (var pair in _pairs)
             {
-                Vector2 normal = pair.A.Position - pair.B.Position;
-
-                //Calculate half widths
-                float aExtent = pair.A.BoundingRect.Width / 2f;
-                float bExtent = pair.B.BoundingRect.Width / 2f;
-
-                //Calculate the overlap.
-                float xExtent = aExtent + bExtent - Math.Abs(normal.X);
-
-                //If the overlap is greater than 0
-                if (xExtent > 0)
+                Manifold m = AABBvsAABB(AABB.CreateAABB(pair.A.BoundingRect, pair.A), AABB.CreateAABB(pair.B.BoundingRect, pair.B));
+                if (m.AreColliding)
                 {
-                    //Calculate half widths
-                    aExtent = pair.A.BoundingRect.Height / 2f;
-                    bExtent = pair.B.BoundingRect.Height / 2f;
-
-                    //Calculate overlap
-                    float yExtent = aExtent + bExtent - Math.Abs(normal.Y);
-
-                    if (yExtent > 0)
+                    //Do our real test now.
+                    if (pair.A.Shape is AABB && pair.B.Shape is AABB)
+                        //If the shapes are both AABB's, skip the check, we already have it
+                        _manifolds.Add(m);
+                    else
                     {
-                        //Do our real test now.
-                        Manifold m = CheckCollision(pair.A.Shape, pair.B.Shape);
+                        m = CheckCollision(pair.A.Shape, pair.B.Shape);
                         if (m.AreColliding)
                             _manifolds.Add(m);
                     }
+
                 }
+                
             }
         }
 
@@ -435,8 +424,12 @@ namespace EntityEngineV4.Collision
 
                 if (yExtent > 0)
                 {
-                    //Find which axis has the biggest penetration ;D
+                    //Variable to multiply the normal by to make the collision resolve
                     Vector2 fixnormal;
+
+                    //Check to see which axis has the biggest "penetration" ;D
+
+                    //Collision is happening on Y axis
                     if (xExtent > yExtent)
                     {
                         if (m.Normal.X < 0)
@@ -444,8 +437,8 @@ namespace EntityEngineV4.Collision
                         else
                             fixnormal = Vector2.UnitX;
 
-                        if (m.B.BoundingRect.Top > m.A.BoundingRect.Top && m.A.BoundingRect.Top < m.B.BoundingRect.Bottom)
-                        {
+                       if (m.B.BoundingRect.Top > m.A.BoundingRect.Top && m.A.BoundingRect.Top < m.B.BoundingRect.Bottom)
+                       {
                             if (m.A.AllowCollisionDirection.HasMatchingBit(DOWN))
                                 m.A.CollisionDirection.CombineMask(DOWN);
                             if (m.B.AllowCollisionDirection.HasMatchingBit(UP))
@@ -459,34 +452,38 @@ namespace EntityEngineV4.Collision
                                 m.B.CollisionDirection.CombineMask(DOWN);
                         }
 
+
                         m.Normal = PhysicsMath.GetNormal(a.Position, b.Position) * fixnormal.X;
                         m.PenetrationDepth = xExtent;
                     }
+                    //Collision happening on X axis
                     else
                     {
                         if (m.Normal.Y < 0)
                             fixnormal = -Vector2.UnitY;
                         else
                             fixnormal = Vector2.UnitY;
-
-                        if (m.B.BoundingRect.Left > m.A.BoundingRect.Left && m.A.BoundingRect.Left < m.B.BoundingRect.Right)
+                        if (m.B.BoundingRect.Left > m.A.BoundingRect.Left && 
+                            m.A.BoundingRect.Left < m.B.BoundingRect.Right)
                         {
                             if (m.A.AllowCollisionDirection.HasMatchingBit(RIGHT))
                                 m.A.CollisionDirection.CombineMask(RIGHT);
                             if (m.B.AllowCollisionDirection.HasMatchingBit(LEFT))
                                 m.B.CollisionDirection.CombineMask(LEFT);
                         }
-                        else if (m.A.BoundingRect.Left > m.B.BoundingRect.Left && m.B.BoundingRect.Left < m.A.BoundingRect.Right)
+                        else if (m.A.BoundingRect.Left > m.B.BoundingRect.Left && 
+                            m.B.BoundingRect.Left < m.A.BoundingRect.Right)
                         {
                             if (m.A.AllowCollisionDirection.HasMatchingBit(LEFT))
                                 m.A.CollisionDirection.CombineMask(LEFT);
                             if (m.B.AllowCollisionDirection.HasMatchingBit(RIGHT))
                                 m.B.CollisionDirection.CombineMask(RIGHT);
                         }
-                        
+
                         m.Normal = PhysicsMath.GetNormal(a.Position, b.Position) * fixnormal.Y;
                         m.PenetrationDepth = yExtent;
                     }
+
                     m.AreColliding = true;
                     return m;
                 }

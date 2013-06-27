@@ -14,6 +14,8 @@ namespace EntityEngineV4.Engine
 
         public static GameTime GameTime { get; private set; }
 
+        public static Camera CurrentCamera;
+
         public SpriteBatch SpriteBatch { get; private set; }
 
         public EntityState CurrentState;
@@ -59,12 +61,15 @@ namespace EntityEngineV4.Engine
             _fpslabel = new Label(new EntityState(this, "FakeState"), "FPSLabel");
             _fpslabel.Visible = false;
 
+            CurrentCamera = new Camera();
+
             MakeWindow(g, viewport);
         }
 
         public virtual void Update(GameTime gt)
         {
             GameTime = gt;
+            CurrentCamera.Update();
             CurrentState.Update(gt);
 
             _elapsedTime += gt.ElapsedGameTime;
@@ -87,11 +92,17 @@ namespace EntityEngineV4.Engine
 
             Game.GraphicsDevice.Clear(BackgroundColor); Game.GraphicsDevice.Clear(BackgroundColor);
             SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
-                              DepthStencilState.None, RasterizerState.CullNone);
-            if (_fpslabel.Visible)
-                _fpslabel.Draw(SpriteBatch);
+                           DepthStencilState.None, RasterizerState.CullNone, null, CurrentCamera.Transform); 
+
             CurrentState.Draw(SpriteBatch);
 
+            SpriteBatch.End();
+
+            SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
+                            DepthStencilState.None, RasterizerState.CullNone);
+
+            if (_fpslabel.Visible)
+                _fpslabel.Draw(SpriteBatch);
             SpriteBatch.End();
         }
 

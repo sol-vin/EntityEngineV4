@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EntityEngineV4.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -29,6 +30,8 @@ namespace EntityEngineV4.Engine
         public int LastId { get; private set; }
 
         public bool Debug { get; set; }
+
+        protected bool Destroyed;
 
         public List<Service> Services;
 
@@ -119,6 +122,9 @@ namespace EntityEngineV4.Engine
 
         public virtual void Update(GameTime gt)
         {
+            //TODO: Find a fix for destroying this!
+            if (Destroyed) 
+                return;
             foreach (var service in Services)
             {
                 service.Update(gt);
@@ -132,6 +138,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Draw(SpriteBatch sb)
         {
+            if (Destroyed) return;
             foreach (var service in Services)
             {
                 service.Draw(sb);
@@ -154,6 +161,10 @@ namespace EntityEngineV4.Engine
             {
                 service.Destroy();
             }
+            Destroyed = true;
+
+            Camera c = new Camera();
+            c.View();
         }
 
         public void AddEntity(Entity e)
