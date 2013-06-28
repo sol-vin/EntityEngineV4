@@ -1,3 +1,4 @@
+using EntityEngineV4.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -18,6 +19,8 @@ namespace EntityEngineV4.Engine
             StateRef.Services.Remove(this);
             if (DestroyEvent != null)
                 DestroyEvent(this);
+
+            EntityGame.Log.Write("Destroyed", this, Alert.Info);
         }
 
         protected Service(EntityState stateRef, string name)

@@ -1,3 +1,4 @@
+using EntityEngineV4.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -44,6 +45,8 @@ namespace EntityEngineV4.Engine
             Parent.RemoveComponent(this);
             if (DestroyEvent != null)
                 DestroyEvent(this);
+
+            EntityGame.Log.Write("Destroyed", this, Alert.Info);
         }
     }
 }

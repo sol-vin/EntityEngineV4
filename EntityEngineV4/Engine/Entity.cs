@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EntityEngineV4.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -75,6 +76,8 @@ namespace EntityEngineV4.Engine
             {
                 component.Destroy();
             }
+
+            EntityGame.Log.Write("Destroyed", this, Alert.Info);
         }
 
         public T GetComponent<T>(string name) where T : IComponent

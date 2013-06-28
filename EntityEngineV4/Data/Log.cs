@@ -33,6 +33,9 @@ namespace EntityEngineV4.Data
 
         public const double MAXLOGSIZE = 1024 * 1024 * 25;
         public string LogName;
+        public readonly string FileExt = ".txt";
+
+        public int Id;
 
         public Log()
         {
@@ -42,10 +45,10 @@ namespace EntityEngineV4.Data
                 Directory.CreateDirectory(LogLocation);
             }
             LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
-                      DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log.Txt";
+                      DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
 
             LogLocation = Path.Combine(LogLocation,
-                                        LogName);
+                                        LogName + FileExt);
             _file = new StreamWriter(LogLocation, true);
             _file.WriteLine("Starting Log @ " + DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day +
                             " | " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" +
@@ -62,9 +65,11 @@ namespace EntityEngineV4.Data
                 Directory.CreateDirectory(LogLocation);
             }
 
-            logLocation = Path.Combine(LogLocation,
-                                       DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Minute + "-" +
-                                       DateTime.Now.Millisecond + "_EntityEngineLog.Txt");
+            LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
+                      DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
+
+            LogLocation = Path.Combine(LogLocation,
+                                        LogName + FileExt);
 
             _file = new StreamWriter(logLocation, true);
             _file.WriteLine("Starting Log @ " + DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day +
@@ -82,7 +87,12 @@ namespace EntityEngineV4.Data
                              //[Month-Day : HH:MM:SS:MS]
                              DateTime.Now.Millisecond + "]" + " - [" + l.Value + "]" +
                              " - " + message;
-
+            if (CheckLogSize())
+            {
+                Id++;
+                LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
+                          DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
+            }
             _file = new StreamWriter(LogLocation, true);
             _file.WriteLine(logline);
             _file.Close();
@@ -90,20 +100,37 @@ namespace EntityEngineV4.Data
 
         public void Write(string message, IComponent sender, Alert l)
         {
-
+            string sendersname;
+            if (sender is Entity)
+                sendersname = (sender as Entity).StateRef.Name + "->" + sender.Name;
+            else if (sender is Component)
+            {
+                Component c = (Component) sender;
+                sendersname = c.Parent.StateRef.Name + "->" + c.Parent.Name + "->" + c.Name;
+            }
+            else if(sender is Service)
+            {
+                sendersname = (sender as Service).StateRef.Name + "->" + sender.Name;
+            }
+            else
+            {
+                sendersname = sender.Name;
+            }
             string logline =
                 "[" + DateTime.Now.Month + "-" + DateTime.Now.Day + " : " + DateTime.Now.Hour + ":" +
                 DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond +
                 //[Month-Day : HH:MM:SS:MS]
                 DateTime.Now.Millisecond + "]" + " - [" + l.Value + "]" +
-                " - [Sender: " + sender.Name + "] - " + message;
+                " - [Sender: " + sendersname + "] - " + message;
             _file = new StreamWriter(LogLocation, true);
             _file.WriteLine(logline);
             _file.Close();
 
             if (CheckLogSize())
             {
-                
+                Id++;
+                LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
+                          DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
             }
         }
 
@@ -113,7 +140,7 @@ namespace EntityEngineV4.Data
             FileInfo f = new FileInfo(LogLocation);
             size = f.Length;
 
-            if (size > MAXLOGSIZE)
+            if (size < MAXLOGSIZE)
                 return true;
             return false;
         }
