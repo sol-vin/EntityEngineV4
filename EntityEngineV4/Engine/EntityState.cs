@@ -19,7 +19,7 @@ namespace EntityEngineV4.Engine
 
         public string Name { get; private set; }
 
-        public int Id { get; private set; }
+        public uint Id { get; private set; }
 
         public bool Default { get; private set; }
 
@@ -27,7 +27,7 @@ namespace EntityEngineV4.Engine
 
         public bool Visible { get; private set; }
 
-        public int LastId { get; private set; }
+        public uint LastId { get; private set; }
 
         public bool Debug { get; set; }
 
@@ -97,10 +97,18 @@ namespace EntityEngineV4.Engine
         public virtual void ChangeToState(string name)
         {
             if (ChangeState != null)
-                ChangeState(name);
-            else
             {
-                throw new Exception("Called" + Name + ".ChangeToState(" + name + ") while there were no states to change to i n ChangeState!");
+                ChangeState(name);
+                //Figure out if the change was successful
+                if (Parent.CurrentState.Name == Name)
+                {
+                    //It was not log it
+                    EntityGame.Log.Write("Could not find " + name + "in the ChangeState!", this, Alert.Warning);
+                }
+                else
+                {
+                    EntityGame.Log.Write("Changed to state " + name, this, Alert.Info);
+                }
             }
         }
 
@@ -108,6 +116,8 @@ namespace EntityEngineV4.Engine
         {
             if (name == Name)
                 Show();
+
+            EntityGame.Log.Write("Shown" ,this, Alert.Info);
         }
 
         public virtual void Hide()
@@ -157,14 +167,17 @@ namespace EntityEngineV4.Engine
                 entity.Destroy();
             }
 
-            foreach (var service in Services)
+            foreach (var service in Services.ToArray())
             {
                 service.Destroy();
             }
             Destroyed = true;
 
+            //Start off with a fresh camera.
             Camera c = new Camera();
             c.View();
+
+            EntityGame.Log.Write("Destoyed", this, Alert.Info);
         }
 
         public void AddEntity(Entity e)
@@ -173,6 +186,8 @@ namespace EntityEngineV4.Engine
             e.DestroyEvent += RemoveEntity;
             if (EntityAdded != null)
                 EntityAdded(e);
+
+            EntityGame.Log.Write("Entity " + e.Name + " added with ID" + e.Id, this, Alert.Info);
         }
 
         public void RemoveEntity(Entity e)
@@ -180,9 +195,10 @@ namespace EntityEngineV4.Engine
             Remove(e);
             if (EntityRemoved != null)
                 EntityRemoved(e);
+            EntityGame.Log.Write("Entity " + e.Name + " removed with ID" + e.Id, this, Alert.Info);
         }
 
-        public int GetId()
+        public uint GetId()
         {
             return LastId++;
         }

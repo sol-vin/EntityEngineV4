@@ -39,7 +39,7 @@ namespace EntityEngineV4.Collision
         private HashSet<Manifold> _manifolds;
 
         public CollisionHandler(EntityState stateref)
-            : base(stateref)
+            : base(stateref, "CollisionHandler")
         {
             _collideables = new List<Collision>();
             _pairs = new HashSet<Pair>();

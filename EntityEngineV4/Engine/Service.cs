@@ -3,29 +3,42 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
-    public abstract class Service
+    public abstract class Service : IComponent
     {
-        public bool Active;
-        public bool Visible;
         public EntityState StateRef;
 
-        public Service(EntityState stateref)
+        public string Name { get; private set; }
+        public uint Id { get; private set; }
+        public bool Active { get; private set; }
+        public bool Visible { get; private set; }
+        public bool Debug { get; set; }
+
+        public virtual void Destroy(IComponent i = null)
         {
-            StateRef = stateref;
+            StateRef.Services.Remove(this);
+            if (DestroyEvent != null)
+                DestroyEvent(this);
+        }
+
+        protected Service(EntityState stateRef, string name)
+        {
+            StateRef = stateRef;
+            Name = name;
+            Id = stateRef.GetId();
         }
 
         public delegate void EventHandler(Service s);
 
         public event EventHandler DestroyEvent;
 
-        public abstract void Update(GameTime gt);
-
-        public abstract void Draw(SpriteBatch sb);
-
-        public virtual void Destroy()
+        public virtual void Update(GameTime gt)
         {
-            if (DestroyEvent != null)
-                DestroyEvent(this);
+            
+        }
+
+        public virtual void Draw(SpriteBatch sb)
+        {
+            
         }
     }
 }

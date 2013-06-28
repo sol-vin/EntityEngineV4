@@ -7,7 +7,7 @@ namespace EntityEngineV4.Engine
     {
         string Name { get; }
 
-        int Id { get; }
+        uint Id { get; }
 
         bool Active { get; }
 

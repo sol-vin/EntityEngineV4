@@ -55,7 +55,7 @@ namespace EntityEngineV4.Input
         #region Constructor Region
 
         public InputHandler(EntityState stateref)
-            : base(stateref)
+            : base(stateref,"InputHandler")
         {
             _keyboardState = Keyboard.GetState();
             _gamePadStates = new GamePadState[Enum.GetValues(typeof(PlayerIndex)).Length];
@@ -84,9 +84,7 @@ namespace EntityEngineV4.Input
         {
         }
 
-        public override void Destroy()
-        {
-        }
+
 
         #endregion XNA methods
 

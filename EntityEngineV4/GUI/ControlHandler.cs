@@ -34,7 +34,7 @@ namespace EntityEngineV4.GUI
         public event ControlEventHandler FocusChanged;
 
         public ControlHandler(EntityState stateref)
-            : base(stateref)
+            : base(stateref, "ControlHandler")
         {
             _controls = new Control[1, 1];
         }

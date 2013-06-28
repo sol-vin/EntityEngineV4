@@ -13,7 +13,7 @@ namespace EntityEngineV4.Engine
 
         public string Name { get; private set; }
 
-        public int Id { get; private set; }
+        public uint Id { get; private set; }
 
         public bool Active { get; set; }
 

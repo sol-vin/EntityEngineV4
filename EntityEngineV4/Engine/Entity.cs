@@ -20,7 +20,7 @@ namespace EntityEngineV4.Engine
 
         public string Name { get; protected set; }
 
-        public int Id { get; private set; }
+        public uint Id { get; private set; }
 
         public bool Default { get; set; }
 
@@ -35,6 +35,7 @@ namespace EntityEngineV4.Engine
             StateRef = stateref;
             Parent = parent;
             Name = name;
+            Id = StateRef.GetId();
             Active = true;
             Visible = true;
         }
@@ -43,6 +44,7 @@ namespace EntityEngineV4.Engine
         {
             StateRef = stateref;
             Parent = stateref;
+            Id = StateRef.GetId();
             Name = name;
             Active = true;
             Visible = true;

@@ -13,9 +13,9 @@ namespace EntityEngineV4.Collision
     public class Collision : Component
     {
         //Delegates and events
-        public delegate void EventHandler(Collision c);
+        public delegate void CollisionEventHandler(Collision c);
 
-        public event EventHandler CollideEvent;
+        public event CollisionEventHandler CollideEvent;
 
         public Bitmask CollisionDirection = new Bitmask();
 

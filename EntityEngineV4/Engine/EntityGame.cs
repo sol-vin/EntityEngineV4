@@ -16,6 +16,8 @@ namespace EntityEngineV4.Engine
 
         public static Camera CurrentCamera;
 
+        public static Log Log { get; private set; }
+
         public SpriteBatch SpriteBatch { get; private set; }
 
         public EntityState CurrentState;
@@ -36,11 +38,6 @@ namespace EntityEngineV4.Engine
             set { _fpslabel.Visible = value; }
         }
 
-        /// <summary>
-        /// The time in between each physics update
-        /// </summary>
-        private static int _timebetweenupdate;
-
         public EntityGame(Game game, SpriteBatch spriteBatch)
         {
             Game = game;
@@ -49,6 +46,8 @@ namespace EntityEngineV4.Engine
 
             _fpslabel = new Label(null, "FPSLabel");
             _fpslabel.Visible = false;
+
+            Log = new Log();
         }
 
         public EntityGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)
@@ -62,6 +61,8 @@ namespace EntityEngineV4.Engine
             _fpslabel.Visible = false;
 
             CurrentCamera = new Camera();
+
+            Log = new Log();
 
             MakeWindow(g, viewport);
         }
@@ -119,6 +120,8 @@ namespace EntityEngineV4.Engine
             g.PreferredBackBufferHeight = r.Height;
             g.IsFullScreen = false;
             g.ApplyChanges();
+
+            Log.Write("Created window with params " + r.ToString(), Alert.Info);
         }
     }
 }
