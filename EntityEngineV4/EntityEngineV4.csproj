@@ -43,9 +43,12 @@
     <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Components\Rendering\SourceAnimation.cs" />
     <Compile Include="Data\Bitmask.cs" />
     <Compile Include="Collision\Collision.cs" />
     <Compile Include="Collision\CollisionHandler.cs" />

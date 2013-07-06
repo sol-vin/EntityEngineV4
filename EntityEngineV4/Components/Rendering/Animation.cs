@@ -1,9 +1,8 @@
-using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace EntityEngineV4.Components.Render
+namespace EntityEngineV4.Components.Rendering
 {
     public class Animation : ImageRender
     {
