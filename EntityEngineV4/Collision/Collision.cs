@@ -243,7 +243,6 @@ namespace EntityEngineV4.Collision
 
         public void OnCollision(Collision c)
         {
-            //TODO: Add direction mask code
             _collidedWith.Add(c);
             if (CollideEvent != null)
                 CollideEvent(c);

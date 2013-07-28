@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Components.Rendering
 {
-    public class Render : Component
+    public abstract class Render : Component
     {
         public float Alpha = 1f;
         public Color Color = Color.White;
@@ -18,22 +18,9 @@ namespace EntityEngineV4.Components.Rendering
 
         public virtual Rectangle SourceRect { get; set; }
 
-        public Render(Entity entity, string name)
+        protected Render(Entity entity, string name)
             : base(entity, name)
         {
-        }
-
-        public virtual Render Clone()
-        {
-            var r = new Render(Parent, Name);
-            r.Color = Color;
-            r.Alpha = Alpha;
-            r.Scale = Scale;
-            r.Layer = Layer;
-            r.Flip = Flip;
-            r.Origin = Origin;
-            r.DrawRect = DrawRect;
-            return r;
         }
     }
 }

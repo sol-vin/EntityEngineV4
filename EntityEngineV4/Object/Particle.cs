@@ -87,7 +87,7 @@ namespace EntityEngineV4.Object
 
     public class Emitter : Component
     {
-        public Texture2D Texture { get; protected set; }
+        //public Texture2D Texture { get; protected set; }
 
         public Vector2 TileSize { get; protected set; }
 
@@ -97,12 +97,6 @@ namespace EntityEngineV4.Object
         public Emitter(Entity parent, string name)
             : base(parent, name)
         {
-        }
-
-        public Emitter(Entity e, string name, Texture2D texture)
-            : base(e, name)
-        {
-            Texture = texture;
         }
 
         public override void Update(GameTime gt)

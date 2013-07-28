@@ -59,7 +59,7 @@ namespace EntityEngineV4.PowerTools
             public Color Color = Color.White;
             public float Layer;
             public bool Visible = true;
-            public float Thickness = 1;
+            public float Thickness = 1f;
 
             public PrimitiveHandler Parent { get; private set; }
 
@@ -152,6 +152,54 @@ namespace EntityEngineV4.PowerTools
             }
         }
 
+        public class Rectangle : Primitive
+        {
+            public float X, Y, Width, Height;
+
+            public bool Fill = false;
+
+            public Rectangle(float x, float y, float width, float height)
+            {
+                X = x;
+                Y = y;
+                Width = width;
+                Height = height;
+            }
+
+            public override void Draw(SpriteBatch sb)
+            {
+                base.Draw(sb);
+                if(!Fill)
+                {
+                    
+                    for (int x = (int)(X - Thickness/2); x < X + Thickness/2; x++)
+                    {
+                        for (int y = (int)(Y - Thickness / 2); y < Y + Thickness / 2; y++)
+                        {
+                            //Draw our top line
+                            DrawLine(sb, new Vector2(x, y), new Vector2(x + Width, y), 1, Layer, Color);
+
+                            //Left line
+                            DrawLine(sb, new Vector2(x, y), new Vector2(x, y + Height), 1, Layer, Color);
+
+                            //Right Line
+                            DrawLine(sb, new Vector2(x + Width, y), new Vector2(x + Width, y + Height), 1, Layer, Color);
+
+                            //Bottom Line
+                            DrawLine(sb, new Vector2(x - 1, y + Height), new Vector2(x + Width, y + Height), 1, Layer, Color);
+                        }
+                    }
+                }
+                else
+                {
+                    for (float y = 0; y < Height; y++)
+                    {
+                        DrawLine(sb, new Vector2(X,Y+y), new Vector2(X+Width, Y+y), Thickness, Layer, Color);
+                    }
+                }
+            }
+        }
+
         public class Circle : Primitive
         {
             public Vector2 Center;
@@ -186,7 +234,7 @@ namespace EntityEngineV4.PowerTools
                 }
                 float chroma = value*saturation;
                 float hdash = hue*6f;
-                float x = chroma*(1f - System.Math.Abs((hdash%2) - 1f));
+                float x = chroma*(1f - Math.Abs((hdash%2) - 1f));
 
                 if (hdash < 1f)
                 {
@@ -230,6 +278,19 @@ namespace EntityEngineV4.PowerTools
                 output.A = (byte) (alpha*byte.MaxValue);
 
                 return output;
+            }
+        }
+        public static class Physics
+        {
+            public static float DotProduct(Vector2 a, Vector2 b)
+            {
+                return a.X * b.X + a.Y * b.Y;
+            }
+            public static Vector2 GetNormal(Vector2 a, Vector2 b)
+            {
+                Vector2 ret = b - a;
+                ret.Normalize();
+                return ret;
             }
         }
     }

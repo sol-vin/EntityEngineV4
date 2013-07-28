@@ -4,6 +4,7 @@ using System.Linq;
 using EntityEngineV4.Collision.Shapes;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
+using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -187,7 +188,7 @@ namespace EntityEngineV4.Collision
             Vector2 relVelocity = m.B.PositionDelta - m.A.PositionDelta;
             //Finds out if the objects are moving towards each other.
             //We only need to resolve collisions that are moving towards, not away.
-            float velAlongNormal = PhysicsMath.DotProduct(relVelocity, m.Normal);
+            float velAlongNormal = MathTools.Physics.DotProduct(relVelocity, m.Normal);
             if (velAlongNormal > 0)
                 return;
             float e = Math.Min(m.A.Restitution, m.B.Restitution);
@@ -276,7 +277,7 @@ namespace EntityEngineV4.Collision
                         }
 
 
-                        m.Normal = PhysicsMath.GetNormal(a.Position, b.Position) * fixnormal.X;
+                        m.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * fixnormal.X;
                         m.PenetrationDepth = xExtent;
                     }
                     //Collision happening on X axis
@@ -303,7 +304,7 @@ namespace EntityEngineV4.Collision
                                 m.B.CollisionDirection.CombineMask(RIGHT);
                         }
 
-                        m.Normal = PhysicsMath.GetNormal(a.Position, b.Position) * fixnormal.Y;
+                        m.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * fixnormal.Y;
                         m.PenetrationDepth = yExtent;
                     }
 

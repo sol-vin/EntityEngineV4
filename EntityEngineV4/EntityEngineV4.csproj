@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Components\Rendering\Primitives\Primitive.cs" />
     <Compile Include="Components\Rendering\SourceAnimation.cs" />
     <Compile Include="Data\Bitmask.cs" />
     <Compile Include="Collision\Collision.cs" />
