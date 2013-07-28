@@ -46,7 +46,7 @@ namespace EntityEngineV4.Engine
             if (DestroyEvent != null)
                 DestroyEvent(this);
 
-            EntityGame.Log.Write("Destroyed", this, Alert.Info);
+            EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
         }
     }
 }

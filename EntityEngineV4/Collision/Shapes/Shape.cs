@@ -10,6 +10,11 @@ namespace EntityEngineV4.Collision.Shapes
 
         public abstract Rectangle BoundingBox { get; set; }
 
+        public static implicit operator Collision(Shape c)
+        {
+            return c.Collision;
+        }
+
         protected Shape()
         {
         }

@@ -9,15 +9,24 @@ namespace EntityEngineV4.Data
 {
     public sealed class Alert
     {
-        public static readonly Alert Info = new Alert("Info");
-        public static readonly Alert Warning = new Alert("Warning");
-        public static readonly Alert Error = new Alert("Error");
-        public static readonly Alert Critical = new Alert("Critical");
+        public static readonly Alert Trivial = new Alert("Trivial", 0);
+        public static readonly Alert Info = new Alert("Info", 1);
+        public static readonly Alert Warning = new Alert("Warning", 2);
+        public static readonly Alert Error = new Alert("Error", 3);
+        public static readonly Alert Critical = new Alert("Critical",4);
 
         public string Value { get; private set; }
-        private Alert(string s)
+        public byte Rank { get; private set; }
+
+        public static implicit operator string(Alert a)
         {
-            Value = s;
+            return a.Value;
+        }
+
+        public Alert(string value, byte rank)
+        {
+            Value = value;
+            Rank = rank;
         }
     }
 
@@ -34,6 +43,8 @@ namespace EntityEngineV4.Data
         public const double MAXLOGSIZE = 1024 * 1024 * 25;
         public string LogName;
         public readonly string FileExt = ".txt";
+
+        public Alert HighestAlertLevel = Alert.Info;
 
         public int Id;
 
@@ -54,7 +65,6 @@ namespace EntityEngineV4.Data
                             " | " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" +
                             DateTime.Now.Millisecond);
             _file.WriteLine("===========================================");
-            _file.Close();
         }
 
         public Log(string logLocation)
@@ -76,16 +86,19 @@ namespace EntityEngineV4.Data
                             " | " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" +
                             DateTime.Now.Millisecond);
             _file.WriteLine("===========================================");
-            _file.Close();
         }
 
         public void Write(string message, Alert l)
         {
+            //Find out if our alert is not high enough to publish
+            if (l.Rank < HighestAlertLevel.Rank)
+                return;
+
             //Figure out what our Alert level is.
             string logline = "[" + DateTime.Now.Month + "-" + DateTime.Now.Day + " : " + DateTime.Now.Hour + ":" +
                              DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond +
                              //[Month-Day : HH:MM:SS:MS]
-                             DateTime.Now.Millisecond + "]" + " - [" + l.Value + "]" +
+                             DateTime.Now.Millisecond + "]" + " - [" + l + "]" +
                              " - " + message;
             if (CheckLogSize())
             {
@@ -93,13 +106,15 @@ namespace EntityEngineV4.Data
                 LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
                           DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
             }
-            _file = new StreamWriter(LogLocation, true);
             _file.WriteLine(logline);
-            _file.Close();
         }
 
         public void Write(string message, IComponent sender, Alert l)
         {
+            //Find out if our alert is not high enough to publish
+            if (l.Rank < HighestAlertLevel.Rank)
+                return;
+
             string sendersname;
             if (sender is Entity)
                 sendersname = (sender as Entity).StateRef.Name + "->" + sender.Name;
@@ -120,11 +135,8 @@ namespace EntityEngineV4.Data
                 "[" + DateTime.Now.Month + "-" + DateTime.Now.Day + " : " + DateTime.Now.Hour + ":" +
                 DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond +
                 //[Month-Day : HH:MM:SS:MS]
-                DateTime.Now.Millisecond + "]" + " - [" + l.Value + "]" +
+                DateTime.Now.Millisecond + "]" + " - [" + l + "]" +
                 " - [Sender: " + sendersname + "] - " + message;
-            _file = new StreamWriter(LogLocation, true);
-            _file.WriteLine(logline);
-            _file.Close();
 
             if (CheckLogSize())
             {
@@ -132,17 +144,24 @@ namespace EntityEngineV4.Data
                 LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
                           DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
             }
+
+            _file.WriteLine(logline);
         }
 
         public bool CheckLogSize()
         {
             long size = 0;
-            FileInfo f = new FileInfo(LogLocation);
+            var f = new FileInfo(LogLocation);
             size = f.Length;
 
             if (size < MAXLOGSIZE)
                 return true;
             return false;
+        }
+
+        public void Dispose()
+        {
+            _file.Close();
         }
 }
 }

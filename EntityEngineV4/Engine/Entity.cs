@@ -77,7 +77,7 @@ namespace EntityEngineV4.Engine
                 component.Destroy();
             }
 
-            EntityGame.Log.Write("Destroyed", this, Alert.Info);
+            EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
         }
 
         public T GetComponent<T>(string name) where T : IComponent
@@ -85,7 +85,10 @@ namespace EntityEngineV4.Engine
             if (name == "") return GetComponent<T>();
             var result = this.FirstOrDefault(c => c.Name == name);
             if (result == null)
+            {
+                EntityGame.Log.Write("Component " + name + " does not exist", this, Alert.Warning);
                 throw new Exception("Component " + name + " does not exist in " + Name + ".");
+            }
             return (T)result;
         }
 
@@ -93,7 +96,10 @@ namespace EntityEngineV4.Engine
         {
             var result = this.FirstOrDefault(c => c.Id == id);
             if (result == null)
+            {
+                EntityGame.Log.Write("Component " + id + " does not exist", this, Alert.Warning);
                 throw new Exception("Component ID:" + id + " does not exist in " + Name + ".");
+            }
             return (T)result;
         }
 
@@ -101,7 +107,10 @@ namespace EntityEngineV4.Engine
         {
             var result = this.FirstOrDefault(c => c is T);
             if (result == null)
+            {
+                EntityGame.Log.Write("Component " + typeof(T) + " does not exist", this, Alert.Warning);
                 throw new Exception("Component of type " + typeof(T) + " does not exist in " + Name + ".");
+            }
             return (T)result;
         }
 
@@ -109,6 +118,7 @@ namespace EntityEngineV4.Engine
         {
             if (this.Any(component => c.Name == component.Name))
             {
+                EntityGame.Log.Write("Component " + c.Name + " already exists", this, Alert.Warning);
                 throw new Exception(c.Name + " already exists in " + Name + "\'s list!");
             }
 

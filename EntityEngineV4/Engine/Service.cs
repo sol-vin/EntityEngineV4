@@ -34,14 +34,8 @@ namespace EntityEngineV4.Engine
 
         public event EventHandler DestroyEvent;
 
-        public virtual void Update(GameTime gt)
-        {
-            
-        }
+        public abstract void Update(GameTime gt);
 
-        public virtual void Draw(SpriteBatch sb)
-        {
-            
-        }
+        public abstract void Draw(SpriteBatch sb);
     }
 }

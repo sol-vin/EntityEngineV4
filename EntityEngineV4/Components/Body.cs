@@ -34,6 +34,31 @@ namespace EntityEngineV4.Components
 
         public float Bottom { get { return Position.Y + Bounds.Y; } }
 
+        public float X 
+        {
+            get { return Position.X; }
+            set { Position.X = value; }
+        }
+
+        public float Y
+        {
+            get { return Position.Y; }
+            set { Position.Y = value; }
+        }
+
+        public float Width
+        {
+            get { return Bounds.X; }
+            set { Bounds.X = value; }
+        }
+
+        public float Height
+        {
+            get { return Bounds.Y; }
+            set { Bounds.Y = value; }
+        }
+
+
         public Color DebugColor = Color.Yellow;
 
         public Body(Entity e, string name)

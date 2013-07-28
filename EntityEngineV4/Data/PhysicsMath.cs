@@ -9,12 +9,6 @@ namespace EntityEngineV4.Data
         {
             return a.X * b.X + a.Y * b.Y;
         }
-
-        public static float Distance(Vector2 a, Vector2 b)
-        {
-            return (float)Math.Sqrt(((int)(a.X - b.X) ^ 2 + (int)(a.Y - b.Y) ^ 2));
-        }
-
         public static Vector2 GetNormal(Vector2 a, Vector2 b)
         {
             Vector2 ret = b - a;

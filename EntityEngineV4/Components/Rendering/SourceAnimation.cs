@@ -54,6 +54,11 @@ namespace EntityEngineV4.Components.Rendering
             }
         }
 
+        public new Vector2 Origin
+        {
+            get { return new Vector2(_sourcerectangles[CurrentFrame].Width / 2f, _sourcerectangles[CurrentFrame].Height / 2f); }
+        }
+
         public override Rectangle SourceRect
         {
             get { return _sourcerectangles[CurrentFrame]; }

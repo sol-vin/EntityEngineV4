@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
@@ -13,6 +14,9 @@ namespace EntityEngineV4.Data
         public Vector2 Delta { get { return Position - LastPosition; } }
         public Vector2 Position = new Vector2();
         public float Zoom = 1f;
+
+        public Body Target { get; private set; }
+
         public Matrix Transform
         {
             get
@@ -56,6 +60,12 @@ namespace EntityEngineV4.Data
         public void View()
         {
             EntityGame.CurrentCamera = this;
+        }
+
+        public void FollowPoint(Body b)
+        {
+            //TODO: Writing Camera following code
+            throw new NotImplementedException();
         }
     }
 }

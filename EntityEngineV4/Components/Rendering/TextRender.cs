@@ -38,7 +38,7 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            if (EntityGame.Viewport.Intersects(DrawRect))
+            if (EntityGame.CurrentCamera.ScreenSpace.Intersects(DrawRect))
                 sb.DrawString(Font, Text, _body.Position, Color * Alpha, _body.Angle, Origin, Scale, Flip, Layer);
         }
 

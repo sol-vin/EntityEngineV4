@@ -1,3 +1,4 @@
+using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using EntityEngineV4.Input.MouseInput;
 using Microsoft.Xna.Framework;
@@ -77,6 +78,8 @@ namespace EntityEngineV4.GUI
 
             FocusChanged += c.OnFocusChange;
             _controls[c.TabPosition.X, c.TabPosition.Y] = c;
+
+            EntityGame.Log.Write("Control " + c.Name + " added", this, Alert.Info);
         }
 
         public void RemoveControl(Control c)
@@ -102,6 +105,8 @@ namespace EntityEngineV4.GUI
         {
             if (FocusChanged != null)
                 FocusChanged(c);
+
+            EntityGame.Log.Write("Focus changed to " + c.Name, this, Alert.Trivial);
         }
 
         public void UpControl()

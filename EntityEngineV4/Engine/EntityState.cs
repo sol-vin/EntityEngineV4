@@ -47,7 +47,10 @@ namespace EntityEngineV4.Engine
         {
             var result = this.FirstOrDefault(entity => entity.Name == name);
             if (result == null)
+            {
+                EntityGame.Log.Write("Entity " + name + " does not exist!", this, Alert.Warning);
                 throw new Exception("Entity " + name + " does not exist!");
+            }
             return (T)result;
         }
 
@@ -55,17 +58,20 @@ namespace EntityEngineV4.Engine
         {
             var result = this.FirstOrDefault(entity => entity.Id == id);
             if (result == null)
+            {
+                EntityGame.Log.Write("Entity " + id + " does not exist!", this, Alert.Warning);
                 throw new Exception("Entity ID " + id + " does not exist!");
+            }
             return (T)result;
         }
 
-        public bool CheckEntity<T>(int id) where T : Entity
+        public bool CheckEntity(int id)
         {
             var result = this.FirstOrDefault(entity => entity.Id == id);
             return result != null;
         }
 
-        public bool CheckEntity<T>(string name) where T : Entity
+        public bool CheckEntity(string name)
         {
             var result = this.FirstOrDefault(entity => entity.Name == name);
             return result != null;
@@ -75,7 +81,10 @@ namespace EntityEngineV4.Engine
         {
             var result = Services.FirstOrDefault(service => service.GetType() == typeof(T));
             if (result == null)
+            {
+                EntityGame.Log.Write("Service " + typeof(T) + " does not exist!", this, Alert.Warning);
                 throw new Exception("Service " + typeof(T) + " does not exist!");
+            }
             return (T)result;
         }
 
@@ -92,6 +101,8 @@ namespace EntityEngineV4.Engine
         public virtual void Show()
         {
             Parent.CurrentState = this;
+
+            EntityGame.Log.Write("Shown", this, Alert.Info);
         }
 
         public virtual void ChangeToState(string name)
@@ -116,8 +127,6 @@ namespace EntityEngineV4.Engine
         {
             if (name == Name)
                 Show();
-
-            EntityGame.Log.Write("Shown" ,this, Alert.Info);
         }
 
         public virtual void Hide()
@@ -187,7 +196,7 @@ namespace EntityEngineV4.Engine
             if (EntityAdded != null)
                 EntityAdded(e);
 
-            EntityGame.Log.Write("Entity " + e.Name + " added with ID" + e.Id, this, Alert.Info);
+            EntityGame.Log.Write("Entity " + e.Name + " added with ID" + e.Id, this, Alert.Warning);
         }
 
         public void RemoveEntity(Entity e)
@@ -195,7 +204,7 @@ namespace EntityEngineV4.Engine
             Remove(e);
             if (EntityRemoved != null)
                 EntityRemoved(e);
-            EntityGame.Log.Write("Entity " + e.Name + " removed with ID" + e.Id, this, Alert.Info);
+            EntityGame.Log.Write("Entity " + e.Name + " removed with ID" + e.Id, this, Alert.Warning);
         }
 
         public uint GetId()

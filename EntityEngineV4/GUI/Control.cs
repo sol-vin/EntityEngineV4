@@ -15,7 +15,6 @@ namespace EntityEngineV4.GUI
         /// It is a point because you can go up, down, left, and right.
         /// </summary>
         private Point _tabposition;
-
         public Point TabPosition
         {
             get { return _tabposition; }
@@ -45,6 +44,12 @@ namespace EntityEngineV4.GUI
                 _tabstop = value;
             }
         }
+
+        //Easy access area
+        public float X { get { return Body.Position.X; } set { Body.Position.X = value; } }
+        public float Y { get { return Body.Position.Y; } set { Body.Position.Y = value; } }
+        public float Width { get { return Body.Bounds.X; } set { Body.Bounds.X = value; } }
+        public float Height { get { return Body.Bounds.X; } set { Body.Bounds.Y= value; } }
 
         public event ControlEventHandler Selected;
 
