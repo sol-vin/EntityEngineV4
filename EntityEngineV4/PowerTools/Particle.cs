@@ -19,7 +19,7 @@ namespace EntityEngineV4.Object
         protected Timer TimeToLiveTimer;
 
         public Particle(EntityState stateref, Vector2 position, int ttl, Emitter e)
-            : base(stateref, e, e.Name + ".Particle")
+            : base(e, e.Name + ".Particle")
         {
             Name = Name + Id;
 
@@ -33,8 +33,8 @@ namespace EntityEngineV4.Object
             TimeToLiveTimer.LastEvent += () => Destroy();
         }
 
-        public Particle(EntityState stateref, int ttl, Emitter e)
-            : base(stateref, e, e.Name + ".Particle")
+        public Particle(Emitter e, int ttl)
+            : base(e, e.Name + ".Particle")
         {
             Name = Name + Id;
 
@@ -59,8 +59,8 @@ namespace EntityEngineV4.Object
         public int FadeAge;
         public Render Render;
 
-        public FadeParticle(EntityState stateref, int ttl, Emitter e)
-            : base(stateref, ttl, e)
+        public FadeParticle( Emitter e, int ttl)
+            : base(e, ttl)
         {
         }
 
@@ -94,6 +94,7 @@ namespace EntityEngineV4.Object
         public bool AutoEmit;
         public int AutoEmitAmount = 1;
 
+        private delegate void ParticleHandler(Entity p);
         public Emitter(Entity parent, string name)
             : base(parent, name)
         {
@@ -107,14 +108,18 @@ namespace EntityEngineV4.Object
 
         protected virtual Particle GenerateNewParticle()
         {
-            var p = new Particle(Parent.StateRef, 30, this);
+            var p = new Particle(this, 30);
             return p;
         }
 
         public virtual void Emit(int amount)
         {
+            
             for (var i = 0; i < amount; i++)
-                Parent.StateRef.AddEntity(GenerateNewParticle());
+            {
+                Particle p = GenerateNewParticle();
+                AddEntity(p);
+            }
         }
     }
 }

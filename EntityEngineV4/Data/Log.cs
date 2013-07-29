@@ -117,15 +117,15 @@ namespace EntityEngineV4.Data
 
             string sendersname;
             if (sender is Entity)
-                sendersname = (sender as Entity).StateRef.Name + "->" + sender.Name;
+                sendersname = sender.Parent.Name + "->" + sender.Name;
             else if (sender is Component)
             {
                 Component c = (Component) sender;
-                sendersname = c.Parent.StateRef.Name + "->" + c.Parent.Name + "->" + c.Name;
+                sendersname = c.Parent.Name + "->" + c.Name;
             }
             else if(sender is Service)
             {
-                sendersname = (sender as Service).StateRef.Name + "->" + sender.Name;
+                sendersname = sender.Parent.Name + "->" + sender.Name;
             }
             else
             {

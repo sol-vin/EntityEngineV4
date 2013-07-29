@@ -160,11 +160,11 @@ namespace EntityEngineV4.Collision
             get { return _collisionBody.Delta; }
         }
 
-        public Collision(Entity parent, string name, Shape shape, Body collisionBody)
+        public Collision(IComponent parent, string name, Shape shape, Body collisionBody)
             : base(parent, name)
         {
             _collisionBody = collisionBody;
-            _collisionHandler = parent.StateRef.GetService<CollisionHandler>();
+            _collisionHandler = EntityGame.CurrentState.GetService<CollisionHandler>();
 
             _collisionPhysics = new Physics(Parent, name + ".Physics", _collisionBody);
 
@@ -182,11 +182,11 @@ namespace EntityEngineV4.Collision
             _collisionHandler.AddCollision(this);
         }
 
-        public Collision(Entity parent, string name, Shape shape, Body collisionBody, Physics collisionPhysics)
+        public Collision(IComponent parent, string name, Shape shape, Body collisionBody, Physics collisionPhysics)
             : base(parent, name)
         {
             _collisionBody = collisionBody;
-            _collisionHandler = parent.StateRef.GetService<CollisionHandler>();
+            _collisionHandler = EntityGame.CurrentState.GetService<CollisionHandler>();
 
             _collisionPhysics = collisionPhysics;
 

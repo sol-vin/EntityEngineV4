@@ -15,12 +15,12 @@ namespace EntityEngineV4.Components
 
         public event Entity.EventHandler DiedEvent;
 
-        public Health(Entity e, string name)
+        public Health(IComponent e, string name)
             : base(e, name)
         {
         }
 
-        public Health(Entity e, string name, int hp)
+        public Health(IComponent e, string name, int hp)
             : base(e, name)
         {
             HitPoints = hp;
@@ -32,12 +32,12 @@ namespace EntityEngineV4.Components
 
             HitPoints -= points;
             if (HurtEvent != null)
-                HurtEvent(Parent);
+                HurtEvent(Parent as Entity);
 
             if (!Alive)
             {
                 if (DiedEvent != null)
-                    DiedEvent(Parent);
+                    DiedEvent(Parent as Entity);
             }
         }
     }

@@ -53,8 +53,8 @@ namespace EntityEngineV4.GUI
 
         public event ControlEventHandler Selected;
 
-        protected Control(EntityState stateref, string name)
-            : base(stateref, stateref, name)
+        protected Control(ControlHandler parent, string name)
+            : base(parent, name)
         {
             Body = new Body(this, "Body");
         }

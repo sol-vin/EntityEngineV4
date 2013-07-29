@@ -62,7 +62,7 @@
     <Compile Include="Data\Log.cs" />
     <Compile Include="Data\PhysicsMath.cs" />
     <Compile Include="Data\TextureHelper.cs" />
-    <Compile Include="Object\Particle.cs" />
+    <Compile Include="PowerTools\Particle.cs" />
     <Compile Include="Engine\IComponent.cs" />
     <Compile Include="Engine\Component.cs" />
     <Compile Include="Engine\Entity.cs" />
@@ -98,5 +98,7 @@
     <Compile Include="Tiles\Components\TilemapRender.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Object\" />
+  </ItemGroup>
 </Project>

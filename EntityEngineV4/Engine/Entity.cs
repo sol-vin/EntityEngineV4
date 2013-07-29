@@ -11,13 +11,14 @@ namespace EntityEngineV4.Engine
     {
         public IComponent Parent { get; private set; }
 
-        public EntityState StateRef { get; private set; }
-
         public delegate void EventHandler(Entity e);
 
         public event EventHandler DestroyEvent;
 
-        public event Component.EventHandler ComponentAdded, ComponentRemoved;
+        public event Component.EventHandler AddComponentEvent;
+        public event Component.EventHandler RemoveComponentEvent;
+        public event EventHandler AddEntityEvent;
+        public event EventHandler RemoveEntityEvent;
 
         public string Name { get; protected set; }
 
@@ -31,22 +32,11 @@ namespace EntityEngineV4.Engine
 
         public bool Debug { get; set; }
 
-        public Entity(EntityState stateref, IComponent parent, string name)
+        public Entity(IComponent parent, string name)
         {
-            StateRef = stateref;
             Parent = parent;
             Name = name;
-            Id = StateRef.GetId();
-            Active = true;
-            Visible = true;
-        }
-
-        public Entity(EntityState stateref, string name)
-        {
-            StateRef = stateref;
-            Parent = stateref;
-            Id = StateRef.GetId();
-            Name = name;
+            Id = EntityGame.GetID();
             Active = true;
             Visible = true;
         }
@@ -114,7 +104,7 @@ namespace EntityEngineV4.Engine
             return (T)result;
         }
 
-        public void AddComponent(Component c)
+        public virtual void AddComponent(Component c)
         {
             if (this.Any(component => c.Name == component.Name))
             {
@@ -124,15 +114,47 @@ namespace EntityEngineV4.Engine
 
             Add(c);
 
-            if (ComponentAdded != null)
-                ComponentAdded(c);
+            c.AddEntityEvent += AddEntity;
+            c.RemoveComponentEvent += RemoveComponentEvent;
+
+            if (AddComponentEvent != null)
+                AddComponentEvent(c);
         }
 
-        public void RemoveComponent(Component c)
+        public virtual void RemoveComponent(Component c)
         {
             Remove(c);
-            if (ComponentRemoved != null)
-                ComponentRemoved(c);
+
+            c.AddEntityEvent -= AddEntity;
+            c.RemoveComponentEvent -= RemoveComponentEvent;
+
+            if (RemoveComponentEvent != null)
+                RemoveComponentEvent(c);
+        }
+
+        public void AddEntity(Entity c)
+        {
+            if (AddEntityEvent != null)
+            {
+                AddEntityEvent(c);
+            }
+            else
+            {
+                EntityGame.Log.Write("AddEntity was called but no methods were subscribed", this, Alert.Warning);
+            }
+
+        }
+
+        public void RemoveEntity(Entity c)
+        {
+            if (RemoveEntityEvent != null)
+            {
+                RemoveEntityEvent(c);
+            }
+            else
+            {
+                EntityGame.Log.Write("RemoveEntity was called but no methods were subscribed", this, Alert.Warning);
+            }
         }
     }
 }

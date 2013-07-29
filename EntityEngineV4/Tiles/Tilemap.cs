@@ -17,7 +17,7 @@ namespace EntityEngineV4.Tiles
         public TilemapRender Render;
         public TilemapData Data;
 
-        public Tilemap(EntityState stateref, IComponent parent, string name, Texture2D tileTexture, Tile[,] tiles, Point tileSize) : base(stateref, parent, name)
+        public Tilemap(IComponent parent, string name, Texture2D tileTexture, Tile[,] tiles, Point tileSize) : base(parent, name)
         {
             Body = new Body(this, "Body");
             Data = new TilemapData(tiles, tileSize, Body);
@@ -25,8 +25,8 @@ namespace EntityEngineV4.Tiles
         }
 
 
-        public Tilemap(EntityState stateref, IComponent parent, string name, Texture2D tileTexture, Point size, Point tileSize)
-            : base(stateref, parent, name)
+        public Tilemap(IComponent parent, string name, Texture2D tileTexture, Point size, Point tileSize)
+            : base(parent, name)
         {
             Body = new Body(this, "Body");
             Data = new TilemapData(size, tileSize, Body);

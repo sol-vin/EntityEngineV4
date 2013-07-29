@@ -8,8 +8,8 @@ namespace EntityEngineV4.GUI
     {
         public ImageRender ImageRender;
 
-        public Image(EntityState stateref, string name, Texture2D texture)
-            : base(stateref, name)
+        public Image(ControlHandler parent, string name, Texture2D texture)
+            : base(parent, name)
         {
             ImageRender = new ImageRender(this, "ImageRender", texture, Body);
             Selectable = false;

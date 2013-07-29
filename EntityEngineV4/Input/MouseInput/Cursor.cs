@@ -23,7 +23,7 @@ namespace EntityEngineV4.Input.MouseInput
         }
 
         public Cursor(EntityState stateref, string name)
-            : base(stateref, stateref, name)
+            : base(stateref, name)
         {
             Body = new Body(this, "Body");
             Body.Position = new Vector2(400, 300);

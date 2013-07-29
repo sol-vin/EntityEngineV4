@@ -29,7 +29,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
         }
     }
 
-    public static class DrawTypes
+    public static class ShapeTypes
     {
 
         public class Line : Primitive

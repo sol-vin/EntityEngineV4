@@ -21,7 +21,9 @@ namespace EntityEngineV4.Components
         //Dependencies
         private Body _body;
 
-        public Physics(Entity e, string name, Body body)
+        //TODO: Finish rolling out new Constructors
+
+        public Physics(IComponent e, string name, Body body)
             : base(e, name)
         {
             _body = body;

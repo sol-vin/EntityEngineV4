@@ -7,12 +7,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
-    public class EntityState : HashSet<Entity>, IComponent
+    public class EntityState : HashSet<IComponent>, IComponent
     {
-        public EntityGame Parent { get; private set; }
+        public IComponent Parent { get; private set; }
+        public EntityGame GameRef { get { return Parent as EntityGame; } }
 
-        public event Entity.EventHandler EntityAdded, EntityRemoved;
-
+        public event Component.EventHandler AddComponentEvent;
+        public event Component.EventHandler RemoveComponentEvent;
+        public event Entity.EventHandler AddEntityEvent;
+        public event Entity.EventHandler RemoveEntityEvent;
+        public event Service.EventHandler AddServiceEvent , RemoveServiceEvent;
+        
         public delegate void EventHandler(string name);
 
         public event EventHandler ChangeState;
@@ -100,7 +105,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Show()
         {
-            Parent.CurrentState = this;
+            EntityGame.CurrentState = this;
 
             EntityGame.Log.Write("Shown", this, Alert.Info);
         }
@@ -111,7 +116,7 @@ namespace EntityEngineV4.Engine
             {
                 ChangeState(name);
                 //Figure out if the change was successful
-                if (Parent.CurrentState.Name == Name)
+                if (EntityGame.CurrentState.Name == Name)
                 {
                     //It was not log it
                     EntityGame.Log.Write("Could not find " + name + "in the ChangeState!", this, Alert.Warning);
@@ -183,7 +188,7 @@ namespace EntityEngineV4.Engine
             Destroyed = true;
 
             //Start off with a fresh camera.
-            Camera c = new Camera();
+            Camera c = new Camera(this, Name + ".Camera");
             c.View();
 
             EntityGame.Log.Write("Destoyed", this, Alert.Info);
@@ -192,24 +197,76 @@ namespace EntityEngineV4.Engine
         public void AddEntity(Entity e)
         {
             Add(e);
-            e.DestroyEvent += RemoveEntity;
-            if (EntityAdded != null)
-                EntityAdded(e);
+            e.AddEntityEvent += AddEntity;
+            e.RemoveEntityEvent += RemoveEntity;
+            if (AddEntityEvent != null)
+                AddEntityEvent(e);
 
-            EntityGame.Log.Write("Entity " + e.Name + " added with ID" + e.Id, this, Alert.Warning);
+            EntityGame.Log.Write("Entity " + e.Name + " added with ID" + e.Id, this, Alert.Trivial);
         }
 
         public void RemoveEntity(Entity e)
         {
             Remove(e);
-            if (EntityRemoved != null)
-                EntityRemoved(e);
-            EntityGame.Log.Write("Entity " + e.Name + " removed with ID" + e.Id, this, Alert.Warning);
+            e.AddEntityEvent -= AddEntity;
+            e.RemoveEntityEvent -= RemoveEntity;
+            if (RemoveEntityEvent != null)
+                RemoveEntityEvent(e);
+            EntityGame.Log.Write("Entity " + e.Name + " removed with ID" + e.Id, this, Alert.Trivial);
         }
 
         public uint GetId()
         {
             return LastId++;
+        }
+
+        public void AddComponent(Component c)
+        {
+            if (AddComponentEvent != null)
+            {
+                AddComponentEvent(c);
+            }
+            else
+            {
+                EntityGame.Log.Write("AddComponent called with no methods subscribed", this, Alert.Warning);
+            }
+        }
+
+        public void RemoveComponent(Component c)
+        {
+            if (RemoveComponentEvent != null)
+            {
+                RemoveComponentEvent(c);
+            }
+            else
+            {
+                EntityGame.Log.Write("RemoveComponent called with no methods subscribed", this, Alert.Warning);
+            }
+        }
+
+        public void AddService(Service s)
+        {
+            s.AddEntityEvent += AddEntity;
+            s.RemoveEntityEvent += RemoveEntity;
+            s.DestroyEvent += RemoveService;
+
+            Services.Add(s);
+            if (AddServiceEvent != null)
+            {
+                AddServiceEvent(s);
+            }
+        }
+
+        public void RemoveService(Service s)
+        {
+            s.AddEntityEvent -= AddEntity;
+            s.RemoveEntityEvent -= RemoveEntity;
+            s.DestroyEvent -= RemoveService;
+            Services.Remove(s);
+            if (RemoveServiceEvent != null)
+            {
+                RemoveServiceEvent(s);
+            }
         }
     }
 }

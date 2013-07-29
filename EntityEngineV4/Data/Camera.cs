@@ -8,12 +8,20 @@ using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Data
 {
-    public class Camera
+    public class Camera : Entity
     {
+        public readonly Vector2 DEFAULTVIEW = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);
         public Vector2 LastPosition { get; private set; }
         public Vector2 Delta { get { return Position - LastPosition; } }
         public Vector2 Position = new Vector2();
         public float Zoom = 1f;
+
+        public Rectangle DeadZone;
+
+        public enum FollowStyles
+        {
+            LockOn, Lerp
+        }
 
         public Body Target { get; private set; }
 
@@ -47,14 +55,20 @@ namespace EntityEngineV4.Data
             }
         }
 
-        public Camera()
+        public Camera(IComponent parent, string name) : base(parent, name)
         {
-            Position = new Vector2(EntityGame.Viewport.Width/2f, EntityGame.Viewport.Height/2f);
+            Position = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);
         }
+
 
         public void Update()
         {
             LastPosition = Position;
+
+            if (Target != null)
+            {
+                
+            }
         }
 
         public void View()
@@ -64,8 +78,12 @@ namespace EntityEngineV4.Data
 
         public void FollowPoint(Body b)
         {
-            //TODO: Writing Camera following code
-            throw new NotImplementedException();
+            Target = b;
+        }
+
+        public void Flash()
+        {
+            
         }
     }
 }

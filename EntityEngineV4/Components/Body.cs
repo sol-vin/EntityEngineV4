@@ -61,12 +61,12 @@ namespace EntityEngineV4.Components
 
         public Color DebugColor = Color.Yellow;
 
-        public Body(Entity e, string name)
+        public Body(IComponent e, string name)
             : base(e, name)
         {
         }
 
-        public Body(Entity e, string name, Vector2 position)
+        public Body(IComponent e, string name, Vector2 position)
             : base(e, name)
         {
             Position = position;

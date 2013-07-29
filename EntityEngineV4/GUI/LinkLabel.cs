@@ -8,8 +8,8 @@ namespace EntityEngineV4.GUI
     {
         public Color SelectedColor = Color.Red;
 
-        public LinkLabel(EntityState stateref, string name)
-            : base(stateref, name)
+        public LinkLabel(ControlHandler parent, string name)
+            : base(parent, name)
         {
             Selectable = true;
         }
