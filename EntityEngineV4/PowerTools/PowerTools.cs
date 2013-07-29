@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EntityEngineV4.Collision.Shapes;
+using EntityEngineV4.Components.Rendering.Primitives;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
@@ -85,6 +86,35 @@ namespace EntityEngineV4.PowerTools
                 {
                     Parent.RemovePrimitive(this);
                 }
+            }
+        }
+
+
+        public class Point : Primitive
+        {
+            public int X, Y;
+            public float Angle;
+
+            public Microsoft.Xna.Framework.Rectangle DrawRect
+            {
+                get { return new Microsoft.Xna.Framework.Rectangle((int)(X - Thickness / 2), (int)(Y - Thickness / 2), (int)(Thickness), (int)(Thickness)); }
+            }
+
+            public static implicit operator Vector2(Point p)
+            {
+                return new Vector2(p.X, p.Y);
+            }
+
+            public Point(int x = 0, int y = 0)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public override void Draw(SpriteBatch sb)
+            {
+                base.Draw(sb);
+                sb.Draw(Assets.Pixel, DrawRect, null, Color, Angle, Vector2.Zero, SpriteEffects.None, Layer);
             }
         }
 

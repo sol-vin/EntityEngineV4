@@ -58,7 +58,7 @@ namespace EntityEngineV4.Data
             LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
                       DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
 
-            LogLocation = Path.Combine(LogLocation,
+            LogLocation = System.IO.Path.Combine(LogLocation,
                                         LogName + FileExt);
             _file = new StreamWriter(LogLocation, true);
             _file.WriteLine("Starting Log @ " + DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day +
@@ -78,7 +78,7 @@ namespace EntityEngineV4.Data
             LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
                       DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
 
-            LogLocation = Path.Combine(LogLocation,
+            LogLocation = System.IO.Path.Combine(LogLocation,
                                         LogName + FileExt);
 
             _file = new StreamWriter(logLocation, true);

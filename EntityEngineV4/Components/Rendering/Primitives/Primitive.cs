@@ -32,6 +32,34 @@ namespace EntityEngineV4.Components.Rendering.Primitives
     public static class ShapeTypes
     {
 
+        public class Point : Primitive
+        {
+            public int X, Y;
+            public float Angle;
+
+            public override Microsoft.Xna.Framework.Rectangle DrawRect
+            {
+                get { return new Microsoft.Xna.Framework.Rectangle((int) (X-Thickness/2), (int) (Y-Thickness/2), (int) (X+Thickness), (int) (Y+Thickness));}
+            }
+
+            public static implicit operator Microsoft.Xna.Framework.Point(Point p)
+            {
+                return new Microsoft.Xna.Framework.Point(p.X,p.Y);
+            }
+
+            public Point(Entity parent, string name, int x=0, int y=0) : base(parent, name)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public override void Draw(SpriteBatch sb)
+            {
+                base.Draw(sb);
+                sb.Draw(Assets.Pixel, DrawRect, null, Color, Angle, new Vector2(DrawRect.Width/2, DrawRect.Height/2), Flip, Layer);
+            }
+        }
+
         public class Line : Primitive
         {
             public Vector2 Point1, Point2;
