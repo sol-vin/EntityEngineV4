@@ -14,12 +14,23 @@ namespace EntityEngineV4.Components.Rendering
 
         public Vector2 Origin;
 
+        /// <summary>
+        /// Handy rectangle for getting the drawing position
+        /// </summary>
         public virtual Rectangle DrawRect { get; set; }
 
+        /// <summary>
+        /// Source rectangle of the texture
+        /// </summary>
         public virtual Rectangle SourceRect { get; set; }
 
-        protected Render(Entity entity, string name)
-            : base(entity, name)
+        /// <summary>
+        /// Bounds of the DrawRect
+        /// </summary>
+        public virtual Vector2 Bounds { get; set; }
+
+        protected Render(IComponent parent, string name)
+            : base(parent, name)
         {
         }
     }

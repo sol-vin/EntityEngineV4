@@ -61,14 +61,11 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent i = null)
         {
-            Entity e = Parent as Entity;
-            if (e != null)
-            {
-                e.RemoveComponent(this);
-            }
-            
+
             if (DestroyEvent != null)
                 DestroyEvent(this);
+
+            RemoveComponent(this);
 
             EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
         }

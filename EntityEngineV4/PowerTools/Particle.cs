@@ -52,6 +52,11 @@ namespace EntityEngineV4.Object
         {
             base.Update(gt);
         }
+
+        public override void Destroy(IComponent i = null)
+        {
+            base.Destroy(i);
+        }
     }
 
     public class FadeParticle : Particle

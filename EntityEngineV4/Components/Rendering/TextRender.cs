@@ -15,8 +15,13 @@ namespace EntityEngineV4.Components.Rendering
             {
                 Vector2 position;
                 position = _body.Position;
-                return new Rectangle((int)position.X, (int)position.Y, (int)(Font.MeasureString(Text).X * Scale.X), (int)(Font.MeasureString(Text).Y * Scale.Y));
+                return new Rectangle((int)position.X, (int)position.Y, (int)(Bounds.X), (int)(Bounds.Y));
             }
+        }
+
+        public override Vector2 Bounds
+        {
+            get { return new Vector2(Font.MeasureString(Text).X*Scale.X, Font.MeasureString(Text).Y*Scale.Y);  }
         }
 
         //Dependencies

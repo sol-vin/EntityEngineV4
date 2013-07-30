@@ -22,39 +22,6 @@ namespace EntityEngineV4.PowerTools
                     SpriteEffects.None, layer);
         }
 
-        public class PrimitiveHandler : Service
-        {
-            private List<Primitive> _shapes = new List<Primitive>();
-
-            public PrimitiveHandler(EntityState stateRef)
-                : base(stateRef, "PrimitiveHandler")
-            {
-            }
-
-            public override void Update(GameTime gt)
-            {
-            }
-
-            public override void Draw(SpriteBatch sb)
-            {
-                foreach (var primitive in _shapes)
-                {
-                    if (primitive.Visible)
-                        primitive.Draw(sb);
-                }
-            }
-
-            public void AddPrimitive(Primitive p)
-            {
-                _shapes.Add(p);
-            }
-
-            public void RemovePrimitive(Primitive p)
-            {
-                _shapes.Remove(p);
-            }
-        }
-
         public abstract class Primitive
         {
             public Color Color = Color.White;
@@ -62,7 +29,6 @@ namespace EntityEngineV4.PowerTools
             public bool Visible = true;
             public float Thickness = 1f;
 
-            public PrimitiveHandler Parent { get; private set; }
 
             protected Primitive()
             {
@@ -72,20 +38,10 @@ namespace EntityEngineV4.PowerTools
             {
             }
 
-            public void SetParent(PrimitiveHandler p)
-            {
-                Parent = p;
-            }
-
             public virtual void Destroy()
             {
                 Color = new Color();
                 Visible = false;
-
-                if (Parent != null)
-                {
-                    Parent.RemovePrimitive(this);
-                }
             }
         }
 

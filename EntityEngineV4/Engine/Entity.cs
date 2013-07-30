@@ -67,6 +67,7 @@ namespace EntityEngineV4.Engine
                 component.Destroy();
             }
 
+            RemoveEntity(this);
             EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
         }
 
@@ -116,6 +117,8 @@ namespace EntityEngineV4.Engine
 
             c.AddEntityEvent += AddEntity;
             c.RemoveComponentEvent += RemoveComponentEvent;
+            c.AddComponentEvent += AddComponent;
+            c.RemoveComponentEvent += RemoveComponent;
 
             if (AddComponentEvent != null)
                 AddComponentEvent(c);

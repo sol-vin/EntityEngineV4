@@ -16,8 +16,16 @@ namespace EntityEngineV4.Components.Rendering
                 return new Rectangle(
                     (int)((int)position.X + Origin.X * Scale.X),
                     (int)((int)position.Y + Origin.Y * Scale.Y),
-                    (int)(Texture.Width * Scale.X),
-                    (int)(Texture.Height * Scale.Y));
+                    (int)(Bounds.X),
+                    (int)(Bounds.Y));
+            }
+        }
+        
+        public override Vector2 Bounds
+        {
+            get
+            {
+                return new Vector2(Texture.Width * Scale.X, Texture.Height * Scale.Y);
             }
         }
 
@@ -32,7 +40,7 @@ namespace EntityEngineV4.Components.Rendering
         public ImageRender(Entity e, string name, Body body)
             : base(e, name)
         {
-            Origin = Vector2.Zero;
+            Origin = new Vector2(.5f, .5f);
             Body = body;
         }
 
@@ -40,7 +48,7 @@ namespace EntityEngineV4.Components.Rendering
             : base(e, name)
         {
             Texture = texture;
-            Origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
+            Origin = new Vector2(.5f, .5f);
             Body = body;
         }
 
@@ -50,7 +58,7 @@ namespace EntityEngineV4.Components.Rendering
                 DrawRect.Bottom > EntityGame.CurrentCamera.ScreenSpace.X ||
                 DrawRect.Right > EntityGame.CurrentCamera.ScreenSpace.Y ||
                 DrawRect.Left < EntityGame.CurrentCamera.ScreenSpace.Width)
-                sb.Draw(Texture, DrawRect, null, Color * Alpha, Body.Angle, Origin, Flip, Layer);
+                sb.Draw(Texture, DrawRect , null, Color * Alpha, Body.Angle, Origin, Flip, Layer);
         }
 
         public void LoadTexture(string location)

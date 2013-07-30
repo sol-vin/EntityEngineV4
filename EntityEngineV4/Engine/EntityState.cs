@@ -17,8 +17,10 @@ namespace EntityEngineV4.Engine
         public event Entity.EventHandler AddEntityEvent;
         public event Entity.EventHandler RemoveEntityEvent;
         public event Service.EventHandler AddServiceEvent , RemoveServiceEvent;
-        
+
         public delegate void EventHandler(string name);
+
+        public event EventHandler ShownEvent;
 
         public event EventHandler ChangeState;
 
@@ -46,6 +48,12 @@ namespace EntityEngineV4.Engine
             Name = name;
 
             Services = new List<Service>();
+            ShownEvent += s => Create();
+
+            Active = true;
+            Visible = true;
+
+            Id = EntityGame.GetID();
         }
 
         public T GetEntity<T>(string name) where T : Entity
@@ -99,13 +107,18 @@ namespace EntityEngineV4.Engine
             return result != null;
         }
 
-        public virtual void Start()
+        //TODO: Create a type to regulate when this is called after a Show()
+        public virtual void Create()
         {
+
         }
 
         public virtual void Show()
         {
             EntityGame.CurrentState = this;
+
+            if (ShownEvent != null)
+                ShownEvent(this.Name);
 
             EntityGame.Log.Write("Shown", this, Alert.Info);
         }
@@ -132,10 +145,6 @@ namespace EntityEngineV4.Engine
         {
             if (name == Name)
                 Show();
-        }
-
-        public virtual void Hide()
-        {
         }
 
         public virtual void Reset()
