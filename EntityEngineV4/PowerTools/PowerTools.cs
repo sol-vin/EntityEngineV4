@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using EntityEngineV4.Collision.Shapes;
+using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering.Primitives;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.PowerTools
 {
@@ -152,6 +155,14 @@ namespace EntityEngineV4.PowerTools
                 Height = height;
             }
 
+            public Rectangle(Microsoft.Xna.Framework.Rectangle rect)
+            {
+                X = rect.X;
+                Y = rect.Y;
+                Width = rect.Width;
+                Height = rect.Height;
+            }
+
             public override void Draw(SpriteBatch sb)
             {
                 base.Draw(sb);
@@ -266,12 +277,14 @@ namespace EntityEngineV4.PowerTools
                 return output;
             }
         }
+
         public static class Physics
         {
             public static float DotProduct(Vector2 a, Vector2 b)
             {
-                return a.X * b.X + a.Y * b.Y;
+                return a.X*b.X + a.Y*b.Y;
             }
+
             public static Vector2 GetNormal(Vector2 a, Vector2 b)
             {
                 Vector2 ret = b - a;

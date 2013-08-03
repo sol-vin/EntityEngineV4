@@ -13,13 +13,24 @@ namespace EntityEngineV4.Components.Rendering.Primitives
     {
         public abstract class Primitive : Render
         {
+            public Body Body;
+
             public float Thickness = 1;
 
+            protected Primitive(IComponent parent, string name) : base(parent, name)
+            {
+                Body = new Body(this, "Primitive.Body");   
+            }
 
-
-            protected Primitive(IComponent parent, string name)
+            protected Primitive(IComponent parent, string name, Vector2 pos)
                 : base(parent, name)
             {
+                Body = new Body(this, "Primitive.Body", pos);
+            }
+
+            protected Primitive(IComponent parent, string name, Body body) : base(parent, name)
+            {
+                Body = body;
             }
 
             public static void DrawLine(SpriteBatch sb, Vector2 p1, Vector2 p2, float thickness, float layer, Color color)
@@ -36,23 +47,28 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
         public class Point : Primitive
         {
-            public int X, Y;
-            public float Angle;
+            public float X { get { return Body.X; } set { Body.X = value; } }
+            public float Y { get { return Body.Y; } set { Body.Y = value; } }
+            public float Angle { get { return Body.Angle; } set { Body.Angle = value; } }
 
             public override Microsoft.Xna.Framework.Rectangle DrawRect
             {
                 get { return new Microsoft.Xna.Framework.Rectangle((int) (X-Thickness/2), (int) (Y-Thickness/2), (int) (X+Thickness), (int) (Y+Thickness));}
             }
 
-            public static implicit operator Microsoft.Xna.Framework.Point(Point p)
+            public static implicit operator Vector2(Point p)
             {
-                return new Microsoft.Xna.Framework.Point(p.X,p.Y);
+                return new Vector2(p.X,p.Y);
             }
 
             public Point(Entity parent, string name, int x=0, int y=0) : base(parent, name)
             {
                 X = x;
                 Y = y;
+            }
+
+            public Point(IComponent parent, string name, Body body) : base(parent, name, body)
+            {
             }
 
             public override void Draw(SpriteBatch sb)
@@ -127,10 +143,14 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
         public class Rectangle : Primitive
         {
-            public float X, Y, Width, Height;
-            public float Angle;
+            public float X { get { return Body.X; } set { Body.X = value; } }
+            public float Y { get { return Body.Y; } set { Body.Y = value; } }
+            public float Width { get { return Body.Width; } set { Body.Width = value; } }
+            public float Height { get { return Body.Height; } set { Body.Height = value; } }
+            public float Angle { get { return Body.Angle; } set { Body.Angle = value; } }
 
-            public override Vector2 Bounds { get { return new Vector2(Width * Scale.X, Height * Scale.Y);}}
+
+            public override Vector2 Bounds { get { return new Vector2((Width) * Scale.X, (Height) * Scale.Y);}}
 
             public override Microsoft.Xna.Framework.Rectangle DrawRect
             {
@@ -156,37 +176,44 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Origin = new Vector2(.5f,.5f);
             }
 
+            public Rectangle(IComponent parent, string name, Body body, bool fill) : base(parent, name, body)
+            {
+                Fill = fill;
+                Origin = new Vector2(.5f, .5f);
+            }
+
             public override void Draw(SpriteBatch sb)
             {
                 base.Draw(sb);
                 if (!Fill)
                 {
-                    float minx = X + (Thickness/2) + Origin.X * Bounds.X;
-                    float maxx = X + (Thickness/2) + Origin.X * Bounds.X;
-                    float miny = Y + (Thickness/2) + Origin.Y * Bounds.Y;
-                    float maxy = Y + (Thickness/2) + Origin.Y * Bounds.Y;
+                    float minx = X + (Thickness/2) + Origin.X;
+                    float miny = Y + (Thickness/2) +Origin.Y;
                     //TODO: Fix origin issue
                     //Draw our top line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X, Origin.Y * Bounds.X), new Vector2(Width + Thickness, Thickness), Flip, Layer);
+                            new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X, Origin.Y * Bounds.Y), new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
 
                     //Left line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X * Bounds.Y, Origin.Y), new Vector2(Thickness, Height + Thickness), Flip, Layer);
+                            new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X * Bounds.X, Origin.Y), new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
 
+
+                    //Essentially these are the same as the top and bottom just rotated 180 degrees
+                    //I have to do it this way instead of setting the origin to a negative value because XNA
+                    //seems to ignore origins when they are negative
                     //Right Line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx, miny), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X * Bounds.X, Origin.Y), new Vector2(Thickness, Height + Thickness), Flip, Layer);
+                            new Vector2(minx + 1, miny), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X * Bounds.X, Origin.Y), new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
 
                     //Bottom Line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx, miny), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X, Origin.Y * Bounds.Y), new Vector2(Width + Thickness, Thickness), Flip, Layer);
+                            new Vector2(minx, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X, Origin.Y * Bounds.Y), new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
 
                 }
                 else
                 {
-
-                    sb.Draw(Assets.Pixel, new Vector2(X + Origin.X*Width, Y + Origin.Y*Height), null, Color * Alpha, Angle, Origin, Bounds, Flip, Layer);
+                    sb.Draw(Assets.Pixel, new Vector2(X + Origin.X*Width, Y + Origin.Y*Height), null, Color * Alpha, Angle, Origin, Bounds - new Vector2(Thickness), Flip, Layer);
                 }
             }
         }
