@@ -44,7 +44,6 @@ namespace EntityEngineV4.Components.Rendering
         {
             base.Draw(sb);
 
-
             if (Debug)
             {
                 //Draw a bounding rect around it's drawrect
@@ -53,11 +52,10 @@ namespace EntityEngineV4.Components.Rendering
                 r.Thickness = 1;
                 r.Draw(sb);
 
-                DrawingTools.Point origin = new DrawingTools.Point((int) (Origin.X + DrawRect.X), (int) (Origin.Y + DrawRect.Y));
+                DrawingTools.Point origin = new DrawingTools.Point((int)(Origin.X + DrawRect.X), (int)(Origin.Y + DrawRect.Y));
                 origin.Color = Color.Orange;
                 origin.Draw(sb);
             }
-
         }
     }
 }

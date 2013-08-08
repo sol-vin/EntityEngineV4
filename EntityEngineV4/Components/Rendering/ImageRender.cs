@@ -20,7 +20,7 @@ namespace EntityEngineV4.Components.Rendering
                     (int)(Bounds.Y));
             }
         }
-        
+
         public override Vector2 Bounds
         {
             get
@@ -54,11 +54,11 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            if (DrawRect.Top < EntityGame.CurrentCamera.ScreenSpace.Height ||
-                DrawRect.Bottom > EntityGame.CurrentCamera.ScreenSpace.X ||
-                DrawRect.Right > EntityGame.CurrentCamera.ScreenSpace.Y ||
-                DrawRect.Left < EntityGame.CurrentCamera.ScreenSpace.Width)
-                sb.Draw(Texture, DrawRect , null, Color * Alpha, Body.Angle, Origin, Flip, Layer);
+            if (DrawRect.Top < EntityGame.Camera.ScreenSpace.Height ||
+                DrawRect.Bottom > EntityGame.Camera.ScreenSpace.X ||
+                DrawRect.Right > EntityGame.Camera.ScreenSpace.Y ||
+                DrawRect.Left < EntityGame.Camera.ScreenSpace.Width)
+                sb.Draw(Texture, DrawRect, null, Color * Alpha, Body.Angle, Origin, Flip, Layer);
         }
 
         public void LoadTexture(string location)

@@ -13,11 +13,14 @@ namespace EntityEngineV4.Engine
 
         public delegate void EventHandler(Entity e);
 
-        public event EventHandler DestroyEvent;
+        public event Engine.EventHandler DestroyEvent;
 
         public event Component.EventHandler AddComponentEvent;
+
         public event Component.EventHandler RemoveComponentEvent;
+
         public event EventHandler AddEntityEvent;
+
         public event EventHandler RemoveEntityEvent;
 
         public string Name { get; protected set; }
@@ -62,12 +65,15 @@ namespace EntityEngineV4.Engine
             if (DestroyEvent != null)
                 DestroyEvent(this);
 
-            foreach (var component in ToArray())
-            {
-                component.Destroy();
-            }
-
             RemoveEntity(this);
+
+            //Null out our events
+            AddComponentEvent = null;
+            RemoveComponentEvent = null;
+            AddEntityEvent = null;
+            RemoveEntityEvent = null;
+            DestroyEvent = null;
+
             EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
         }
 
@@ -116,9 +122,9 @@ namespace EntityEngineV4.Engine
             Add(c);
 
             c.AddEntityEvent += AddEntity;
-            c.RemoveComponentEvent += RemoveComponentEvent;
-            c.AddComponentEvent += AddComponent;
+            c.RemoveEntityEvent += RemoveEntity;
             c.RemoveComponentEvent += RemoveComponent;
+            c.AddComponentEvent += AddComponent;
 
             if (AddComponentEvent != null)
                 AddComponentEvent(c);
@@ -129,7 +135,9 @@ namespace EntityEngineV4.Engine
             Remove(c);
 
             c.AddEntityEvent -= AddEntity;
-            c.RemoveComponentEvent -= RemoveComponentEvent;
+            c.RemoveEntityEvent -= RemoveEntity;
+            c.RemoveComponentEvent -= RemoveComponent;
+            c.AddComponentEvent -= AddComponent;
 
             if (RemoveComponentEvent != null)
                 RemoveComponentEvent(c);
@@ -145,7 +153,6 @@ namespace EntityEngineV4.Engine
             {
                 EntityGame.Log.Write("AddEntity was called but no methods were subscribed", this, Alert.Warning);
             }
-
         }
 
         public void RemoveEntity(Entity c)

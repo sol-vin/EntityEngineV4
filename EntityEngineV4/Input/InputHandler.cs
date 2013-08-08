@@ -55,7 +55,7 @@ namespace EntityEngineV4.Input
         #region Constructor Region
 
         public InputHandler(EntityState stateref)
-            : base(stateref,"InputHandler")
+            : base(stateref, "InputHandler")
         {
             _keyboardState = Keyboard.GetState();
             _gamePadStates = new GamePadState[Enum.GetValues(typeof(PlayerIndex)).Length];
@@ -83,8 +83,6 @@ namespace EntityEngineV4.Input
         public override void Draw(SpriteBatch sb)
         {
         }
-
-
 
         #endregion XNA methods
 

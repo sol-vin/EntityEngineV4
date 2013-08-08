@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
@@ -13,6 +11,7 @@ namespace EntityEngineV4.Components.Rendering
     public class SourceAnimation : ImageRender
     {
         private Rectangle[] _sourcerectangles;
+
         public Rectangle[] SourceRectangles
         {
             get { return _sourcerectangles; }
@@ -64,7 +63,8 @@ namespace EntityEngineV4.Components.Rendering
             get { return _sourcerectangles[CurrentFrame]; }
         }
 
-        public SourceAnimation(Entity e, string name, Body body) : base(e, name, body)
+        public SourceAnimation(Entity e, string name, Body body)
+            : base(e, name, body)
         {
             FrameTimer = new Timer(e, Name + ".FrameTimer");
             FrameTimer.LastEvent += AdvanceNextFrame;
@@ -107,6 +107,7 @@ namespace EntityEngineV4.Components.Rendering
             if (CurrentFrame >= TimelineSize)
                 CurrentFrame = 0;
         }
+
         public void AdvanceLastFrame()
         {
             CurrentFrame--;
@@ -149,6 +150,7 @@ namespace EntityEngineV4.Components.Rendering
             //Copy over the new array
             _sourcerectangles = (Rectangle[])copy.Clone();
         }
+
         /// <summary>
         /// Add's a source rectangle into the timeline at a specified position.
         /// </summary>
@@ -160,7 +162,7 @@ namespace EntityEngineV4.Components.Rendering
             if (insert)
             {
                 //resize it
-                var copy = new Rectangle[_sourcerectangles.GetUpperBound(0)+1];
+                var copy = new Rectangle[_sourcerectangles.GetUpperBound(0) + 1];
                 for (int i = 0; i < _sourcerectangles.GetUpperBound(0); i++)
                 {
                     if (i >= position) i++;
@@ -169,7 +171,6 @@ namespace EntityEngineV4.Components.Rendering
 
                 //Copy over the new array
                 _sourcerectangles = (Rectangle[])copy.Clone();
-
 
                 //copy the rectangle
                 _sourcerectangles[position] = r;
@@ -202,7 +203,7 @@ namespace EntityEngineV4.Components.Rendering
 
             //Get the root element
             var rootelement = xml.Root;
-            if(rootelement == null)
+            if (rootelement == null)
             {
                 EntityGame.Log.Write("XML Path was null!", this, Alert.Error);
                 throw new Exception("XML Path was null!");
@@ -217,11 +218,11 @@ namespace EntityEngineV4.Components.Rendering
                 {
                     if (value.Name == "X")
                     {
-                        r.X = (int) value;
+                        r.X = (int)value;
                     }
                     else if (value.Name == "Y")
                     {
-                        r.Y = (int) value;
+                        r.Y = (int)value;
                     }
                     else if (value.Name == "Width")
                     {

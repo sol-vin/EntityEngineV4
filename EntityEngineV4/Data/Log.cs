@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using EntityEngineV4.Engine;
 
@@ -13,9 +10,10 @@ namespace EntityEngineV4.Data
         public static readonly Alert Info = new Alert("Info", 1);
         public static readonly Alert Warning = new Alert("Warning", 2);
         public static readonly Alert Error = new Alert("Error", 3);
-        public static readonly Alert Critical = new Alert("Critical",4);
+        public static readonly Alert Critical = new Alert("Critical", 4);
 
         public string Value { get; private set; }
+
         public byte Rank { get; private set; }
 
         public static implicit operator string(Alert a)
@@ -30,14 +28,14 @@ namespace EntityEngineV4.Data
         }
     }
 
-
     /// <summary>
     /// Logs information and messages based on inputs
     /// </summary>
-    /// 
+    ///
     public class Log
     {
         public string LogLocation { get; private set; }
+
         private StreamWriter _file;
 
         public const double MAXLOGSIZE = 1024 * 1024 * 25;
@@ -97,7 +95,7 @@ namespace EntityEngineV4.Data
             //Figure out what our Alert level is.
             string logline = "[" + DateTime.Now.Month + "-" + DateTime.Now.Day + " : " + DateTime.Now.Hour + ":" +
                              DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond +
-                             //[Month-Day : HH:MM:SS:MS]
+                //[Month-Day : HH:MM:SS:MS]
                              DateTime.Now.Millisecond + "]" + " - [" + l + "]" +
                              " - " + message;
             if (CheckLogSize())
@@ -120,10 +118,10 @@ namespace EntityEngineV4.Data
                 sendersname = sender.Parent.Name + "->" + sender.Name;
             else if (sender is Component)
             {
-                Component c = (Component) sender;
+                Component c = (Component)sender;
                 sendersname = c.Parent.Name + "->" + c.Name;
             }
-            else if(sender is Service)
+            else if (sender is Service)
             {
                 sendersname = sender.Parent.Name + "->" + sender.Name;
             }
@@ -163,5 +161,5 @@ namespace EntityEngineV4.Data
         {
             _file.Close();
         }
-}
+    }
 }

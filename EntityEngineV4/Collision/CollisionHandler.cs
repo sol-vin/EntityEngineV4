@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using EntityEngineV4.Collision.Shapes;
-using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
@@ -22,7 +21,6 @@ namespace EntityEngineV4.Collision
         public const int LEFT = 0x100;
         public const int RIGHT = 0x1000;
         public const int ALL = 0x1111;
-
 
         /// <summary>
         /// List of colliding members on this state.
@@ -157,9 +155,7 @@ namespace EntityEngineV4.Collision
                         if (m.AreColliding)
                             _manifolds.Add(m);
                     }
-
                 }
-                
             }
         }
 
@@ -180,7 +176,7 @@ namespace EntityEngineV4.Collision
         public static bool CanObjectsResolve(Collision resolver, Collision other)
         {
             return resolver.ResolutionGroupMask.HasMatchingBit(other.ResolutionGroupMask) //Compare the pair mask one sided.
-                && resolver.Enabled && other.Enabled && !resolver.Immovable; 
+                && resolver.Enabled && other.Enabled && !resolver.Immovable;
         }
 
         public static void ResolveCollision(Manifold m)
@@ -216,8 +212,8 @@ namespace EntityEngineV4.Collision
 
         public static Manifold TestAABBvsAABB(AABB a, AABB b)
         {
-            Manifold m = new Manifold(a.Collision, b.Collision);
-            throw  new NotImplementedException();
+            var m = new Manifold(a, b);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -226,7 +222,7 @@ namespace EntityEngineV4.Collision
         public static Manifold AABBvsAABB(AABB a, AABB b)
         {
             //Start packing the manifold
-            Manifold m = new Manifold(a.Collision, b.Collision);
+            var m = new Manifold(a, b);
             m.Normal = a.Position - b.Position;
 
             //Calculate half widths
@@ -261,8 +257,8 @@ namespace EntityEngineV4.Collision
                         else
                             fixnormal = Vector2.UnitX;
 
-                       if (m.B.BoundingRect.Top > m.A.BoundingRect.Top && m.A.BoundingRect.Top < m.B.BoundingRect.Bottom)
-                       {
+                        if (m.B.BoundingRect.Top > m.A.BoundingRect.Top && m.A.BoundingRect.Top < m.B.BoundingRect.Bottom)
+                        {
                             if (m.A.AllowCollisionDirection.HasMatchingBit(DOWN))
                                 m.A.CollisionDirection.CombineMask(DOWN);
                             if (m.B.AllowCollisionDirection.HasMatchingBit(UP))
@@ -276,7 +272,6 @@ namespace EntityEngineV4.Collision
                                 m.B.CollisionDirection.CombineMask(DOWN);
                         }
 
-
                         m.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * fixnormal.X;
                         m.PenetrationDepth = xExtent;
                     }
@@ -287,7 +282,7 @@ namespace EntityEngineV4.Collision
                             fixnormal = -Vector2.UnitY;
                         else
                             fixnormal = Vector2.UnitY;
-                        if (m.B.BoundingRect.Left > m.A.BoundingRect.Left && 
+                        if (m.B.BoundingRect.Left > m.A.BoundingRect.Left &&
                             m.A.BoundingRect.Left < m.B.BoundingRect.Right)
                         {
                             if (m.A.AllowCollisionDirection.HasMatchingBit(RIGHT))
@@ -295,7 +290,7 @@ namespace EntityEngineV4.Collision
                             if (m.B.AllowCollisionDirection.HasMatchingBit(LEFT))
                                 m.B.CollisionDirection.CombineMask(LEFT);
                         }
-                        else if (m.A.BoundingRect.Left > m.B.BoundingRect.Left && 
+                        else if (m.A.BoundingRect.Left > m.B.BoundingRect.Left &&
                             m.B.BoundingRect.Left < m.A.BoundingRect.Right)
                         {
                             if (m.A.AllowCollisionDirection.HasMatchingBit(LEFT))
@@ -307,8 +302,15 @@ namespace EntityEngineV4.Collision
                         m.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * fixnormal.Y;
                         m.PenetrationDepth = yExtent;
                     }
-
-                    m.AreColliding = true;
+                    //Check to see if any flags actually got toggled.
+                    //If they didn't then, ensure that the manifold reports they don't collide.
+                    if (m.A.AllowCollisionDirection == 0 ||
+                        m.B.AllowCollisionDirection == 0 ||
+                        m.B.CollisionDirection == 0 ||
+                        m.A.CollisionDirection == 0)
+                        m.AreColliding = false;
+                    else
+                        m.AreColliding = true;
                     return m;
                 }
             }
@@ -317,7 +319,12 @@ namespace EntityEngineV4.Collision
         }
 
         //Collision resolver methods
-
+        /// <summary>
+        /// Uses a table to test collision between various shapes
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static Manifold CheckCollision(Shape a, Shape b)
         {
             if (a is AABB && b is AABB)

@@ -8,15 +8,21 @@ namespace EntityEngineV4.Data
 
         public event EventHandler BitmaskChanged;
 
+        public static implicit operator uint(Bitmask b)
+        {
+            return b.Mask;
+        }
+
         private uint _mask = 0;
+
         public uint Mask
         {
             get { return _mask; }
-            set 
-        { 
-            _mask = value;
-            if (BitmaskChanged != null) BitmaskChanged(this);
-        }
+            set
+            {
+                _mask = value;
+                if (BitmaskChanged != null) BitmaskChanged(this);
+            }
         }
 
         public Bitmask()

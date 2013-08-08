@@ -8,7 +8,28 @@ namespace EntityEngineV4.Input.MouseInput
 {
     public class MouseHandler : Service
     {
-        public static Cursor Cursor;
+        public static Cursor _cursor;
+        public static Cursor Cursor
+        {
+            get { return _cursor; }
+            set
+            {
+                //Get out of a situation where we have the same controlling cursor
+                if (_cursor == null || value == null)
+                {
+                    _cursor = value;
+                    return;
+                }
+
+                if ( _cursor.Id == value.Id) return;
+
+                //Make it lose focus
+                _cursor.OnLostFocus(value);
+
+                //Change the reference
+                _cursor = value;
+            }
+        }
         private static MouseState _mousestate;
 
         public static MouseState MouseState
@@ -29,12 +50,25 @@ namespace EntityEngineV4.Input.MouseInput
 
         public static Point Delta { get; private set; }
 
-        public MouseHandler(EntityState stateref)
+        public MouseHandler(EntityState stateref, bool useDefaultCursors = false)
             : base(stateref, "MouseHandler")
         {
-            Cursor = new Cursor(stateref, "Cursor");
+            if (!useDefaultCursors)
+            {
+                AddDefaultCursors();
+            }
+
             _mousestate = Mouse.GetState();
             Flush();
+        }
+
+        public void AddDefaultCursors()
+        {
+            MouseCursor mc = new MouseCursor(this, "MouseHandler.MouseCursor");
+            DestroyEvent += mc.Destroy;
+            mc.OnGetFocus();
+            AddEntity(mc);
+            //AddEntity(new ControllerCursor(this, "MouseHandler.ControllerCursor")); //TODO: Add this back when done writing MouseHandler controller fix
         }
 
         public override void Update(GameTime gt)
@@ -54,12 +88,10 @@ namespace EntityEngineV4.Input.MouseInput
                 //Calc our Delta
                 Delta = new Point(_lastmousestate.X - _mousestate.X, _lastmousestate.Y - _mousestate.Y);
             }
-            Cursor.Update(gt);
         }
 
         public override void Draw(SpriteBatch sb)
         {
-            Cursor.Draw(sb);
         }
 
         public static Point GetPosition()
@@ -75,6 +107,15 @@ namespace EntityEngineV4.Input.MouseInput
         public static void Flush()
         {
             _lastmousestate = _mousestate;
+        }
+
+        public override void Destroy(IComponent i = null)
+        {
+            base.Destroy(i);
+
+            Flush();
+
+            Cursor = null;
         }
 
         public static bool IsMouseButtonDown(MouseButton mb)

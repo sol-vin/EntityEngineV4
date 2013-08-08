@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using EntityEngineV4.Collision.Shapes;
-using EntityEngineV4.Components;
-using EntityEngineV4.Components.Rendering.Primitives;
 using EntityEngineV4.Data;
-using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
-using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.PowerTools
 {
     public static class DrawingTools
     {
-
         public static void DrawLine(SpriteBatch sb, Vector2 p1, Vector2 p2, float thickness, float layer, Color color)
         {
-            float angle = (float) System.Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
+            float angle = (float)System.Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
             float length = Vector2.Distance(p1, p2);
 
             sb.Draw(Assets.Pixel, p1, null, color,
@@ -31,7 +23,6 @@ namespace EntityEngineV4.PowerTools
             public float Layer;
             public bool Visible = true;
             public float Thickness = 1f;
-
 
             protected Primitive()
             {
@@ -47,7 +38,6 @@ namespace EntityEngineV4.PowerTools
                 Visible = false;
             }
         }
-
 
         public class Point : Primitive
         {
@@ -81,8 +71,6 @@ namespace EntityEngineV4.PowerTools
         {
             public Vector2 Point1 = new Vector2();
             public Vector2 Point2 = new Vector2();
-
-
 
             public Line(Vector2 point1, Vector2 point2, Color color)
             {
@@ -166,10 +154,9 @@ namespace EntityEngineV4.PowerTools
             public override void Draw(SpriteBatch sb)
             {
                 base.Draw(sb);
-                if(!Fill)
+                if (!Fill)
                 {
-                    
-                    for (int x = (int)(X - Thickness/2); x < X + Thickness/2; x++)
+                    for (int x = (int)(X - Thickness / 2); x < X + Thickness / 2; x++)
                     {
                         for (int y = (int)(Y - Thickness / 2); y < Y + Thickness / 2; y++)
                         {
@@ -191,7 +178,7 @@ namespace EntityEngineV4.PowerTools
                 {
                     for (float y = 0; y < Height; y++)
                     {
-                        DrawLine(sb, new Vector2(X,Y+y), new Vector2(X+Width, Y+y), Thickness, Layer, Color);
+                        DrawLine(sb, new Vector2(X, Y + y), new Vector2(X + Width, Y + y), Thickness, Layer, Color);
                     }
                 }
             }
@@ -221,58 +208,69 @@ namespace EntityEngineV4.PowerTools
     {
         public static class Color
         {
+            public struct HSVColor
+            {
+                public float Hue, Saturation, Value;
+            }
+
+            public static HSVColor RGBtoHSV(Microsoft.Xna.Framework.Color color)
+            {
+                //TODO: Write RGBtoHSV stuff -> http://en.literateprograms.org/RGB_to_HSV_color_space_conversion_%28C%29
+                throw new NotImplementedException();
+            }
+
             public static Microsoft.Xna.Framework.Color HSVtoRGB(float hue, float saturation, float value, float alpha)
             {
                 var output = new Microsoft.Xna.Framework.Color();
 
                 if (hue > 1)
                 {
-                    hue = hue - (float) System.Math.Floor(hue); //Rounds down and gives us the remander
+                    hue = hue - (float)System.Math.Floor(hue); //Rounds down and gives us the remander
                 }
-                float chroma = value*saturation;
-                float hdash = hue*6f;
-                float x = chroma*(1f - Math.Abs((hdash%2) - 1f));
+                float chroma = value * saturation;
+                float hdash = hue * 6f;
+                float x = chroma * (1f - Math.Abs((hdash % 2) - 1f));
 
                 if (hdash < 1f)
                 {
-                    output.R = (byte) (chroma*byte.MaxValue);
-                    output.G = (byte) (x*byte.MaxValue);
+                    output.R = (byte)(chroma * byte.MaxValue);
+                    output.G = (byte)(x * byte.MaxValue);
                 }
                 else if (hdash < 2f)
                 {
-                    output.G = (byte) (chroma*byte.MaxValue);
-                    output.R = (byte) (x*byte.MaxValue);
+                    output.G = (byte)(chroma * byte.MaxValue);
+                    output.R = (byte)(x * byte.MaxValue);
                 }
                 else if (hdash < 3f)
                 {
-                    output.G = (byte) (chroma*byte.MaxValue);
-                    output.B = (byte) (x*byte.MaxValue);
+                    output.G = (byte)(chroma * byte.MaxValue);
+                    output.B = (byte)(x * byte.MaxValue);
                 }
                 else if (hdash < 4f)
                 {
-                    output.B = (byte) (chroma*byte.MaxValue);
-                    output.G = (byte) (x*byte.MaxValue);
+                    output.B = (byte)(chroma * byte.MaxValue);
+                    output.G = (byte)(x * byte.MaxValue);
                 }
                 else if (hdash < 5f)
                 {
-                    output.B = (byte) (chroma*byte.MaxValue);
-                    output.R = (byte) (x*byte.MaxValue);
+                    output.B = (byte)(chroma * byte.MaxValue);
+                    output.R = (byte)(x * byte.MaxValue);
                 }
                 else if (hdash < 6f)
                 {
-                    output.R = (byte) (chroma*byte.MaxValue);
-                    output.B = (byte) (x*byte.MaxValue);
+                    output.R = (byte)(chroma * byte.MaxValue);
+                    output.B = (byte)(x * byte.MaxValue);
                 }
 
                 unchecked
                 {
                     float min = value - chroma;
-                    output.R += (byte) (min*byte.MaxValue);
-                    output.G += (byte) (min*byte.MaxValue);
-                    output.B += (byte) (min*byte.MaxValue);
+                    output.R += (byte)(min * byte.MaxValue);
+                    output.G += (byte)(min * byte.MaxValue);
+                    output.B += (byte)(min * byte.MaxValue);
                 }
 
-                output.A = (byte) (alpha*byte.MaxValue);
+                output.A = (byte)(alpha * byte.MaxValue);
 
                 return output;
             }
@@ -282,7 +280,7 @@ namespace EntityEngineV4.PowerTools
         {
             public static float DotProduct(Vector2 a, Vector2 b)
             {
-                return a.X*b.X + a.Y*b.Y;
+                return a.X * b.X + a.Y * b.Y;
             }
 
             public static Vector2 GetNormal(Vector2 a, Vector2 b)
@@ -290,6 +288,21 @@ namespace EntityEngineV4.PowerTools
                 Vector2 ret = b - a;
                 ret.Normalize();
                 return ret;
+            }
+
+            public static float CrossProduct(Vector2 a, Vector2 b)
+            {
+                return a.X * b.Y - a.Y * b.X;
+            }
+
+            public static Vector2 CrossProduct(Vector2 a, float scalar)
+            {
+                return new Vector2(scalar * a.Y, -scalar * a.X);
+            }
+
+            public static Vector2 CrossProduct(float scalar, Vector2 a)
+            {
+                return new Vector2(-scalar * a.Y, scalar * a.X);
             }
         }
     }

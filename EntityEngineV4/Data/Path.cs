@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,11 +8,10 @@ namespace EntityEngineV4.Data
 {
     public class Path
     {
-        List<PathPoint> _points = new List<PathPoint>();
+        private List<PathPoint> _points = new List<PathPoint>();
 
         public Color DebugPointColor = Color.Red;
         public Color DebugLineColor = Color.Green;
-
 
         public PathPoint First
         {
@@ -24,17 +20,17 @@ namespace EntityEngineV4.Data
 
         public PathPoint Last
         {
-            get { return _points[_points.Count-1]; }
+            get { return _points[_points.Count - 1]; }
         }
 
-        public int Count { get {return _points.Count;}}
+        public int Count { get { return _points.Count; } }
 
         private int _lastposition;
 
         public Path()
         {
         }
-        
+
         /// <summary>
         /// Adds a PathPoint to the back of the List
         /// </summary>
@@ -50,7 +46,6 @@ namespace EntityEngineV4.Data
         {
             foreach (var pathPoint in _points)
             {
-                
             }
         }
 
@@ -102,7 +97,6 @@ namespace EntityEngineV4.Data
                 point2.Color = DebugPointColor;
                 point2.Layer = 1;
                 point2.Draw(sb);
-
 
                 line = new DrawingTools.Line(new Vector2(point1.X, point1.Y), new Vector2(point2.X, point2.Y), DebugLineColor);
                 line.Layer = 1;

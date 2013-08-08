@@ -19,14 +19,15 @@ namespace EntityEngineV4.Collision
 
         public Bitmask CollisionDirection = new Bitmask();
 
-
         public Bitmask AllowCollisionDirection = new Bitmask(CollisionHandler.ALL);
 
-        private List<Collision> _collidedWith = new List<Collision>(); 
+        private List<Collision> _collidedWith = new List<Collision>();
+
         public List<Collision> CollidedWith
         {
             get { return _collidedWith.ToList(); }
         }
+
         public bool IsColliding { get { return CollidedWith.Count > 0; } }
 
         /// <summary>
@@ -99,6 +100,7 @@ namespace EntityEngineV4.Collision
 
         //TODO: Add this to the collision handler when pairing
         private bool _enabled = true;
+
         public bool Enabled
         {
             get { return _enabled; }
@@ -164,7 +166,7 @@ namespace EntityEngineV4.Collision
             : base(parent, name)
         {
             _collisionBody = collisionBody;
-            _collisionHandler = EntityGame.CurrentState.GetService<CollisionHandler>();
+            _collisionHandler = EntityGame.ActiveState.GetService<CollisionHandler>();
 
             _collisionPhysics = new Physics(Parent, name + ".Physics", _collisionBody);
 
@@ -186,7 +188,7 @@ namespace EntityEngineV4.Collision
             : base(parent, name)
         {
             _collisionBody = collisionBody;
-            _collisionHandler = EntityGame.CurrentState.GetService<CollisionHandler>();
+            _collisionHandler = EntityGame.ActiveState.GetService<CollisionHandler>();
 
             _collisionPhysics = collisionPhysics;
 
@@ -220,6 +222,9 @@ namespace EntityEngineV4.Collision
             base.Draw(sb);
             if (Debug)
             {
+                //TODO: Future update add primitives to this debug drawing method!
+                //TODO: Move this debug funtionality to Body!
+
                 //Draw our debug bounds.
                 Rectangle drawwindow;
                 //Draw top

@@ -61,6 +61,7 @@
     <Compile Include="Data\Camera.cs" />
     <Compile Include="Data\Log.cs" />
     <Compile Include="Data\Path.cs" />
+    <Compile Include="PowerTools\RandomHelper.cs" />
     <Compile Include="PowerTools\TextureHelper.cs" />
     <Compile Include="PowerTools\Particle.cs" />
     <Compile Include="Engine\IComponent.cs" />
@@ -98,7 +99,5 @@
     <Compile Include="Tiles\Components\TilemapRender.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Object\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

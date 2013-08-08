@@ -11,11 +11,14 @@ namespace EntityEngineV4.Engine
         public delegate void EventHandler(Component i);
 
         public event EventHandler AddComponentEvent;
+
         public event EventHandler RemoveComponentEvent;
+
         public event Entity.EventHandler AddEntityEvent;
+
         public event Entity.EventHandler RemoveEntityEvent;
 
-        public event EventHandler DestroyEvent;
+        public event Engine.EventHandler DestroyEvent;
 
         public string Name { get; private set; }
 
@@ -44,7 +47,7 @@ namespace EntityEngineV4.Engine
             Active = true;
             Visible = true;
             Entity e = Parent as Entity;
-            if(e != null)
+            if (e != null)
             {
                 e.AddComponent(this);
             }
@@ -61,11 +64,17 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent i = null)
         {
-
             if (DestroyEvent != null)
                 DestroyEvent(this);
 
             RemoveComponent(this);
+
+            //Null out our events
+            AddComponentEvent = null;
+            RemoveComponentEvent = null;
+            AddEntityEvent = null;
+            RemoveEntityEvent = null;
+            DestroyEvent = null;
 
             EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
         }

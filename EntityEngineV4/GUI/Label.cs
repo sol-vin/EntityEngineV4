@@ -1,6 +1,5 @@
 ﻿using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
-using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.GUI

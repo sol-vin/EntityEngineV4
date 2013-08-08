@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EntityEngineV4.Components;
+﻿using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
@@ -11,8 +7,11 @@ namespace EntityEngineV4.Data
     public class Camera : Entity
     {
         public readonly Vector2 DEFAULTVIEW = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);
+
         public Vector2 LastPosition { get; private set; }
+
         public Vector2 Delta { get { return Position - LastPosition; } }
+
         public Vector2 Position = new Vector2();
         public float Zoom = 1f;
 
@@ -37,7 +36,7 @@ namespace EntityEngineV4.Data
 
         public bool IsActive
         {
-            get { return EntityGame.CurrentCamera.Equals(this); }
+            get { return EntityGame.Camera.Equals(this); }
         }
 
         public Rectangle ScreenSpace
@@ -46,20 +45,20 @@ namespace EntityEngineV4.Data
             {
                 var r = new Rectangle
                     {
-                        X = (int)(Position.X - EntityGame.Viewport.Width/2f),
-                        Y = (int)(Position.Y - EntityGame.Viewport.Height/2f),
-                        Width = (int)(EntityGame.Viewport.Width*Zoom),
-                        Height = (int)(EntityGame.Viewport.Height*Zoom)
+                        X = (int)(Position.X - EntityGame.Viewport.Width / 2f),
+                        Y = (int)(Position.Y - EntityGame.Viewport.Height / 2f),
+                        Width = (int)(EntityGame.Viewport.Width * 1f/Zoom),
+                        Height = (int)(EntityGame.Viewport.Height * 1f/Zoom)
                     };
                 return r;
             }
         }
 
-        public Camera(IComponent parent, string name) : base(parent, name)
+        public Camera(IComponent parent, string name)
+            : base(parent, name)
         {
             Position = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);
         }
-
 
         public void Update()
         {
@@ -67,13 +66,12 @@ namespace EntityEngineV4.Data
 
             if (Target != null)
             {
-                
             }
         }
 
         public void View()
         {
-            EntityGame.CurrentCamera = this;
+            EntityGame.Camera = this;
         }
 
         public void FollowPoint(Body b)
@@ -83,7 +81,6 @@ namespace EntityEngineV4.Data
 
         public void Flash()
         {
-            
         }
     }
 }

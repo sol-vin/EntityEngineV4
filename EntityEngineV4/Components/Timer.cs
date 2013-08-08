@@ -37,6 +37,21 @@ namespace EntityEngineV4.Components
         /// </summary>
         public int Milliseconds;
 
+        public int CurrentMilliseconds
+        {
+           get
+           {
+               if (Alive)
+               {
+                   return (int)( EntityGame.GameTime.ElapsedGameTime.TotalMilliseconds - _lastseconds);
+               }
+               else
+               {
+                   return 0;
+               }
+           }
+        }
+
         private bool _tr;
 
         public bool TimeReached
@@ -44,10 +59,15 @@ namespace EntityEngineV4.Components
             get { return _tr; }
         }
 
+        public float Progress
+        {
+            get { return MathHelper.Clamp((float)CurrentMilliseconds/Milliseconds, 0, 1); }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Timer"/> class.
         /// </summary>
-        public Timer(Entity e, string name)
+        public Timer(IComponent e, string name)
             : base(e, name)
         {
             Alive = false;
@@ -104,6 +124,9 @@ namespace EntityEngineV4.Components
             }
         }
 
+        /// <summary>
+        /// Starts the timer
+        /// </summary>
         public void Start()
         {
             if (Alive) return;
@@ -113,11 +136,20 @@ namespace EntityEngineV4.Components
             _lastseconds = EntityGame.GameTime.TotalGameTime.TotalMilliseconds;
         }
 
+        /// <summary>
+        /// Pauses the timere
+        /// </summary>
         public void Pause()
         {
+            //TODO: Fix the pause method, it needs to actually pause it, the timer is still running and
+            //when un paused will immeadiately fire
+          
             Alive = false;
         }
 
+        /// <summary>
+        /// Stops the timer. Can be subscribed to the LastEvent event to stop it once it reaches it's maximum time.
+        /// </summary>
         public void Stop()
         {
             Alive = false;

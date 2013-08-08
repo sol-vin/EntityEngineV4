@@ -13,7 +13,7 @@ namespace EntityEngineV4.GUI
     {
         private Control[,] _controls;
 
-        public bool UseMouse = true;
+        public bool UseMouse;
 
         public int MaxTabX
         {
@@ -34,10 +34,19 @@ namespace EntityEngineV4.GUI
 
         public event ControlEventHandler FocusChanged;
 
-        public ControlHandler(EntityState stateref)
+        public ControlHandler(EntityState stateref, bool useMouse = true)
             : base(stateref, "ControlHandler")
         {
             _controls = new Control[1, 1];
+
+            UseMouse = useMouse;
+
+            //Check to see if the mouse service is present, if not, log and disable mouse
+            if (!stateref.CheckService<MouseHandler>())
+            {
+                UseMouse = false;
+                EntityGame.Log.Write("Mouse was disabled on this state, switching UseMouse to false. Next time, please specify UseMouse in constructor", this, Alert.Warning);
+            }
         }
 
         public override void Update(GameTime gt)
@@ -47,7 +56,7 @@ namespace EntityEngineV4.GUI
                 if (control == null || !control.Active) continue;
 
                 control.Update(gt);
-                if (control.Selectable && TestMouseCollision(control))
+                if (control.Selectable && TestMouseCollision(control) && UseMouse)
                 {
                     CurrentControl.OnFocusLost(CurrentControl);
                     _currentcontrol = control.TabPosition;

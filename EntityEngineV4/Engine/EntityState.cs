@@ -16,35 +16,40 @@ namespace EntityEngineV4.Engine
         public event Component.EventHandler RemoveComponentEvent;
         public event Entity.EventHandler AddEntityEvent;
         public event Entity.EventHandler RemoveEntityEvent;
-        public event Service.EventHandler AddServiceEvent , RemoveServiceEvent;
+        public event Service.EventHandler AddServiceEvent, RemoveServiceEvent;
+        public event Engine.EventHandler DestroyEvent;
 
         public delegate void EventHandler(string name);
-
         public event EventHandler ShownEvent;
-
         public event EventHandler ChangeState;
 
         public string Name { get; private set; }
-
         public uint Id { get; private set; }
-
-        public bool Default { get; private set; }
-
         public bool Active { get; private set; }
-
         public bool Visible { get; private set; }
-
         public uint LastId { get; private set; }
-
         public bool Debug { get; set; }
 
         protected bool Destroyed;
 
         public List<Service> Services;
 
-        public EntityState(EntityGame eg, string name)
+        public EntityState()
         {
-            Parent = eg;
+            Parent = EntityGame.Self;
+
+            Services = new List<Service>();
+            ShownEvent += s => Create();
+
+            Active = true;
+            Visible = true;
+
+            Id = EntityGame.GetID();
+        }
+
+        public EntityState(string name)
+        {
+            Parent = EntityGame.Self;
             Name = name;
 
             Services = new List<Service>();
@@ -110,12 +115,11 @@ namespace EntityEngineV4.Engine
         //TODO: Create a type to regulate when this is called after a Show()
         public virtual void Create()
         {
-
         }
 
         public virtual void Show()
         {
-            EntityGame.CurrentState = this;
+            EntityGame.ActiveState = this;
 
             if (ShownEvent != null)
                 ShownEvent(this.Name);
@@ -129,7 +133,7 @@ namespace EntityEngineV4.Engine
             {
                 ChangeState(name);
                 //Figure out if the change was successful
-                if (EntityGame.CurrentState.Name == Name)
+                if (EntityGame.ActiveState.Name == Name)
                 {
                     //It was not log it
                     EntityGame.Log.Write("Could not find " + name + "in the ChangeState!", this, Alert.Warning);
@@ -156,8 +160,8 @@ namespace EntityEngineV4.Engine
         public virtual void Update(GameTime gt)
         {
             //TODO: Find a fix for destroying this!
-            if (Destroyed) 
-                return;
+            if (Destroyed) return;
+
             foreach (var service in Services)
             {
                 service.Update(gt);
@@ -185,16 +189,10 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent i = null)
         {
-            foreach (var entity in this.ToArray())
-            {
-                entity.Destroy();
-            }
-
-            foreach (var service in Services.ToArray())
-            {
-                service.Destroy();
-            }
             Destroyed = true;
+
+            if (DestroyEvent != null)
+                DestroyEvent(this);
 
             //Start off with a fresh camera.
             Camera c = new Camera(this, Name + ".Camera");
@@ -208,6 +206,8 @@ namespace EntityEngineV4.Engine
             Add(e);
             e.AddEntityEvent += AddEntity;
             e.RemoveEntityEvent += RemoveEntity;
+            DestroyEvent += e.Destroy;
+
             if (AddEntityEvent != null)
                 AddEntityEvent(e);
 
@@ -219,6 +219,8 @@ namespace EntityEngineV4.Engine
             Remove(e);
             e.AddEntityEvent -= AddEntity;
             e.RemoveEntityEvent -= RemoveEntity;
+            DestroyEvent -= e.Destroy;
+
             if (RemoveEntityEvent != null)
                 RemoveEntityEvent(e);
             EntityGame.Log.Write("Entity " + e.Name + " removed with ID" + e.Id, this, Alert.Trivial);
@@ -257,25 +259,30 @@ namespace EntityEngineV4.Engine
         {
             s.AddEntityEvent += AddEntity;
             s.RemoveEntityEvent += RemoveEntity;
-            s.DestroyEvent += RemoveService;
+            DestroyEvent += s.Destroy;
 
             Services.Add(s);
             if (AddServiceEvent != null)
             {
                 AddServiceEvent(s);
             }
+
+            EntityGame.Log.Write("Added service " + s.Name, this, Alert.Info);
         }
 
         public void RemoveService(Service s)
         {
             s.AddEntityEvent -= AddEntity;
             s.RemoveEntityEvent -= RemoveEntity;
-            s.DestroyEvent -= RemoveService;
+            DestroyEvent -= s.Destroy;
+
             Services.Remove(s);
             if (RemoveServiceEvent != null)
             {
                 RemoveServiceEvent(s);
             }
+
+            EntityGame.Log.Write("Removed service " + s.Name, this, Alert.Info);
         }
     }
 }

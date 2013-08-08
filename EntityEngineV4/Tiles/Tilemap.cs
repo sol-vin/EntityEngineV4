@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EntityEngineV4.Components;
+﻿using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using EntityEngineV4.Tiles.Components;
 using Microsoft.Xna.Framework;
@@ -14,16 +10,17 @@ namespace EntityEngineV4.Tiles
     {
         //TODO: Finish this
         public Body Body;
+
         public TilemapRender Render;
         public TilemapData Data;
 
-        public Tilemap(IComponent parent, string name, Texture2D tileTexture, Tile[,] tiles, Point tileSize) : base(parent, name)
+        public Tilemap(IComponent parent, string name, Texture2D tileTexture, Tile[,] tiles, Point tileSize)
+            : base(parent, name)
         {
             Body = new Body(this, "Body");
             Data = new TilemapData(tiles, tileSize, Body);
-            Render = new TilemapRender(this, "TilemapRender", tileTexture ,Data);
+            Render = new TilemapRender(this, "TilemapRender", tileTexture, Data);
         }
-
 
         public Tilemap(IComponent parent, string name, Texture2D tileTexture, Point size, Point tileSize)
             : base(parent, name)
@@ -37,6 +34,5 @@ namespace EntityEngineV4.Tiles
         {
             Data = new TilemapData(size, tileSize, Body);
         }
-
     }
 }

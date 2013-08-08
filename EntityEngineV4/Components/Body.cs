@@ -8,7 +8,9 @@ namespace EntityEngineV4.Components
     public class Body : Component
     {
         public float Angle;
+
         public Vector2 LastPosition { get; private set; }
+
         public Vector2 Position;
         public Vector2 Bounds;
 
@@ -24,6 +26,7 @@ namespace EntityEngineV4.Components
                 Bounds = new Vector2(value.Width, value.Height);
             }
         }
+
         public Vector2 Delta { get { return Position - LastPosition; } }
 
         public float Top { get { return Position.Y; } }
@@ -34,7 +37,7 @@ namespace EntityEngineV4.Components
 
         public float Bottom { get { return Position.Y + Bounds.Y; } }
 
-        public float X 
+        public float X
         {
             get { return Position.X; }
             set { Position.X = value; }
@@ -58,7 +61,6 @@ namespace EntityEngineV4.Components
             set { Bounds.Y = value; }
         }
 
-
         public Color DebugColor = Color.Yellow;
 
         public Body(IComponent e, string name)
@@ -81,9 +83,9 @@ namespace EntityEngineV4.Components
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
-            if(Debug)
+            if (Debug)
             {
-//Draw our debug bounds.
+                //Draw our debug bounds.
                 Rectangle drawwindow;
                 //Draw top
                 drawwindow = new Rectangle(BoundingRect.X, BoundingRect.Y, BoundingRect.Width, 1);

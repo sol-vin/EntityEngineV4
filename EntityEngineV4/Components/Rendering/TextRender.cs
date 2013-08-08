@@ -21,7 +21,7 @@ namespace EntityEngineV4.Components.Rendering
 
         public override Vector2 Bounds
         {
-            get { return new Vector2(Font.MeasureString(Text).X*Scale.X, Font.MeasureString(Text).Y*Scale.Y);  }
+            get { return new Vector2(Font.MeasureString(Text).X * Scale.X, Font.MeasureString(Text).Y * Scale.Y); }
         }
 
         //Dependencies
@@ -43,7 +43,7 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            if (EntityGame.CurrentCamera.ScreenSpace.Intersects(DrawRect))
+            if (EntityGame.Camera.ScreenSpace.Intersects(DrawRect))
                 sb.DrawString(Font, Text, _body.Position, Color * Alpha, _body.Angle, Origin, Scale, Flip, Layer);
         }
 

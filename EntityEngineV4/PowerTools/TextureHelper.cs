@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -24,12 +21,12 @@ namespace EntityEngineV4.Data
                 }
                 else if (i >= texture.Width)
                 {
-                    int yvalue = (int)Math.Floor(i/(double)texture.Width);
-                    output[i - (yvalue*texture.Width), yvalue] = colordata[i];
+                    int yvalue = (int)Math.Floor(i / (double)texture.Width);
+                    output[i - (yvalue * texture.Width), yvalue] = colordata[i];
                 }
             }
 
-            return (Color[,]) output.Clone();
+            return (Color[,])output.Clone();
         }
     }
 }

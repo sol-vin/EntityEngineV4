@@ -2,9 +2,8 @@
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace EntityEngineV4.Object
+namespace EntityEngineV4.PowerTools
 {
     public class Particle : Entity
     {
@@ -15,30 +14,12 @@ namespace EntityEngineV4.Object
         }
 
         public Emitter Emitter;
-        public Body Body;
         protected Timer TimeToLiveTimer;
-
-        public Particle(EntityState stateref, Vector2 position, int ttl, Emitter e)
-            : base(e, e.Name + ".Particle")
-        {
-            Name = Name + Id;
-
-            Body = new Body(this, "Body", position);
-
-            Emitter = e;
-
-            TimeToLiveTimer = new Timer(this, "Timer");
-            TimeToLive = ttl;
-            TimeToLiveTimer.Start();
-            TimeToLiveTimer.LastEvent += () => Destroy();
-        }
 
         public Particle(Emitter e, int ttl)
             : base(e, e.Name + ".Particle")
         {
             Name = Name + Id;
-
-            Body = new Body(this, "Body");
 
             Emitter = e;
 
@@ -64,13 +45,13 @@ namespace EntityEngineV4.Object
         public int FadeAge;
         public Render Render;
 
-        public FadeParticle( Emitter e, int ttl)
+        public FadeParticle(Emitter e, int ttl)
             : base(e, ttl)
         {
         }
 
-        public FadeParticle(EntityState stateref, Vector2 position, int fadeage, int ttl, Emitter e)
-            : base(stateref, position, ttl, e)
+        public FadeParticle(Emitter e, int fadeage, int ttl)
+            : base(e, ttl)
         {
             FadeAge = fadeage;
         }
@@ -92,15 +73,12 @@ namespace EntityEngineV4.Object
 
     public class Emitter : Component
     {
-        //public Texture2D Texture { get; protected set; }
-
-        public Vector2 TileSize { get; protected set; }
-
         public bool AutoEmit;
         public int AutoEmitAmount = 1;
 
         private delegate void ParticleHandler(Entity p);
-        public Emitter(Entity parent, string name)
+
+        public Emitter(IComponent parent, string name)
             : base(parent, name)
         {
         }
@@ -117,13 +95,11 @@ namespace EntityEngineV4.Object
             return p;
         }
 
-        public virtual void Emit(int amount)
+        public virtual void Emit(int amount = 1)
         {
-            
             for (var i = 0; i < amount; i++)
             {
-                Particle p = GenerateNewParticle();
-                AddEntity(p);
+                AddEntity(GenerateNewParticle());
             }
         }
     }

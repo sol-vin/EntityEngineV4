@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
+    public delegate void EventHandler(IComponent c);
     public interface IComponent
     {
         IComponent Parent { get; }
@@ -16,10 +17,12 @@ namespace EntityEngineV4.Engine
         bool Visible { get; }
 
         bool Debug { get; set; }
-        
+
         event Component.EventHandler AddComponentEvent, RemoveComponentEvent;
 
         event Entity.EventHandler AddEntityEvent, RemoveEntityEvent;
+
+        event EventHandler DestroyEvent;
 
         void Update(GameTime gt);
 
@@ -34,7 +37,5 @@ namespace EntityEngineV4.Engine
         void AddEntity(Entity c);
 
         void RemoveEntity(Entity c);
-
-
     }
 }
