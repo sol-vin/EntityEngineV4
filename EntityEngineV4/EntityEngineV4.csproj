@@ -59,6 +59,7 @@
     <Compile Include="Collision\Shapes\Shape.cs" />
     <Compile Include="Components\Rendering\TileRender.cs" />
     <Compile Include="Data\Camera.cs" />
+    <Compile Include="Data\Collections\Shufflebag.cs" />
     <Compile Include="Data\Log.cs" />
     <Compile Include="Data\Path.cs" />
     <Compile Include="PowerTools\RandomHelper.cs" />
