@@ -1,3 +1,4 @@
+using System;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using EntityEngineV4.Input.MouseInput;
@@ -55,10 +56,10 @@ namespace EntityEngineV4.GUI
             {
                 if (control == null || !control.Active) continue;
 
-                control.Update(gt);
                 if (control.Selectable && TestMouseCollision(control) && UseMouse)
                 {
-                    CurrentControl.OnFocusLost(CurrentControl);
+                    if(CurrentControl != null)
+                        CurrentControl.OnFocusLost(CurrentControl);
                     _currentcontrol = control.TabPosition;
                     control.OnFocusGain(control);
                     if (MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton))
@@ -69,21 +70,29 @@ namespace EntityEngineV4.GUI
 
         public override void Draw(SpriteBatch sb)
         {
-            foreach (var c in _controls)
-            {
-                if (c != null && c.Visible)
-                    c.Draw(sb);
-            }
         }
 
         public void AddControl(Control c)
         {
+            DestroyEvent += c.Destroy;
+
+            //Resize the collection to the appropriate size
             if (c.TabPosition.X >= MaxTabX && c.TabPosition.Y >= MaxTabY)
                 ResizeControlCollection(c.TabPosition.X + 1, c.TabPosition.Y + 1);
             else if (c.TabPosition.X >= MaxTabX)
                 ResizeControlCollection(c.TabPosition.X + 1, MaxTabY + 1);
             else if (c.TabPosition.Y >= MaxTabY)
                 ResizeControlCollection(MaxTabX + 1, c.TabPosition.Y + 1);
+
+            //Find out if anything is at that space
+            if (_controls[c.TabPosition.X, c.TabPosition.Y] != null)
+            {
+                //We have to move the control to the slot to the right of it.
+                //This will move evry control in that row because setting the 
+                //Control.TabPosition property triggers an AddControl and RemoveControl.
+                //Essentially, this is recurrsive so don't worry about it.
+                _controls[c.TabPosition.X, c.TabPosition.Y].TabPosition = new Point(c.TabPosition.X + 1, c.TabPosition.Y);
+            }
 
             FocusChanged += c.OnFocusChange;
             _controls[c.TabPosition.X, c.TabPosition.Y] = c;
@@ -94,7 +103,13 @@ namespace EntityEngineV4.GUI
         public void RemoveControl(Control c)
         {
             FocusChanged -= c.OnFocusChange;
-            _controls[c.TabPosition.X, c.TabPosition.Y] = null;
+            if (_controls[c.TabPosition.X, c.TabPosition.Y] != null)
+            {
+                _controls[c.TabPosition.X, c.TabPosition.Y].Destroy();
+                _controls[c.TabPosition.X, c.TabPosition.Y] = null;
+            }
+
+            RemoveEntity(c);
         }
 
         private void ResizeControlCollection(int x, int y)
@@ -179,7 +194,7 @@ namespace EntityEngineV4.GUI
         {
             foreach (var control in _controls)
             {
-                if (control.Selectable && TestMouseCollision(control))
+                if (control.Selectable && TestMouseCollision(control) && UseMouse)
                 {
                     control.OnFocusGain(control);
                     if (MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton))
@@ -194,6 +209,18 @@ namespace EntityEngineV4.GUI
         public bool TestMouseCollision(Control c)
         {
             return c.Body.BoundingRect.Contains(new Point((int)MouseHandler.Cursor.Position.X, (int)MouseHandler.Cursor.Position.Y));
+        }
+
+        public Control GetControl(Point tabPosition)
+        {
+            return GetControl(tabPosition.X, tabPosition.Y);
+        }
+
+        public Control GetControl(int x, int y)
+        {
+            if(x < 0 || y < 0) throw new IndexOutOfRangeException();
+
+            return _controls[x, y];
         }
     }
 }

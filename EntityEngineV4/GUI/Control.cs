@@ -1,5 +1,6 @@
 ﻿using System;
 using EntityEngineV4.Components;
+using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,7 +10,7 @@ namespace EntityEngineV4.GUI
     public abstract class Control : Entity
     {
         public Body Body;
-
+        public ControlHandler ControlHandler { get; private set; }
         /// <summary>
         /// This is the position where the GUI control resdies on the page when tabbing through.
         /// It is a point because you can go up, down, left, and right.
@@ -24,7 +25,23 @@ namespace EntityEngineV4.GUI
                 //Sanity Check
                 if (value.X < 0 || value.Y < 0)
                     throw new IndexOutOfRangeException(Name + ".TabPosition cannot be less than 0!");
+
+                //Check to see if it actually has changed
+                if (_tabposition == value)
+                    return;
+
+                //It's different, lets swap it around.
+                
+                //First copy if it was attached or not
+                bool wasAttached = Attached;
+
+                if(wasAttached)
+                    ControlHandler.RemoveControl(this);
+
                 _tabposition = value;
+
+                if(wasAttached)
+                    ControlHandler.AddControl(this);
             }
         }
 
@@ -55,12 +72,30 @@ namespace EntityEngineV4.GUI
 
         public float Height { get { return Body.Bounds.X; } set { Body.Bounds.Y = value; } }
 
+        public bool Attached { get { return ControlHandler.GetControl(TabPosition) == null; } }
+
         public event ControlEventHandler Selected;
 
         protected Control(IComponent parent, string name)
             : base(parent, name)
         {
+            Visible = true;
             Body = new Body(this, "Body");
+
+            //Add our service if we have a parent, if not, we will let them update and draw
+            if (parent != null && parent.GetType() != typeof (ControlHandler))
+            {
+                ControlHandler = parent.GetService<ControlHandler>();
+                if (ControlHandler == null)
+                {
+                    EntityGame.Log.Write("ControlHandler was not found!", this, Alert.Error);
+                    throw new Exception("ControlHandler was not found!");
+                }
+            }
+            else if (parent != null && parent.GetType() == typeof(ControlHandler))
+            {
+                ControlHandler = parent as ControlHandler;
+            }
         }
 
         public override void Draw(SpriteBatch sb)
@@ -96,6 +131,11 @@ namespace EntityEngineV4.GUI
             if (!Selectable) return;
             if (Selected != null)
                 Selected(this);
+        }
+
+        public void AttachToControlHandler()
+        {
+            ControlHandler.AddControl(this);
         }
     }
 

@@ -99,7 +99,7 @@ namespace EntityEngineV4.PowerTools
         {
             for (var i = 0; i < amount; i++)
             {
-                AddEntity(GenerateNewParticle());
+                GenerateNewParticle();
             }
         }
     }

@@ -16,23 +16,19 @@ namespace EntityEngineV4.Engine
         public event Engine.EventHandler DestroyEvent;
 
         public event Component.EventHandler AddComponentEvent;
-
         public event Component.EventHandler RemoveComponentEvent;
 
         public event EventHandler AddEntityEvent;
-
         public event EventHandler RemoveEntityEvent;
 
+        public event Service.EventHandler AddServiceEvent;
+        public event Service.EventHandler RemoveServiceEvent;
+        public event Service.ReturnHandler GetServiceEvent;
+
         public string Name { get; protected set; }
-
         public uint Id { get; private set; }
-
-        public bool Default { get; set; }
-
         public bool Active { get; set; }
-
         public bool Visible { get; set; }
-
         public bool Debug { get; set; }
 
         public Entity(IComponent parent, string name)
@@ -42,6 +38,9 @@ namespace EntityEngineV4.Engine
             Id = EntityGame.GetID();
             Active = true;
             Visible = true;
+
+            if(parent != null)
+                parent.AddEntity(this);
         }
 
         public virtual void Update(GameTime gt)
@@ -125,6 +124,9 @@ namespace EntityEngineV4.Engine
             c.RemoveEntityEvent += RemoveEntity;
             c.RemoveComponentEvent += RemoveComponent;
             c.AddComponentEvent += AddComponent;
+            c.AddServiceEvent += AddService;
+            c.RemoveServiceEvent += RemoveService;
+            c.GetServiceEvent += GetService;
 
             if (AddComponentEvent != null)
                 AddComponentEvent(c);
@@ -143,7 +145,7 @@ namespace EntityEngineV4.Engine
                 RemoveComponentEvent(c);
         }
 
-        public void AddEntity(Entity c)
+        public virtual void AddEntity(Entity c)
         {
             if (AddEntityEvent != null)
             {
@@ -155,7 +157,7 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public void RemoveEntity(Entity c)
+        public virtual void RemoveEntity(Entity c)
         {
             if (RemoveEntityEvent != null)
             {
@@ -165,6 +167,49 @@ namespace EntityEngineV4.Engine
             {
                 EntityGame.Log.Write("RemoveEntity was called but no methods were subscribed", this, Alert.Warning);
             }
+        }
+
+
+        public void AddService(Service s)
+        {
+            if (AddServiceEvent != null)
+            {
+                AddServiceEvent(s);
+            }
+            else
+            {
+                EntityGame.Log.Write("AddService called with no methods subscribed", this, Alert.Warning);
+            }
+        }
+
+        public void RemoveService(Service s)
+        {
+            if (RemoveServiceEvent != null)
+            {
+                RemoveServiceEvent(s);
+            }
+            else
+            {
+                EntityGame.Log.Write("RemoveService called with no methods subscribed", this, Alert.Warning);
+            }
+        }
+
+        public T GetService<T>() where T : Service
+        {
+            if (GetServiceEvent != null)
+            {
+                return (T)GetServiceEvent(typeof(T));
+            }
+            EntityGame.Log.Write("GetService was called with no methods subscribed!", this, Alert.Warning);
+            return null;
+        }
+        public Service GetService(Type t)
+        {
+            if (GetServiceEvent != null)
+            {
+                return GetServiceEvent(t);
+            }
+            return null;
         }
     }
 }

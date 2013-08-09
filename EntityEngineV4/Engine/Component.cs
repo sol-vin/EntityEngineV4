@@ -1,3 +1,4 @@
+using System;
 using EntityEngineV4.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +17,11 @@ namespace EntityEngineV4.Engine
 
         public event Entity.EventHandler AddEntityEvent;
 
-        public event Entity.EventHandler RemoveEntityEvent;
+        public event Entity.EventHandler RemoveEntityEvent; 
+
+        public event Service.EventHandler AddServiceEvent;
+        public event Service.EventHandler RemoveServiceEvent;
+        public event Service.ReturnHandler GetServiceEvent;
 
         public event Engine.EventHandler DestroyEvent;
 
@@ -79,7 +84,7 @@ namespace EntityEngineV4.Engine
             EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
         }
 
-        public void AddComponent(Component c)
+        public virtual void AddComponent(Component c)
         {
             if (AddComponentEvent != null)
             {
@@ -91,7 +96,7 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public void RemoveComponent(Component c)
+        public virtual void RemoveComponent(Component c)
         {
             if (RemoveComponentEvent != null)
             {
@@ -103,7 +108,7 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public void AddEntity(Entity c)
+        public virtual void AddEntity(Entity c)
         {
             if (AddEntityEvent != null)
             {
@@ -115,7 +120,7 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public void RemoveEntity(Entity c)
+        public virtual void RemoveEntity(Entity c)
         {
             if (RemoveEntityEvent != null)
             {
@@ -125,6 +130,49 @@ namespace EntityEngineV4.Engine
             {
                 EntityGame.Log.Write("RemoveEntity called with no methods subscribed", this, Alert.Warning);
             }
+        }
+
+        public void AddService(Service s)
+        {
+            if (AddServiceEvent != null)
+            {
+                AddServiceEvent(s);
+            }
+            else
+            {
+                EntityGame.Log.Write("AddService called with no methods subscribed", this, Alert.Warning);
+            }
+        }
+
+        public void RemoveService(Service s)
+        {
+            if (RemoveServiceEvent != null)
+            {
+                RemoveServiceEvent(s);
+            }
+            else
+            {
+                EntityGame.Log.Write("RemoveService called with no methods subscribed", this, Alert.Warning);
+            }
+        }
+
+        public T GetService<T>() where T : Service
+        {
+            if (GetServiceEvent != null)
+            {
+                return (T) GetServiceEvent(typeof (T));
+            }
+            EntityGame.Log.Write("GetService was called with no methods subscribed!", this, Alert.Warning);
+            return null;
+        }
+
+        public Service GetService(Type t)
+        {
+            if (GetServiceEvent != null)
+            {
+                return GetServiceEvent(t);
+            }
+            return null;
         }
     }
 }

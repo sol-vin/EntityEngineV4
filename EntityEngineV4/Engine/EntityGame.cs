@@ -34,6 +34,10 @@ namespace EntityEngineV4.Engine
         public event Component.EventHandler RemoveComponentEvent;
         public event Entity.EventHandler AddEntityEvent;
         public event Entity.EventHandler RemoveEntityEvent;
+        public event Service.EventHandler AddServiceEvent;
+        public event Service.EventHandler RemoveServiceEvent;
+        public event Service.ReturnHandler GetServiceEvent;
+
         public event EventHandler DestroyEvent;
 
         public string Name { get; private set; }
@@ -70,7 +74,7 @@ namespace EntityEngineV4.Engine
             _fpslabel = new Label(null, "FPSLabel");
             _fpslabel.Visible = false;
 
-            Camera = new Camera(this, "EntityEngineDefaultCamera");
+            Camera = new Camera(null, "EntityEngineDefaultCamera");
 
             Log = new Log();
 
@@ -115,10 +119,13 @@ namespace EntityEngineV4.Engine
             }
 
             _fpslabel.Visible = ShowFPS;
-            _fpslabel.Update(gt);
-            _fpslabel.Text = FrameRate.ToString();
-            _fpslabel.Body.Position = new Vector2(Viewport.Width - _fpslabel.Body.Bounds.X - 10,
-                                                  Viewport.Height - _fpslabel.Body.Bounds.Y - 10);
+            if (ShowFPS)
+            {
+                _fpslabel.Update(gt);
+                _fpslabel.Text = FrameRate.ToString();
+                _fpslabel.Body.Position = new Vector2(Viewport.Width - _fpslabel.Body.Bounds.X - 10,
+                                                      Viewport.Height - _fpslabel.Body.Bounds.Y - 10);
+            }
         }
 
         public virtual void Draw(SpriteBatch sb = null)
@@ -181,6 +188,34 @@ namespace EntityEngineV4.Engine
             {
                 RemoveEntityEvent(c);
             }
+        }
+
+
+        public void AddService(Service s)
+        {
+            if (AddServiceEvent != null)
+            {
+                AddServiceEvent(s);
+            }
+            ActiveState.AddService(s);
+        }
+
+        public void RemoveService(Service s)
+        {
+            if (RemoveServiceEvent != null)
+            {
+                RemoveServiceEvent(s);
+            }
+            ActiveState.RemoveService(s);
+        }
+
+        public T GetService<T>() where T : Service
+        {
+            return ActiveState.GetService<T>();
+        }
+        public Service GetService(Type t)
+        {
+            return ActiveState.GetService(t);
         }
 
         public static void StartDrawing(Camera camera)

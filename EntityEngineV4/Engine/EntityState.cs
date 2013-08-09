@@ -14,20 +14,23 @@ namespace EntityEngineV4.Engine
 
         public event Component.EventHandler AddComponentEvent;
         public event Component.EventHandler RemoveComponentEvent;
+
         public event Entity.EventHandler AddEntityEvent;
         public event Entity.EventHandler RemoveEntityEvent;
-        public event Service.EventHandler AddServiceEvent, RemoveServiceEvent;
+
+        public event Service.EventHandler AddServiceEvent;
+        public event Service.EventHandler RemoveServiceEvent;
+        public event Service.ReturnHandler GetServiceEvent;
+
         public event Engine.EventHandler DestroyEvent;
 
-        public delegate void EventHandler(string name);
+        public delegate void EventHandler(EntityState state);
         public event EventHandler ShownEvent;
-        public event EventHandler ChangeState;
 
         public string Name { get; private set; }
         public uint Id { get; private set; }
         public bool Active { get; private set; }
         public bool Visible { get; private set; }
-        public uint LastId { get; private set; }
         public bool Debug { get; set; }
 
         protected bool Destroyed;
@@ -101,9 +104,20 @@ namespace EntityEngineV4.Engine
             if (result == null)
             {
                 EntityGame.Log.Write("Service " + typeof(T) + " does not exist!", this, Alert.Warning);
-                throw new Exception("Service " + typeof(T) + " does not exist!");
+                return null;
             }
             return (T)result;
+        }
+
+        public Service GetService(Type t)
+        {
+            var result = Services.FirstOrDefault(service => service.GetType() == t);
+            if (result == null)
+            {
+                EntityGame.Log.Write("Service " + t + " does not exist!", this, Alert.Warning);
+                return null;
+            }
+            return result;
         }
 
         public bool CheckService<T>() where T : Service
@@ -122,33 +136,9 @@ namespace EntityEngineV4.Engine
             EntityGame.ActiveState = this;
 
             if (ShownEvent != null)
-                ShownEvent(this.Name);
+                ShownEvent(this);
 
             EntityGame.Log.Write("Shown", this, Alert.Info);
-        }
-
-        public virtual void ChangeToState(string name)
-        {
-            if (ChangeState != null)
-            {
-                ChangeState(name);
-                //Figure out if the change was successful
-                if (EntityGame.ActiveState.Name == Name)
-                {
-                    //It was not log it
-                    EntityGame.Log.Write("Could not find " + name + "in the ChangeState!", this, Alert.Warning);
-                }
-                else
-                {
-                    EntityGame.Log.Write("Changed to state " + name, this, Alert.Info);
-                }
-            }
-        }
-
-        public virtual void Show(string name)
-        {
-            if (name == Name)
-                Show();
         }
 
         public virtual void Reset()
@@ -201,11 +191,14 @@ namespace EntityEngineV4.Engine
             EntityGame.Log.Write("Destoyed", this, Alert.Info);
         }
 
-        public void AddEntity(Entity e)
+        public virtual void AddEntity(Entity e)
         {
             Add(e);
             e.AddEntityEvent += AddEntity;
             e.RemoveEntityEvent += RemoveEntity;
+            e.AddServiceEvent += AddService;
+            e.RemoveServiceEvent += RemoveService;
+            e.GetServiceEvent += GetService;
             DestroyEvent += e.Destroy;
 
             if (AddEntityEvent != null)
@@ -214,11 +207,14 @@ namespace EntityEngineV4.Engine
             EntityGame.Log.Write("Entity " + e.Name + " added with ID" + e.Id, this, Alert.Trivial);
         }
 
-        public void RemoveEntity(Entity e)
+        public virtual void RemoveEntity(Entity e)
         {
             Remove(e);
             e.AddEntityEvent -= AddEntity;
             e.RemoveEntityEvent -= RemoveEntity;
+            e.AddServiceEvent -= AddService;
+            e.RemoveServiceEvent -= RemoveService;
+            e.GetServiceEvent -= GetService;
             DestroyEvent -= e.Destroy;
 
             if (RemoveEntityEvent != null)
@@ -226,12 +222,7 @@ namespace EntityEngineV4.Engine
             EntityGame.Log.Write("Entity " + e.Name + " removed with ID" + e.Id, this, Alert.Trivial);
         }
 
-        public uint GetId()
-        {
-            return LastId++;
-        }
-
-        public void AddComponent(Component c)
+        public virtual void AddComponent(Component c)
         {
             if (AddComponentEvent != null)
             {
@@ -243,7 +234,7 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public void RemoveComponent(Component c)
+        public virtual void RemoveComponent(Component c)
         {
             if (RemoveComponentEvent != null)
             {

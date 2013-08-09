@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -22,6 +23,9 @@ namespace EntityEngineV4.Engine
 
         event Entity.EventHandler AddEntityEvent, RemoveEntityEvent;
 
+        event Service.EventHandler AddServiceEvent , RemoveServiceEvent;
+        event Service.ReturnHandler GetServiceEvent;
+
         event EventHandler DestroyEvent;
 
         void Update(GameTime gt);
@@ -37,5 +41,10 @@ namespace EntityEngineV4.Engine
         void AddEntity(Entity c);
 
         void RemoveEntity(Entity c);
+
+        void AddService(Service s);
+        void RemoveService(Service s);
+        T GetService<T>() where T : Service;
+        Service GetService(Type t);
     }
 }

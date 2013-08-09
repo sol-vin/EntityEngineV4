@@ -1,3 +1,4 @@
+using System;
 using EntityEngineV4.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,12 +10,20 @@ namespace EntityEngineV4.Engine
         public IComponent Parent { get; private set; }
 
         public EntityState StateRef { get { return Parent as EntityState; } }
+        
+        public delegate void EventHandler(Service s);
+
+        public delegate Service ReturnHandler(Type t);
 
         public event Component.EventHandler AddComponentEvent;
         public event Component.EventHandler RemoveComponentEvent;
 
         public event Entity.EventHandler AddEntityEvent;
         public event Entity.EventHandler RemoveEntityEvent;
+
+        public event EventHandler AddServiceEvent;
+        public event EventHandler RemoveServiceEvent;
+        public event ReturnHandler GetServiceEvent;
 
         public event Engine.EventHandler DestroyEvent;
 
@@ -33,7 +42,6 @@ namespace EntityEngineV4.Engine
             stateRef.AddService(this);
         }
 
-        public delegate void EventHandler(Service s);
 
         public abstract void Update(GameTime gt);
 
@@ -106,5 +114,48 @@ namespace EntityEngineV4.Engine
             }
         }
 
+
+        public void AddService(Service s)
+        {
+            if (AddServiceEvent != null)
+            {
+                AddServiceEvent(s);
+            }
+            else
+            {
+                EntityGame.Log.Write("AddService called with no methods subscribed", this, Alert.Warning);
+            }
+        }
+
+        public void RemoveService(Service s)
+        {
+            if (RemoveServiceEvent != null)
+            {
+                RemoveServiceEvent(s);
+            }
+            else
+            {
+                EntityGame.Log.Write("RemoveService called with no methods subscribed", this, Alert.Warning);
+            }
+        }
+
+        public T GetService<T>() where T : Service
+        {
+            if (GetServiceEvent != null)
+            {
+                return (T)GetServiceEvent(typeof(T));
+            }
+            EntityGame.Log.Write("GetService was called with no methods subscribed!", this, Alert.Warning);
+            return null;
+        }
+
+        public Service GetService(Type t)
+        {
+            if (GetServiceEvent != null)
+            {
+                return GetServiceEvent(t);
+            }
+            return null;
+        }
     }
 }

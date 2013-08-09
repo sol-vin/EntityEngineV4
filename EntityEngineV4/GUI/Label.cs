@@ -1,5 +1,6 @@
 ﻿using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
+using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.GUI
@@ -22,7 +23,7 @@ namespace EntityEngineV4.GUI
         //Components
         public TextRender TextRender;
 
-        public Label(ControlHandler parent, string name)
+        public Label(IComponent parent, string name)
             : base(parent, name)
         {
             TextRender = new TextRender(this, "TextRender", Assets.Font, name, Body);

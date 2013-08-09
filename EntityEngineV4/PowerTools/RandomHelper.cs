@@ -18,6 +18,13 @@ namespace EntityEngineV4.PowerTools
             return (random.Next(0, chance) == 0);
         }
 
+
+        /// <summary>
+        /// Returns a random sign value, either -1 or 1.
+        /// </summary>
+        /// <param name="random"></param>
+        /// <param name="chance"></param>
+        /// <returns></returns>
         public static int GetSign(this Random random, int chance = 2)
         {
             return (RandomBool(random, chance)) ? -1 : 1;
@@ -30,7 +37,7 @@ namespace EntityEngineV4.PowerTools
 
         public static float GetFloat(this Random random, float min, float max)
         {
-            return min + (max - min) * (float)random.NextDouble();
+            return min + (max - min) * GetFloat(random);
         }
     }
 }
