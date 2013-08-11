@@ -220,11 +220,13 @@ namespace EntityEngineV4.Input.MouseInput
 
         public override bool Pressed()
         {
+            EntityGame.Log.Write("Button pressed", this, Alert.Info);
             return SelectKey.Pressed();
         }
 
         public override bool Released()
         {
+            EntityGame.Log.Write("Button released", this, Alert.Info);
             return SelectKey.Released();
         }
 

@@ -105,6 +105,7 @@ namespace EntityEngineV4.Data
                           DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
             }
             _file.WriteLine(logline);
+            _file.Flush();
         }
 
         public void Write(string message, IComponent sender, Alert l)
@@ -144,6 +145,7 @@ namespace EntityEngineV4.Data
             }
 
             _file.WriteLine(logline);
+            _file.Flush();
         }
 
         public bool CheckLogSize()
