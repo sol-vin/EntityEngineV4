@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace EntityEngineV4.Data.Collections
+namespace EntityEngineV4.PowerTools.Collections
 {
     public class Shufflebag<T> : List<T>
     {

@@ -32,17 +32,23 @@ namespace EntityEngineV4.Engine
         public bool Active { get; private set; }
         public bool Visible { get; private set; }
         public bool Debug { get; set; }
-
+        public bool Created { get; private set; }
         protected bool Destroyed;
 
         public List<Service> Services;
+        
+        public enum CreateAction
+        {
+            OncePerShow, OnceInLife
+        }
+
+        public CreateAction CreateActionOnShow = CreateAction.OnceInLife;
 
         public EntityState()
         {
             Parent = EntityGame.Self;
 
             Services = new List<Service>();
-            ShownEvent += s => Create();
 
             Active = true;
             Visible = true;
@@ -126,9 +132,10 @@ namespace EntityEngineV4.Engine
             return result != null;
         }
 
-        //TODO: Create a type to regulate when this is called after a Show()
         public virtual void Create()
         {
+            Reset();
+            Created = true;
         }
 
         public virtual void Show()
@@ -138,21 +145,33 @@ namespace EntityEngineV4.Engine
             if (ShownEvent != null)
                 ShownEvent(this);
 
+            switch (CreateActionOnShow)
+            {
+                case CreateAction.OnceInLife:
+                    if(!Created) Create();
+                    break;
+                case CreateAction.OncePerShow:
+                    Create();
+                    break;
+
+            }
+
             EntityGame.Log.Write("Shown", this, Alert.Info);
         }
 
         public virtual void Reset()
         {
+            Created = false;
+
             Clear();
             Services.Clear();
         }
 
         public virtual void Update(GameTime gt)
         {
-            //TODO: Find a fix for destroying this!
             if (Destroyed) return;
 
-            foreach (var service in Services)
+            foreach (var service in Services.ToArray().Where(s => s.Active))
             {
                 service.Update(gt);
             }
@@ -166,7 +185,8 @@ namespace EntityEngineV4.Engine
         public virtual void Draw(SpriteBatch sb)
         {
             if (Destroyed) return;
-            foreach (var service in Services)
+
+            foreach (var service in Services.ToArray().Where(s => s.Active))
             {
                 service.Draw(sb);
             }
@@ -183,6 +203,8 @@ namespace EntityEngineV4.Engine
 
             if (DestroyEvent != null)
                 DestroyEvent(this);
+
+            Reset();
 
             //Start off with a fresh camera.
             Camera c = new Camera(this, Name + ".Camera");

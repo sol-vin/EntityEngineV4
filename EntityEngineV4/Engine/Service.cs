@@ -40,6 +40,9 @@ namespace EntityEngineV4.Engine
             Id = EntityGame.GetID();
 
             stateRef.AddService(this);
+
+            Active = true;
+            Visible = true;
         }
 
 

@@ -93,6 +93,11 @@ namespace EntityEngineV4.Components
                 OnLast();
                 Reset();
             }
+            //TODO: Double check this works for timers still :)
+            if (!Alive)
+            {
+                _lastseconds += gt.ElapsedGameTime.TotalMilliseconds;
+            }
         }
 
         public override void Update(GameTime gt)

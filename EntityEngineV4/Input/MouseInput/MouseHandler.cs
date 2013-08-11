@@ -68,7 +68,7 @@ namespace EntityEngineV4.Input.MouseInput
             DestroyEvent += mc.Destroy;
             mc.OnGetFocus();
             AddEntity(mc);
-            //AddEntity(new ControllerCursor(this, "MouseHandler.ControllerCursor")); //TODO: Add this back when done writing MouseHandler controller fix
+            AddEntity(new ControllerCursor(this, "MouseHandler.ControllerCursor", ControllerCursor.MovementInput.Buttons){AutoSwitchInputs = true});
         }
 
         public override void Update(GameTime gt)
@@ -94,9 +94,9 @@ namespace EntityEngineV4.Input.MouseInput
         {
         }
 
-        public static Point GetPosition()
+        public static Vector2 GetPosition()
         {
-            return new Point(_mousestate.X, _mousestate.Y);
+            return new Vector2(_mousestate.X, _mousestate.Y);
         }
 
         public static void SetPosition(int x, int y)

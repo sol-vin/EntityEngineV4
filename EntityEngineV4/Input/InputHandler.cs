@@ -58,10 +58,13 @@ namespace EntityEngineV4.Input
             : base(stateref, "InputHandler")
         {
             _keyboardState = Keyboard.GetState();
+            _lastKeyboardState = Keyboard.GetState();
             _gamePadStates = new GamePadState[Enum.GetValues(typeof(PlayerIndex)).Length];
 
             foreach (PlayerIndex index in Enum.GetValues(typeof(PlayerIndex)))
                 _gamePadStates[(int)index] = GamePad.GetState(index);
+
+            _lastGamePadStates = (GamePadState[]) _gamePadStates.Clone();
         }
 
         #endregion Constructor Region
@@ -75,7 +78,7 @@ namespace EntityEngineV4.Input
             _lastKeyboardState = _keyboardState;
             _keyboardState = Keyboard.GetState();
 
-            _lastGamePadStates = (GamePadState[])_gamePadStates.Clone();
+            _lastGamePadStates = _gamePadStates;
             foreach (PlayerIndex index in Enum.GetValues(typeof(PlayerIndex)))
                 _gamePadStates[(int)index] = GamePad.GetState(index);
         }
@@ -90,6 +93,7 @@ namespace EntityEngineV4.Input
 
         public static void Flush()
         {
+            _keyboardState = Keyboard.GetState();
             _lastKeyboardState = _keyboardState;
             _lastGamePadStates = _gamePadStates;
         }

@@ -67,6 +67,8 @@ namespace EntityEngineV4.Input
         public Sticks Stick;
         public float Threshold;
 
+
+
         public GamePadAnalog(Entity parent, string name, Sticks stick, PlayerIndex pi)
             : base(parent, name)
         {
@@ -74,6 +76,9 @@ namespace EntityEngineV4.Input
             PlayerIndex = pi;
         }
 
+        public Vector2 Delta { get { return LastPosition - Position; } }
+
+        public Vector2 LastPosition { get; private set; }
         public Vector2 Position { get; private set; }
 
         public bool Left
@@ -99,6 +104,8 @@ namespace EntityEngineV4.Input
         public override void Update(GameTime gt)
         {
             base.Update(gt);
+            LastPosition = Position;
+
             switch (Stick)
             {
                 case Sticks.Left:
@@ -107,9 +114,7 @@ namespace EntityEngineV4.Input
                     break;
 
                 case Sticks.Right:
-                    Position =
-                        Position =
-                        new Vector2(InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.X,
+                    Position = new Vector2(InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.X,
                                     InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.Y);
                     break;
             }

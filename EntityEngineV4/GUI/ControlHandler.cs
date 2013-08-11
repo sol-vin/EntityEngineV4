@@ -9,7 +9,6 @@ namespace EntityEngineV4.GUI
 {
     public delegate void ControlEventHandler(Control c);
 
-    //TODO: Remove TabPosition, controls do not need to know their own tab position!
     public class ControlHandler : Service
     {
         private Control[,] _controls;
@@ -56,13 +55,13 @@ namespace EntityEngineV4.GUI
             {
                 if (control == null || !control.Active) continue;
 
-                if (control.Selectable && TestMouseCollision(control) && UseMouse)
+                if (UseMouse && control.Selectable && TestMouseCollision(control) )
                 {
                     if(CurrentControl != null)
                         CurrentControl.OnFocusLost(CurrentControl);
                     _currentcontrol = control.TabPosition;
                     control.OnFocusGain(control);
-                    if (MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton))
+                    if (MouseHandler.Cursor.Released())
                         control.Select();
                 }
             }
@@ -188,22 +187,6 @@ namespace EntityEngineV4.GUI
         public void Select()
         {
             CurrentControl.Select();
-        }
-
-        public void MouseCollisionUpdate()
-        {
-            foreach (var control in _controls)
-            {
-                if (control.Selectable && TestMouseCollision(control) && UseMouse)
-                {
-                    control.OnFocusGain(control);
-                    if (MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton))
-                        control.Select();
-                    break;
-                }
-                if (control.Selectable && control.HasFocus)
-                    control.OnFocusLost(control);
-            }
         }
 
         public bool TestMouseCollision(Control c)

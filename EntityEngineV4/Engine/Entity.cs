@@ -211,5 +211,14 @@ namespace EntityEngineV4.Engine
             }
             return null;
         }
+
+        public void Reset()
+        {
+            //Run our components destroys to ensure they are properly disposed.
+            if (DestroyEvent != null)
+                DestroyEvent(this);
+            //Clear it out just in case.
+            Clear();
+        }
     }
 }

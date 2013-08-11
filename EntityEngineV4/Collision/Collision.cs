@@ -97,8 +97,6 @@ namespace EntityEngineV4.Collision
         public Color DebugColor = Color.Magenta;
 
         public Shape Shape;
-
-        //TODO: Add this to the collision handler when pairing
         private bool _enabled = true;
 
         public bool Enabled
@@ -166,7 +164,7 @@ namespace EntityEngineV4.Collision
             : base(parent, name)
         {
             _collisionBody = collisionBody;
-            _collisionHandler = EntityGame.ActiveState.GetService<CollisionHandler>();
+            _collisionHandler = GetService<CollisionHandler>();
 
             _collisionPhysics = new Physics(Parent, name + ".Physics", _collisionBody);
 
@@ -220,29 +218,6 @@ namespace EntityEngineV4.Collision
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
-            if (Debug)
-            {
-                //TODO: Future update add primitives to this debug drawing method!
-                //TODO: Move this debug funtionality to Body!
-
-                //Draw our debug bounds.
-                Rectangle drawwindow;
-                //Draw top
-                drawwindow = new Rectangle(BoundingRect.X, BoundingRect.Y, BoundingRect.Width, 1);
-                sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
-
-                //Draw bottom
-                drawwindow = new Rectangle(BoundingRect.X, BoundingRect.Bottom, BoundingRect.Width, 1);
-                sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
-
-                //Draw left
-                drawwindow = new Rectangle(BoundingRect.X, BoundingRect.Y, 1, BoundingRect.Height);
-                sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
-
-                //Draw right
-                drawwindow = new Rectangle(BoundingRect.Right, BoundingRect.Y, 1, BoundingRect.Height);
-                sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
-            }
             _collidedWith.Clear();
         }
 

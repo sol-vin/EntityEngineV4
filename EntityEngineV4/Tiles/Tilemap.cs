@@ -1,5 +1,6 @@
 ﻿using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
+using EntityEngineV4.Input.MouseInput;
 using EntityEngineV4.Tiles.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,31 +9,83 @@ namespace EntityEngineV4.Tiles
 {
     public class Tilemap : Entity
     {
-        //TODO: Finish this
+        //TODO: Finish Tilemap
         public Body Body;
 
         public TilemapRender Render;
-        public TilemapData Data;
+
+        public event Tile.EventHandler TileSelected;
+
+        public Point Size { get { return Render.Size; } }
 
         public Tilemap(IComponent parent, string name, Texture2D tileTexture, Tile[,] tiles, Point tileSize)
             : base(parent, name)
         {
             Body = new Body(this, "Body");
-            Data = new TilemapData(tiles, tileSize, Body);
-            Render = new TilemapRender(this, "TilemapRender", tileTexture, Data);
+            Body.Width = tileSize.X*(tiles.GetUpperBound(0)+1);
+            Body.Height = tileSize.Y*(tiles.GetUpperBound(1) + 1);
+            Render = new TilemapRender(this, "TilemapRender", tileTexture, tiles, tileSize, Body);
         }
 
         public Tilemap(IComponent parent, string name, Texture2D tileTexture, Point size, Point tileSize)
             : base(parent, name)
         {
             Body = new Body(this, "Body");
-            Data = new TilemapData(size, tileSize, Body);
-            Render = new TilemapRender(this, "TilemapRender", tileTexture, Data);
+            Render = new TilemapRender(this, "TilemapRender", tileTexture, size, tileSize, Body);
         }
 
-        public void SetData(Point size, Point tileSize)
+        public override void Update(GameTime gt)
         {
-            Data = new TilemapData(size, tileSize, Body);
+            base.Update(gt);
+
+            if (MouseHandler.Cursor.Released())
+            {
+                //Get a tile, if it's null dont do anything
+                Tile t = GetTileByPosition(MouseHandler.Cursor.Position);
+                if (t.Index != Tile.EMPTY && TileSelected != null)
+                {
+                    TileSelected(t);
+                }
+            }
+        }
+
+        public Tile GetTileByPosition(Vector2 position)
+        {
+            if (!Render.DrawRect.Contains(new Point((int) position.X, (int) position.Y)))
+                return new Tile(Tile.EMPTY);
+            else
+            {
+                return Render.GetTileByPosition(position - Body.Position);
+            }
+        }
+
+        public Tile GetTile(int x, int y)
+        {
+            return Render.GetTile(x, y);
+        }
+
+        public Tile[,] GetTiles()
+        {
+            return Render.CloneTiles();
+        }
+        public void SetTile(int x, int y, Tile t)
+        {
+            Render.SetTile(x,y,t);
+        }
+
+        public void SetTile(int x, int y, short index)
+        {
+            Render.SetTile(x, y, index);
+        }
+
+        public void SetTile(Point p, Tile t)
+        {
+            SetTile(p.X, p.Y, t);
+        }
+
+        public void SetAllTiles(short index)
+        {
+            Render.SetAllTiles(index);
         }
     }
 }

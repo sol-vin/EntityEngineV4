@@ -59,10 +59,11 @@
     <Compile Include="Collision\Shapes\Shape.cs" />
     <Compile Include="Components\Rendering\TileRender.cs" />
     <Compile Include="Data\Camera.cs" />
-    <Compile Include="Data\Collections\Shufflebag.cs" />
+    <Compile Include="PowerTools\Collections\Shufflebag.cs" />
     <Compile Include="Data\Log.cs" />
     <Compile Include="Data\Path.cs" />
     <Compile Include="PowerTools\RandomHelper.cs" />
+    <Compile Include="PowerTools\SimpleBar.cs" />
     <Compile Include="PowerTools\TextureHelper.cs" />
     <Compile Include="PowerTools\Particle.cs" />
     <Compile Include="Engine\IComponent.cs" />
@@ -96,7 +97,6 @@
     <Compile Include="PowerTools\PowerTools.cs" />
     <Compile Include="Tiles\Tile.cs" />
     <Compile Include="Tiles\Tilemap.cs" />
-    <Compile Include="Tiles\TilemapData.cs" />
     <Compile Include="Tiles\Components\TilemapRender.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

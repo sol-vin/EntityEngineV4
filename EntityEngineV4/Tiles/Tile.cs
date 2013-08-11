@@ -5,10 +5,9 @@ namespace EntityEngineV4.Tiles
 {
     public class Tile
     {
+        public delegate void EventHandler(Tile t);
         public short Index;
         public const short EMPTY = -1;
-        public Color Color = Color.White;
-        public float Layer;
         public SpriteEffects Flip;
         public bool Solid;
 
@@ -16,6 +15,15 @@ namespace EntityEngineV4.Tiles
         {
             Index = index;
             Flip = SpriteEffects.None;
+            Solid = false;
+        }
+
+        public Tile Clone()
+        {
+            Tile t = new Tile(Index);
+            t.Flip = Flip;
+            t.Solid = Solid;
+            return t;
         }
     }
 }

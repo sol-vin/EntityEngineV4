@@ -237,6 +237,7 @@ namespace EntityEngineV4.Engine
 
         public static void Exit()
         {
+            Log.Write("Beginning Exit", Self, Alert.Info);
             ActiveState.Destroy();
             Game.Exit();
             Log.Write("Exited", Self, Alert.Info);
