@@ -8,6 +8,10 @@ namespace EntityEngineV4.Input
         private int _holdtime;
         private double _rapidfire;
 
+        public delegate void EventHandler(Input i);
+
+        public event EventHandler PressedEvent , ReleasedEvent , DownEvent , UpEvent;
+
         public Input(Entity entity, string name)
             : base(entity, name)
         {
@@ -72,6 +76,24 @@ namespace EntityEngineV4.Input
                     _holdtime = 0;
                 }
             }
+
+            //Checks to fire events
+            if (Up())
+            {
+                if (UpEvent != null) UpEvent(this);
+            }
+            else
+                if (DownEvent != null) DownEvent(this);
+
+            if (Pressed())
+            {
+                if (PressedEvent != null) PressedEvent(this);
+            }
+            if (Released())
+            {
+                if (ReleasedEvent != null) ReleasedEvent(this);
+            }
+
         }
     }
 }

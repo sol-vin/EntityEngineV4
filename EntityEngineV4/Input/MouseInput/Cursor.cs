@@ -1,3 +1,4 @@
+using System;
 using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
@@ -98,17 +99,17 @@ namespace EntityEngineV4.Input.MouseInput
 
     public class ControllerCursor : Cursor
     {
-        public GamePadInput SelectKey;
+        public GamepadInput SelectKey;
         public GamePadAnalog AnalogStick;
 
-        public GamePadInput UpKey, DownKey, LeftKey, RightKey;
+        public GamepadInput UpKey, DownKey, LeftKey, RightKey;
         public Vector2 MovementSpeed = new Vector2(3,3);
         
         public enum MovementInput { Analog, Buttons}
 
         /// <summary>
         /// What the controlling input should be.
-        /// If the Input is Analog, it will use the AnalogStick GamePadInput;
+        /// If the Input is Analog, it will use the AnalogStick GamepadInput;
         /// If the Input is Buttons, it will use the UpKey,DownKey, etc, etc, to define it's keys.
         /// </summary>
         public MovementInput Input;
@@ -116,7 +117,7 @@ namespace EntityEngineV4.Input.MouseInput
         /// <summary>
         /// Value for controlling if the ControllerCursor should switch if the Inputs if the Analog or Buttons are pressed
         /// </summary>
-        public bool AutoSwitchInputs = false;
+        public bool AutoSwitchInputs;
 
         /// <summary>
         /// Creates a new ControllerCursor with default values
@@ -161,7 +162,7 @@ namespace EntityEngineV4.Input.MouseInput
             switch (Input)
             {
                 case MovementInput.Analog:
-                    if (!HasFocus && AnalogStickMoved())
+                    if (!HasFocus && (AnalogStickMoved() || SelectKey.Down()))
                         OnGetFocus(this);
                     if (HasFocus)
                     {
@@ -184,7 +185,7 @@ namespace EntityEngineV4.Input.MouseInput
                     }
                     break;
                 case MovementInput.Buttons:
-                    if (!HasFocus && ButtonPressed())
+                    if (!HasFocus && ButtonPressed() || SelectKey.Down())
                         OnGetFocus(this);
                     if (HasFocus)
                     {
@@ -209,7 +210,6 @@ namespace EntityEngineV4.Input.MouseInput
                     }
                     break;
             }
-
             base.Update(gt);
         }
 
@@ -220,13 +220,11 @@ namespace EntityEngineV4.Input.MouseInput
 
         public override bool Pressed()
         {
-            EntityGame.Log.Write("Button pressed", this, Alert.Info);
             return SelectKey.Pressed();
         }
 
         public override bool Released()
         {
-            EntityGame.Log.Write("Button released", this, Alert.Info);
             return SelectKey.Released();
         }
 
@@ -248,12 +246,12 @@ namespace EntityEngineV4.Input.MouseInput
         //Default settings
         public void MakeDefault()
         {
-            SelectKey = new GamePadInput(this, "SelectKey", Buttons.A, PlayerIndex.One);
+            SelectKey = new GamepadInput(this, "SelectKey", Buttons.A, PlayerIndex.One);
             AnalogStick = new GamePadAnalog(this, "AnalogStick", Sticks.Right, PlayerIndex.One);
-            UpKey = new GamePadInput(this, "UpKey", Buttons.DPadUp, PlayerIndex.One);
-            DownKey = new GamePadInput(this, "DownKey", Buttons.DPadDown, PlayerIndex.One);
-            LeftKey = new GamePadInput(this, "LeftKey", Buttons.DPadLeft, PlayerIndex.One);
-            RightKey = new GamePadInput(this, "RightKey", Buttons.DPadRight, PlayerIndex.One);
+            UpKey = new GamepadInput(this, "UpKey", Buttons.DPadUp, PlayerIndex.One);
+            DownKey = new GamepadInput(this, "DownKey", Buttons.DPadDown, PlayerIndex.One);
+            LeftKey = new GamepadInput(this, "LeftKey", Buttons.DPadLeft, PlayerIndex.One);
+            RightKey = new GamepadInput(this, "RightKey", Buttons.DPadRight, PlayerIndex.One);
             Input = MovementInput.Analog;
         }
     }
@@ -267,7 +265,7 @@ namespace EntityEngineV4.Input.MouseInput
 
         public override void Update(GameTime gt)
         {
-            if(!HasFocus && MouseHandler.Delta != Point.Zero)
+            if(!HasFocus && (MouseHandler.Delta != Point.Zero || MouseHandler.IsMouseButtonDown(MouseButton.LeftButton)))
                 OnGetFocus(this);
             if(HasFocus)
             {

@@ -7,13 +7,13 @@ namespace EntityEngineV4.Input
     public sealed class DoubleInput : Input
     {
         public KeyboardInput Key;
-        public GamePadInput Button;
+        public GamepadInput Button;
 
         public DoubleInput(Entity parent, string name, Keys key, Buttons button, PlayerIndex pi)
             : base(parent, name)
         {
             Key = new KeyboardInput(parent, name + "key", key);
-            Button = new GamePadInput(parent, name + "gamepad", button, pi);
+            Button = new GamepadInput(parent, name + "gamepad", button, pi);
         }
 
         public override bool Pressed()

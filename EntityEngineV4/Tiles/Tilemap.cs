@@ -64,10 +64,11 @@ namespace EntityEngineV4.Tiles
             return Render.GetTile(x, y);
         }
 
-        public Tile[,] GetTiles()
+        public Tile[,] CloneTiles()
         {
             return Render.CloneTiles();
         }
+
         public void SetTile(int x, int y, Tile t)
         {
             Render.SetTile(x,y,t);
@@ -86,6 +87,11 @@ namespace EntityEngineV4.Tiles
         public void SetAllTiles(short index)
         {
             Render.SetAllTiles(index);
+        }
+
+        public void SetAllTiles(Tile tile)
+        {
+            Render.SetAllTiles(tile);
         }
     }
 }

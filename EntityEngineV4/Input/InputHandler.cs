@@ -78,7 +78,7 @@ namespace EntityEngineV4.Input
             _lastKeyboardState = _keyboardState;
             _keyboardState = Keyboard.GetState();
 
-            _lastGamePadStates = _gamePadStates;
+            _lastGamePadStates = (GamePadState[])_gamePadStates.Clone();
             foreach (PlayerIndex index in Enum.GetValues(typeof(PlayerIndex)))
                 _gamePadStates[(int)index] = GamePad.GetState(index);
         }

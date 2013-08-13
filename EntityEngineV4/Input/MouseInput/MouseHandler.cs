@@ -68,7 +68,7 @@ namespace EntityEngineV4.Input.MouseInput
             DestroyEvent += mc.Destroy;
             mc.OnGetFocus();
             AddEntity(mc);
-            AddEntity(new ControllerCursor(this, "MouseHandler.ControllerCursor", ControllerCursor.MovementInput.Buttons){AutoSwitchInputs = true});
+            AddEntity(new ControllerCursor(this, "MouseHandler.ControllerCursor", ControllerCursor.MovementInput.Buttons));
         }
 
         public override void Update(GameTime gt)

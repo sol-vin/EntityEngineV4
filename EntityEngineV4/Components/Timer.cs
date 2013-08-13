@@ -1,3 +1,4 @@
+using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
@@ -35,7 +36,19 @@ namespace EntityEngineV4.Components
         /// <summary>
         /// Milliseconds before the timer shoudl reset.
         /// </summary>
-        public int Milliseconds;
+        private int _millseconds;
+        public int Milliseconds { get { return _millseconds; } 
+            set
+            {
+                if(value < 0)
+                {
+                    EntityGame.Log.Write("Milliseconds was attempted to get a negative value!", this, Alert.Warning);
+                    _millseconds = 0;
+                    return;
+                }
+                _millseconds = value;
+            }
+        }
 
         public int CurrentMilliseconds
         {

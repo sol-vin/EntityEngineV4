@@ -123,6 +123,16 @@ namespace EntityEngineV4.Tiles.Components
             }
         }
 
+        public void SetAllTiles(Tile tile)
+        {
+            for (int x = 0; x < Size.X; x++)
+            {
+                for (int y = 0; y < Size.Y; y++)
+                {
+                    SetTile(x, y, tile.Clone());
+                }
+            }
+        }
         public Texture2D Texture { get; private set; }
 
         public int Columns { get { return (int)(Texture.Width / TileSize.X); } }
@@ -148,7 +158,7 @@ namespace EntityEngineV4.Tiles.Components
                     Tile t = GetTile(x, y);
                     if (t.Index <= Tile.EMPTY) continue; //Continue if the tile is empty
 
-                    sb.Draw(Texture, GetTileBoundingRect(x, y), GetSourceRect(x, y, t.Index), Color, 0,
+                    sb.Draw(Texture, GetTileBoundingRect(x, y), GetSourceRect(x, y, t.Index), t.Color, 0,
                             Vector2.Zero, t.Flip, Layer);
                 }
             }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EntityEngineV4.Data;
+using EntityEngineV4.PowerTools;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Tiles
@@ -8,6 +10,7 @@ namespace EntityEngineV4.Tiles
         public delegate void EventHandler(Tile t);
         public short Index;
         public const short EMPTY = -1;
+        public RGBColor Color;
         public SpriteEffects Flip;
         public bool Solid;
 
@@ -23,6 +26,7 @@ namespace EntityEngineV4.Tiles
             Tile t = new Tile(Index);
             t.Flip = Flip;
             t.Solid = Solid;
+            t.Color = Color;
             return t;
         }
     }

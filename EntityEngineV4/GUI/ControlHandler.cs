@@ -61,7 +61,16 @@ namespace EntityEngineV4.GUI
                         CurrentControl.OnFocusLost(CurrentControl);
                     _currentcontrol = control.TabPosition;
                     control.OnFocusGain(control);
-                    if (MouseHandler.Cursor.Released())
+
+                    if (MouseHandler.Cursor.Name == "MouseHandler.ControllerCursor")
+                    {
+                        ControllerCursor cc = (MouseHandler.Cursor as ControllerCursor);
+                        bool down = cc.Down();
+                        bool pressed = cc.Pressed();
+                        Console.WriteLine("YEAH");
+                    }
+
+                    if (MouseHandler.Cursor.Pressed())
                         control.Select();
                 }
             }

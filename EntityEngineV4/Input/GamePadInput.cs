@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Input;
 
 namespace EntityEngineV4.Input
 {
-    public sealed class GamePadInput : Input
+    public sealed class GamepadInput : Input
     {
         private readonly PlayerIndex _pi;
         private Buttons _button;
 
-        public GamePadInput(Entity e, string name, Buttons button, PlayerIndex pi)
+        public GamepadInput(Entity e, string name, Buttons button, PlayerIndex pi)
             : base(e, name)
         {
             _button = button;
@@ -23,7 +23,6 @@ namespace EntityEngineV4.Input
             set
             {
                 _button = value;
-                InputHandler.Flush();
             }
         }
 
