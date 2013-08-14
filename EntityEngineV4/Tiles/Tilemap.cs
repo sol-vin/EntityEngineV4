@@ -64,6 +64,11 @@ namespace EntityEngineV4.Tiles
             return Render.GetTile(x, y);
         }
 
+        public Tile[,] GetTiles()
+        {
+            return Render.GetTiles();
+        }
+
         public Tile[,] CloneTiles()
         {
             return Render.CloneTiles();

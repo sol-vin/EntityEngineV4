@@ -181,5 +181,10 @@ namespace EntityEngineV4.Tiles.Components
             source.Height = TileSize.Y;
             return source;
         }
+
+        public Tile[,] GetTiles()
+        {
+            return _tiles;
+        }
     }
 }
