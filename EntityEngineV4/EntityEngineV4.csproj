@@ -60,6 +60,8 @@
     <Compile Include="Components\Rendering\TileRender.cs" />
     <Compile Include="Data\Camera.cs" />
     <Compile Include="Data\Color.cs" />
+    <Compile Include="GUI\Button.cs" />
+    <Compile Include="GUI\TextButton.cs" />
     <Compile Include="Input\MouseInput\MouseInput.cs" />
     <Compile Include="PowerTools\Collections\Shufflebag.cs" />
     <Compile Include="Data\Log.cs" />

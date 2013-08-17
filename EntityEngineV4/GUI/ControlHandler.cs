@@ -51,29 +51,7 @@ namespace EntityEngineV4.GUI
 
         public override void Update(GameTime gt)
         {
-            foreach (var control in _controls)
-            {
-                if (control == null || !control.Active) continue;
-
-                if (UseMouse && control.Selectable && TestMouseCollision(control) )
-                {
-                    if(CurrentControl != null)
-                        CurrentControl.OnFocusLost(CurrentControl);
-                    _currentcontrol = control.TabPosition;
-                    control.OnFocusGain(control);
-
-                    if (MouseHandler.Cursor.Name == "MouseHandler.ControllerCursor")
-                    {
-                        ControllerCursor cc = (MouseHandler.Cursor as ControllerCursor);
-                        bool down = cc.Down();
-                        bool pressed = cc.Pressed();
-                        Console.WriteLine("YEAH");
-                    }
-
-                    if (MouseHandler.Cursor.Pressed())
-                        control.Select();
-                }
-            }
+            UpdateMouse();
         }
 
         public override void Draw(SpriteBatch sb)
@@ -193,14 +171,53 @@ namespace EntityEngineV4.GUI
             OnFocusChange(CurrentControl);
         }
 
-        public void Select()
+        public void Press()
         {
-            CurrentControl.Select();
+            CurrentControl.Press();
+        }
+
+        public void Release()
+        {
+            CurrentControl.Release();
+        }
+
+        public void Down()
+        {
+            CurrentControl.Down();
         }
 
         public bool TestMouseCollision(Control c)
         {
             return c.Body.BoundingRect.Contains(new Point((int)MouseHandler.Cursor.Position.X, (int)MouseHandler.Cursor.Position.Y));
+        }
+
+        public void UpdateMouse()
+        {
+            //TODO: Fix this so the controller can use the menus!
+             if (!UseMouse) return;
+            foreach (var control in _controls)
+            {
+                if (control == null || !control.Enabled || !control.Selectable) continue;
+
+                if (TestMouseCollision(control) )
+                {
+                    if(CurrentControl != null)
+                        CurrentControl.OnFocusLost(CurrentControl);
+                    _currentcontrol = control.TabPosition;
+                    control.OnFocusGain(control);
+                    if (MouseHandler.Cursor.Pressed())
+                        control.Press();
+                    else if (MouseHandler.Cursor.Released())
+                        control.Release();
+
+                    if (MouseHandler.Cursor.Down())
+                        control.Down();
+                }
+                else if (CurrentControl == control) //If control is the current control and it lost focus
+                {
+                    CurrentControl.OnFocusLost(control);
+                }
+            }
         }
 
         public Control GetControl(Point tabPosition)

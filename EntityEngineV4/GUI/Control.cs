@@ -9,6 +9,8 @@ namespace EntityEngineV4.GUI
 {
     public abstract class Control : Entity
     {
+        public delegate void EventHandler(Control b);
+
         public Body Body;
         public ControlHandler ControlHandler { get; private set; }
         /// <summary>
@@ -74,8 +76,6 @@ namespace EntityEngineV4.GUI
 
         public bool Attached { get { return ControlHandler.GetControl(TabPosition) == null; } }
 
-        public event ControlEventHandler Selected;
-
         protected Control(IComponent parent, string name)
             : base(parent, name)
         {
@@ -126,11 +126,22 @@ namespace EntityEngineV4.GUI
             HasFocus = true;
         }
 
-        public virtual void Select()
+        public event EventHandler OnPressed;
+        public virtual void Press()
         {
-            if (!Selectable) return;
-            if (Selected != null)
-                Selected(this);
+            if (OnPressed != null) OnPressed(this);
+        }
+
+        public event EventHandler OnReleased;
+        public virtual void Release()
+        {
+            if(OnReleased != null) OnReleased(this);
+        }
+
+        public event EventHandler OnDown;
+        public virtual void Down()
+        {
+            if (OnDown != null) OnDown(this);
         }
 
         public void AttachToControlHandler()

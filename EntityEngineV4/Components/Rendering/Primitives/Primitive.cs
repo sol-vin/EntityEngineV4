@@ -175,14 +175,14 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Height = height;
                 Fill = fill;
 
-                Origin = new Vector2(.5f, .5f);
+                Origin = new Vector2(0, 0);
             }
 
             public Rectangle(IComponent parent, string name, Body body, bool fill)
                 : base(parent, name, body)
             {
                 Fill = fill;
-                Origin = new Vector2(.5f, .5f);
+                Origin = new Vector2(0, 0);
             }
 
             public override void Draw(SpriteBatch sb)
@@ -214,7 +214,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 }
                 else
                 {
-                    sb.Draw(Assets.Pixel, new Vector2(X + Origin.X * Width, Y + Origin.Y * Height), null, Color * Alpha, Angle, Origin, Bounds - new Vector2(Thickness), Flip, Layer);
+                    sb.Draw(Assets.Pixel, new Vector2(X + Origin.X, Y + Origin.Y), null, Color * Alpha, Angle, Origin, Bounds, Flip, Layer);
                 }
             }
         }
