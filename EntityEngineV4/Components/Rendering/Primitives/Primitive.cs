@@ -158,9 +158,9 @@ namespace EntityEngineV4.Components.Rendering.Primitives
             {
                 get
                 {
-                    return new Microsoft.Xna.Framework.Rectangle((int)(X - Thickness / 2), (int)(Y - Thickness / 2),
-                                                                 (int)((X + Width + Thickness) * Scale.X),
-                                                                 (int)((Y + Height + Thickness) * Scale.Y));
+                    return new Microsoft.Xna.Framework.Rectangle((int)(X + Origin.X), (int)(Y + Origin.Y),
+                                                                 (int)(Bounds.X),
+                                                                 (int)(Bounds.Y));
                 }
             }
 
@@ -206,15 +206,15 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                     //seems to ignore origins when they are negative
                     //Right Line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx + 1, miny), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X * Bounds.X, Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
+                            new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X * Bounds.X, Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
 
                     //Bottom Line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X, Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
+                            new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X, Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
                 }
                 else
                 {
-                    sb.Draw(Assets.Pixel, new Vector2(X + Origin.X, Y + Origin.Y), null, Color * Alpha, Angle, Origin, Bounds, Flip, Layer);
+                    sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, Origin, Flip, Layer);
                 }
             }
         }
