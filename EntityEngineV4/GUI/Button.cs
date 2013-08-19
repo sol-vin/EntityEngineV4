@@ -13,9 +13,14 @@ namespace EntityEngineV4.GUI
 {
     public class Button : Control
     {
-        private ShapeTypes.Rectangle _bodyImage;
+        protected ShapeTypes.Rectangle _bodyImage;
 
-        public RGBColor NoFocusColor, FocusColor, DownColor;
+
+        public RGBColor RGBColor
+        {
+            get { return _bodyImage.Color.ToRGBColor(); }
+            set { _bodyImage.Color = value; }
+        }
 
         public Button(IComponent parent, string name, Vector2 position, Vector2 bounds, RGBColor color) : base(parent, name)
         {
@@ -26,28 +31,33 @@ namespace EntityEngineV4.GUI
             //Make our rectangles
             _bodyImage = new ShapeTypes.Rectangle(this, "BodyImage", Body, true);
             _bodyImage.Color = color;
-            NoFocusColor = color;
-            FocusColor = color;
-            DownColor = color;
         }
 
         public override void OnFocusGain(Control c)
         {
             base.OnFocusGain(c);
-            _bodyImage.Color = FocusColor;
         }
 
         public override void OnFocusLost(Control c)
         {
             base.OnFocusLost(c);
-            _bodyImage.Color = NoFocusColor;
         }
 
         public override void Down()
         {
             base.Down();
-            _bodyImage.Color = DownColor;
         }
 
+        /// <summary>
+        /// Changes the entity back to it's default configuration
+        /// </summary>
+        public void MakeDefault()
+        {
+            _bodyImage.Color = Color.White.ToRGBColor();
+            
+            FocusLost += c => RGBColor = Color.White.ToRGBColor();
+            FocusGain += c => RGBColor = Color.Red.ToRGBColor();
+            OnDown += c => RGBColor = Color.Green.ToRGBColor();
+        }
     }
 }

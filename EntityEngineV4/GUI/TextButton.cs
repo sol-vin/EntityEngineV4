@@ -19,8 +19,6 @@ namespace EntityEngineV4.GUI
         private ShapeTypes.Rectangle _bodyImage;
         private ShapeTypes.Rectangle _bodyOutline;
 
-        public RGBColor NoFocusColor, FocusColor, DownColor;
-
         public Vector2 Spacing = new Vector2(5,1);
 
         public string Text
@@ -35,6 +33,12 @@ namespace EntityEngineV4.GUI
                 _textBody.Position = new Vector2(Body.Position.X + Body.Bounds.X / 2 - _textBody.Bounds.X / 2,
                     Body.Position.Y + Body.Bounds.Y / 2 - _textBody.Bounds.Y / 2);
             }
+        }
+
+        public RGBColor RGBColor
+        {
+            get { return _bodyImage.Color.ToRGBColor(); }
+            set { _bodyImage.Color = value; }
         }
         
         public TextButton(IComponent parent, string name, Vector2 position, RGBColor color) :base(parent, name)
@@ -55,7 +59,6 @@ namespace EntityEngineV4.GUI
             //Make our rectangles
             _bodyImage = new ShapeTypes.Rectangle(this, "BodyImage", Body, true);
             _bodyImage.Color = color;
-            NoFocusColor = color;
         }
 
         public override void Update(GameTime gt)
@@ -71,19 +74,16 @@ namespace EntityEngineV4.GUI
         public override void OnFocusGain(Control c)
         {
             base.OnFocusGain(c);
-            _bodyImage.Color = FocusColor;
         }
 
         public override void OnFocusLost(Control c)
         {
             base.OnFocusLost(c);
-            _bodyImage.Color = NoFocusColor;
         }
 
         public override void Down()
         {
             base.Down();
-            _bodyImage.Color = DownColor;
         }
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace EntityEngineV4.GUI
         {
             _bodyImage.Color = Color.White.ToRGBColor();
             TextRender.Color = Color.Black.ToRGBColor();
-            NoFocusColor = Color.White.ToRGBColor();
-            FocusColor = Color.Red.ToRGBColor();
-            DownColor = Color.Green.ToRGBColor();
+            FocusLost += c => RGBColor = Color.White.ToRGBColor();
+            FocusGain += c => RGBColor = Color.Red.ToRGBColor();
+            OnDown += c => RGBColor = Color.Green.ToRGBColor();
         }
     }
 }

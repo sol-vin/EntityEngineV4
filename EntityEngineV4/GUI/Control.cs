@@ -72,7 +72,7 @@ namespace EntityEngineV4.GUI
 
         public float Width { get { return Body.Bounds.X; } set { Body.Bounds.X = value; } }
 
-        public float Height { get { return Body.Bounds.X; } set { Body.Bounds.Y = value; } }
+        public float Height { get { return Body.Bounds.Y; } set { Body.Bounds.Y = value; } }
 
         public bool Attached { get { return ControlHandler.GetControl(TabPosition) == null; } }
 
@@ -116,14 +116,20 @@ namespace EntityEngineV4.GUI
                 OnFocusLost(c);
         }
 
+        public event EventHandler FocusLost;
         public virtual void OnFocusLost(Control c)
         {
             HasFocus = false;
+            if(FocusLost != null)
+                FocusLost(c); 
         }
 
+        public event EventHandler FocusGain;
         public virtual void OnFocusGain(Control c)
         {
             HasFocus = true;
+            if(FocusGain != null)
+                FocusGain(c);
         }
 
         public event EventHandler OnPressed;
