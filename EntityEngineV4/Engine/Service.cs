@@ -1,5 +1,6 @@
 using System;
 using EntityEngineV4.Data;
+using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

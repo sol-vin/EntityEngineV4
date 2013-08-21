@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using EntityEngineV4.Engine;
 
-namespace EntityEngineV4.Data
+namespace EntityEngineV4.Engine.Debugging
 {
     public sealed class Alert
     {

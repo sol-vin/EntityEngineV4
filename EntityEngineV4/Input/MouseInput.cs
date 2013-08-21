@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EntityEngineV4.Engine;
-using Microsoft.Xna.Framework;
+﻿using EntityEngineV4.Engine;
 
-namespace EntityEngineV4.Input.MouseInput
+namespace EntityEngineV4.Input
 {
     public class MouseInput : Input
     {

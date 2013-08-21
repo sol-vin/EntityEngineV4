@@ -60,11 +60,12 @@
     <Compile Include="Components\Rendering\TileRender.cs" />
     <Compile Include="Data\Camera.cs" />
     <Compile Include="Data\Color.cs" />
+    <Compile Include="Engine\Debugging\DebugInfo.cs" />
+    <Compile Include="Engine\Debugging\Log.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\TextButton.cs" />
-    <Compile Include="Input\MouseInput\MouseInput.cs" />
+    <Compile Include="Input\MouseInput.cs" />
     <Compile Include="PowerTools\Collections\Shufflebag.cs" />
-    <Compile Include="Data\Log.cs" />
     <Compile Include="Data\Path.cs" />
     <Compile Include="PowerTools\RandomHelper.cs" />
     <Compile Include="PowerTools\SimpleBar.cs" />
@@ -95,8 +96,8 @@
     <Compile Include="Components\Rendering\ImageRender.cs" />
     <Compile Include="Components\Rendering\TextRender.cs" />
     <Compile Include="Components\Rendering\Animation.cs" />
-    <Compile Include="Input\MouseInput\MouseHandler.cs" />
-    <Compile Include="Input\MouseInput\Cursor.cs" />
+    <Compile Include="Input\MouseHandler.cs" />
+    <Compile Include="Input\Cursor.cs" />
     <Compile Include="GUI\ControlHandler.cs" />
     <Compile Include="PowerTools\PowerTools.cs" />
     <Compile Include="Tiles\Tile.cs" />

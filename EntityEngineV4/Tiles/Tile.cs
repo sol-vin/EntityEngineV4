@@ -1,6 +1,4 @@
 ﻿using EntityEngineV4.Data;
-using EntityEngineV4.PowerTools;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Tiles

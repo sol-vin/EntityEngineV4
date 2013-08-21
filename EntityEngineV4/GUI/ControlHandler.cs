@@ -1,14 +1,14 @@
 using System;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
-using EntityEngineV4.Input.MouseInput;
+using EntityEngineV4.Engine.Debugging;
+using EntityEngineV4.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.GUI
 {
     public delegate void ControlEventHandler(Control c);
-
     public class ControlHandler : Service
     {
         private Control[,] _controls;

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EntityEngineV4.Data;
 using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Data

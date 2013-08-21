@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace EntityEngineV4.Input.MouseInput
+namespace EntityEngineV4.Input
 {
     public class MouseHandler : Service
     {

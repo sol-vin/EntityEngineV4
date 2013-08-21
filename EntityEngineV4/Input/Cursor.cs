@@ -1,13 +1,13 @@
-using System;
 using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
+using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace EntityEngineV4.Input.MouseInput
+namespace EntityEngineV4.Input
 {
     public abstract class Cursor : Entity
     {

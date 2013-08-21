@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using EntityEngineV4.Data;
+using EntityEngineV4.Engine.Debugging;
 using EntityEngineV4.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,11 +13,25 @@ namespace EntityEngineV4.Engine
     {
         public static Camera Camera;
         public static EntityState ActiveState;
-        public static bool ShowFPS;
-        private readonly Label _fpslabel;
-        public Color BackgroundColor = Color.Silver;
-        private TimeSpan _elapsedTime = TimeSpan.Zero;
+
+        public static bool ShowDebugInfo;
+
+        private TimeSpan _frameCounterTimer = TimeSpan.Zero;
+        private TimeSpan _cpuCounterTimer = TimeSpan.Zero;
+
         private int _frameCounter;
+        public static int FrameRate { get; private set; }
+        public static float RamUsage {get { return _ramCounter.NextValue(); }}
+        public static float CpuUsage { get; private set; }
+
+        private static List<float> _cpuUsages = new List<float>();
+
+        //Find the cpu and ram usage
+        private static Process _selfProcess = Process.GetCurrentProcess();
+        private static PerformanceCounter _cpuCounter, _ramCounter;
+        private DebugInfo _debugInfo;
+
+        public Color BackgroundColor = Color.Silver;
 
         public static bool Paused { get; protected set; }
 
@@ -25,7 +42,7 @@ namespace EntityEngineV4.Engine
 
         public static SpriteBatch SpriteBatch { get; private set; }
         public static Rectangle Viewport { get; set; }
-        public int FrameRate { get; private set; }
+
 
         public static uint LastID { get; private set; }
         public IComponent Parent { get; private set; }
@@ -48,6 +65,9 @@ namespace EntityEngineV4.Engine
 
         public static EntityGame Self { get; private set; }
 
+
+
+
         private EntityGame(Game game, SpriteBatch spriteBatch)
         {
             Game = game;
@@ -56,10 +76,16 @@ namespace EntityEngineV4.Engine
             SpriteBatch = spriteBatch;
             Assets.LoadConent(game);
 
-            _fpslabel = new Label(null, "FPSLabel");
-            _fpslabel.Visible = false;
+            _debugInfo = new DebugInfo(null, "DebugInfo");
+            _debugInfo.Visible = false;
 
             Log = new Log();
+
+            //Start counters
+
+            Process p = Process.GetCurrentProcess();
+            _ramCounter = new PerformanceCounter("Process", "Working Set", p.ProcessName);
+            _cpuCounter = new PerformanceCounter("Process", "% Processor Time", p.ProcessName);
         }
 
         private EntityGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)
@@ -71,12 +97,15 @@ namespace EntityEngineV4.Engine
             Viewport = viewport;
             Assets.LoadConent(game);
 
-            _fpslabel = new Label(null, "FPSLabel");
-            _fpslabel.Visible = false;
+            _debugInfo = new DebugInfo(null, "DebugInfoLabel");
+            _debugInfo.Visible = false;
 
             Camera = new Camera(null, "EntityEngineDefaultCamera");
 
             Log = new Log();
+            Process p = Process.GetCurrentProcess();
+            _ramCounter = new PerformanceCounter("Process", "Working Set", p.ProcessName);
+            _cpuCounter = new PerformanceCounter("Process", "% Processor Time", p.ProcessName);
 
             MakeWindow(g, viewport);
         }
@@ -109,23 +138,38 @@ namespace EntityEngineV4.Engine
             Camera.Update();
             ActiveState.Update(gt);
 
-            _elapsedTime += gt.ElapsedGameTime;
+            _cpuUsages.Add(_cpuCounter.NextValue());
 
-            if (_elapsedTime > TimeSpan.FromSeconds(1))
+            _frameCounterTimer += gt.ElapsedGameTime;
+            _cpuCounterTimer += gt.ElapsedGameTime;
+
+            if (_frameCounterTimer > TimeSpan.FromSeconds(1))
             {
-                _elapsedTime -= TimeSpan.FromSeconds(1);
+                _frameCounterTimer -= TimeSpan.FromSeconds(1);
                 FrameRate = _frameCounter;
                 _frameCounter = 0;
+                
+            }
+            
+
+            if (_cpuCounterTimer > TimeSpan.FromSeconds(3))
+            {
+                _cpuCounterTimer -= TimeSpan.FromSeconds(5);
+                _cpuUsages.Clear();
+            }
+            else
+            {
+                //average cpu usages
+                float average = 0;
+                foreach (var cpuUsage in _cpuUsages)
+                {
+                    average += cpuUsage;
+                }
+                CpuUsage = average / _cpuUsages.Count;
             }
 
-            _fpslabel.Visible = ShowFPS;
-            if (ShowFPS)
-            {
-                _fpslabel.Update(gt);
-                _fpslabel.Text = FrameRate.ToString();
-                _fpslabel.Body.Position = new Vector2(Viewport.Width - _fpslabel.Body.Bounds.X - 10,
-                                                      Viewport.Height - _fpslabel.Body.Bounds.Y - 10);
-            }
+            _debugInfo.Visible = ShowDebugInfo;
+            _debugInfo.Update(gt);
         }
 
         public virtual void Draw(SpriteBatch sb = null)
@@ -143,8 +187,8 @@ namespace EntityEngineV4.Engine
             SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
                               DepthStencilState.None, RasterizerState.CullNone);
 
-            if (_fpslabel.Visible)
-                _fpslabel.Draw(SpriteBatch);
+            if (_debugInfo.Visible)
+                _debugInfo.Draw(SpriteBatch);
             SpriteBatch.End();
         }
 

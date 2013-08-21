@@ -1,4 +1,6 @@
-﻿using EntityEngineV4.Components;
+﻿using System.Collections.Generic;
+using System.Linq;
+using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
@@ -7,6 +9,8 @@ namespace EntityEngineV4.PowerTools
 {
     public class Particle : Entity
     {
+        public bool Destroyed = false;
+
         public int TimeToLive
         {
             get { return TimeToLiveTimer.Milliseconds; }
@@ -37,6 +41,7 @@ namespace EntityEngineV4.PowerTools
         public override void Destroy(IComponent i = null)
         {
             base.Destroy(i);
+            Destroyed = true;
         }
     }
 
@@ -76,8 +81,6 @@ namespace EntityEngineV4.PowerTools
         public bool AutoEmit;
         public int AutoEmitAmount = 1;
 
-        private delegate void ParticleHandler(Entity p);
-
         public Emitter(IComponent parent, string name)
             : base(parent, name)
         {
@@ -85,6 +88,7 @@ namespace EntityEngineV4.PowerTools
 
         public override void Update(GameTime gt)
         {
+            base.Update(gt);
             if (AutoEmit)
                 Emit(AutoEmitAmount);
         }

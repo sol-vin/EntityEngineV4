@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EntityEngineV4.Data;
+using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
-    public class Entity : List<IComponent>, IComponent
+    public class Entity : HashSet<IComponent>, IComponent
     {
         public IComponent Parent { get; private set; }
 
@@ -45,7 +46,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Update(GameTime gt)
         {
-            foreach (var component in ToArray().Where(c => c.Active))
+            foreach (var component in this.ToList().Where(c => c.Active))
             {
                 component.Update(gt);
             }
@@ -53,7 +54,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Draw(SpriteBatch sb)
         {
-            foreach (var component in ToArray().Where(c => c.Visible))
+            foreach (var component in this.ToList().Where(c => c.Visible))
             {
                 component.Draw(sb);
             }
