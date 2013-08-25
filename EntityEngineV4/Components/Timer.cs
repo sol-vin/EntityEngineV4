@@ -35,7 +35,7 @@ namespace EntityEngineV4.Components
         public double TickTime { get; protected set; }
 
         /// <summary>
-        /// Milliseconds before the timer shoudl reset.
+        /// Milliseconds before the timer should reset.
         /// </summary>
         private int _millseconds;
         public int Milliseconds { get { return _millseconds; } 
@@ -55,14 +55,7 @@ namespace EntityEngineV4.Components
         {
            get
            {
-               if (Alive)
-               {
-                   return (int)( EntityGame.GameTime.ElapsedGameTime.TotalMilliseconds - _lastseconds);
-               }
-               else
-               {
-                   return 0;
-               }
+               return (int)( EntityGame.GameTime.ElapsedGameTime.TotalMilliseconds - _lastseconds);
            }
         }
 
@@ -105,7 +98,7 @@ namespace EntityEngineV4.Components
             {
                 _tr = true;
                 OnLast();
-                Reset();
+                Reset(); //TODO: Ensure that removing this is ok :)
             }
             //TODO: Double check this works for timers still :)
             if (!Alive)

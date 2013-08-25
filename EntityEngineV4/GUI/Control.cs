@@ -75,7 +75,7 @@ namespace EntityEngineV4.GUI
 
         public float Height { get { return Body.Bounds.Y; } set { Body.Bounds.Y = value; } }
 
-        public bool Attached { get { return ControlHandler.GetControl(TabPosition) == null; } }
+        public bool Attached { get { return ControlHandler.GetControl(TabPosition) != null; } }
 
         protected Control(IComponent parent, string name)
             : base(parent, name)
@@ -89,8 +89,8 @@ namespace EntityEngineV4.GUI
                 ControlHandler = parent.GetService<ControlHandler>();
                 if (ControlHandler == null)
                 {
-                    EntityGame.Log.Write("ControlHandler was not found!", this, Alert.Error);
-                    throw new Exception("ControlHandler was not found!");
+                    EntityGame.Log.Write("ControlHandler was not found! Cannot attach to Service", this, Alert.Error);
+                    //throw new Exception("ControlHandler was not found!");
                 }
             }
             else if (parent != null && parent.GetType() == typeof(ControlHandler))
@@ -153,6 +153,12 @@ namespace EntityEngineV4.GUI
 
         public void AttachToControlHandler()
         {
+            if (ControlHandler == null)
+            {
+                //dont attach to a null service
+                EntityGame.Log.Write("Control attempted to attach to a null service!", Alert.Warning);
+                return;
+            }
             ControlHandler.AddControl(this);
         }
     }

@@ -37,9 +37,9 @@ namespace EntityEngineV4.Data
         /// <param name="p"></param>
         public void AddPoint(PathPoint p)
         {
-            p.Position = _lastposition++;
+            p.Rank = _lastposition++;
             _points.Add(p);
-            _points = _points.OrderBy(point => point.Position).ToList();
+            _points = _points.OrderBy(point => point.Rank).ToList();
         }
 
         public void RemovePoint(int position)
@@ -52,9 +52,9 @@ namespace EntityEngineV4.Data
         public void Insert(PathPoint p, int position)
         {
             if (position > _lastposition) _lastposition = position;
-            p.Position = _lastposition++;
+            p.Rank = _lastposition++;
             _points.Add(p);
-            _points = _points.OrderBy(point => point.Position).ToList();
+            _points = _points.OrderBy(point => point.Rank).ToList();
         }
 
         public void DrawDebug(SpriteBatch sb)
@@ -62,7 +62,7 @@ namespace EntityEngineV4.Data
             if (_points.Count < 2 && _points.Count > 0)
             {
                 //Only draw the one Point
-                var singlepoint = new DrawingTools.Point(First.X, First.Y);
+                var singlepoint = new DrawingTools.Point((int)First.X, (int)First.Y);
                 singlepoint.Thickness = 3;
                 singlepoint.Color = DebugPointColor;
                 singlepoint.Layer = 10;
@@ -70,7 +70,7 @@ namespace EntityEngineV4.Data
             else if (_points.Count < 0) return;
 
             //get our first line, then automate the rest.
-            var point1 = new DrawingTools.Point(First.X, First.Y);
+            var point1 = new DrawingTools.Point((int) First.X, (int) First.Y);
             point1.Thickness = 3;
             point1.Color = DebugPointColor;
             point1.Layer = 1;
@@ -81,7 +81,7 @@ namespace EntityEngineV4.Data
             line.Layer = 1f;
             line.Draw(sb);
 
-            var point2 = new DrawingTools.Point(_points[1].X, _points[1].Y);
+            var point2 = new DrawingTools.Point((int) _points[1].X, (int) _points[1].Y);
             point2.Thickness = 3;
             point2.Color = DebugPointColor;
             point2.Layer = 1;
@@ -92,7 +92,7 @@ namespace EntityEngineV4.Data
             {
                 point1 = point2;
 
-                point2 = new DrawingTools.Point(_points[i].X, _points[i].Y);
+                point2 = new DrawingTools.Point((int) _points[i].X, (int) _points[i].Y);
                 point2.Thickness = 3;
                 point2.Color = DebugPointColor;
                 point2.Layer = 1;
@@ -107,14 +107,18 @@ namespace EntityEngineV4.Data
 
     public struct PathPoint
     {
-        public int X, Y;
-        public int Position;
+        public float X, Y;
+        public int Rank;
+
+        public Vector2 Position { get { return new Vector2(X, Y); } set { X = value.X;
+            Y = value.Y;
+        } }
 
         public PathPoint(int x, int y)
         {
             X = x;
             Y = y;
-            Position = 0;
+            Rank = 0;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace EntityEngineV4.Collision
     /// </summary>
     public class CollisionHandler : Service
     {
+        //TODO: Fix AABBvsAABB collision bug
         public const int OVERLAP_BIAS = 4;
         public const int NONE = 0x0;
         public const int UP = 0x1;

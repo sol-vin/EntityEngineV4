@@ -113,11 +113,13 @@ namespace EntityEngineV4.Engine
         public static void MakeGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)
         {
             Self = new EntityGame(game, g, spriteBatch, viewport);
+            Self.Name = "EntityGame";
         }
 
         public static void MakeGame(Game game, SpriteBatch spriteBatch)
         {
             Self = new EntityGame(game, spriteBatch);
+            Self.Name = "EntityGame";
         }
 
         public void Destroy(IComponent i = null)
