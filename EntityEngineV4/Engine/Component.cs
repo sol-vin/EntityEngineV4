@@ -8,6 +8,14 @@ namespace EntityEngineV4.Engine
 {
     public class Component : IComponent
     {
+        /// <summary>
+        /// Controls the order of updating this component
+        /// </summary>
+        public float Order;
+        /// <summary>
+        /// Controls the order and depth of drawing this component
+        /// </summary>
+        public float Layer;
         public IComponent Parent { get; private set; }
 
         public delegate void EventHandler(Component i);

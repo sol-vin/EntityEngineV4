@@ -1,4 +1,5 @@
 using System;
+using EntityEngineV4.Engine.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -28,18 +29,17 @@ namespace EntityEngineV4.Engine
 
         event EventHandler DestroyEvent;
 
+       
         void Update(GameTime gt);
-
         void Draw(SpriteBatch sb);
 
         void Destroy(IComponent i = null);
 
         void AddComponent(Component c);
-
+        //T GetComponent<T>() where T : Component;
         void RemoveComponent(Component c);
 
         void AddEntity(Entity c);
-
         void RemoveEntity(Entity c);
 
         void AddService(Service s);

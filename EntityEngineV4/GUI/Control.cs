@@ -75,7 +75,7 @@ namespace EntityEngineV4.GUI
 
         public float Height { get { return Body.Bounds.Y; } set { Body.Bounds.Y = value; } }
 
-        public bool Attached { get { return ControlHandler.GetControl(TabPosition) != null; } }
+        public bool Attached { get { return ControlHandler.GetControl(TabPosition).Equals(this); } }
 
         protected Control(IComponent parent, string name)
             : base(parent, name)

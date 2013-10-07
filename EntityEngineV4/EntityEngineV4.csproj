@@ -19,6 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -62,6 +63,8 @@
     <Compile Include="Data\Color.cs" />
     <Compile Include="Engine\Debugging\DebugInfo.cs" />
     <Compile Include="Engine\Debugging\Log.cs" />
+    <Compile Include="Engine\Services\DrawService.cs" />
+    <Compile Include="Engine\Services\UpdateService.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\TextButton.cs" />
     <Compile Include="Input\MouseInput.cs" />
