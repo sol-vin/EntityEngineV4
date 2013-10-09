@@ -166,7 +166,8 @@ namespace EntityEngineV4.Collision
             _collisionBody = collisionBody;
             _collisionHandler = GetService<CollisionHandler>();
 
-            _collisionPhysics = new Physics(Parent, name + ".Physics", _collisionBody);
+            _collisionPhysics = new Physics(Parent, name + ".Physics");
+            _collisionPhysics.Link(Physics.DEPENDENCY_BODY, _collisionBody);
 
             Shape = shape;
             Shape.Collision = this;

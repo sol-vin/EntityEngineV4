@@ -18,13 +18,11 @@ namespace EntityEngineV4.Components
         public Vector2 Acceleration = Vector2.Zero;
         private Vector2 _force = Vector2.Zero;
 
-        //Dependencies
-        private Body _body;
-
-        public Physics(IComponent e, string name, Body body)
+        public Physics(IComponent e, string name)
             : base(e, name)
         {
-            _body = body;
+            //Add our dependency links
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
         public override void Update(GameTime gt)
@@ -35,13 +33,13 @@ namespace EntityEngineV4.Components
             Velocity *= Drag;
             AngularVelocity *= AngularVelocityDrag;
 
-            _body.Position += Velocity;
-            _body.Angle += AngularVelocity;
+            GetLink<Body>(DEPENDENCY_BODY).Position += Velocity;
+            GetLink<Body>(DEPENDENCY_BODY).Angle += AngularVelocity;
         }
 
         public void Thrust(float power)
         {
-            var angle = _body.Angle;
+            var angle = GetLink<Body>(DEPENDENCY_BODY).Angle;
             Thrust(power, angle);
         }
 
@@ -53,12 +51,12 @@ namespace EntityEngineV4.Components
 
         public void FaceVelocity()
         {
-            _body.Angle = (float)Math.Atan2(Velocity.X, -Velocity.Y);
+            GetLink<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(Velocity.X, -Velocity.Y);
         }
 
         public void FaceVelocity(Vector2 velocity)
         {
-            _body.Angle = (float)Math.Atan2(velocity.X, velocity.Y);
+            GetLink<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(velocity.X, velocity.Y);
         }
 
         public void AddForce(Vector2 force)
@@ -68,13 +66,17 @@ namespace EntityEngineV4.Components
 
         public Physics Clone()
         {
-            Physics p = new Physics(Parent, Name, _body);
+            Physics p = new Physics(Parent, Name);
             p.AngularVelocity = AngularVelocity;
             p.AngularVelocityDrag = AngularVelocityDrag;
             p.Drag = Drag;
             p.Velocity = Velocity;
             p.Acceleration = Acceleration;
+            p.Link(DEPENDENCY_BODY, GetLink(DEPENDENCY_BODY));
             return p;
         }
+
+        //Dependencies
+        public const int DEPENDENCY_BODY = 0;
     }
 }

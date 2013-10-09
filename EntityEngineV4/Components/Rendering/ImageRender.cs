@@ -12,7 +12,7 @@ namespace EntityEngineV4.Components.Rendering
         {
             get
             {
-                Vector2 position = Body.Position;
+                Vector2 position = GetLink<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
                     (int)((int)position.X + Origin.X * Scale.X),
                     (int)((int)position.Y + Origin.Y * Scale.Y),
@@ -34,22 +34,20 @@ namespace EntityEngineV4.Components.Rendering
             get { return new Rectangle(0, 0, Texture.Width, Texture.Height); }
         }
 
-        //Dependencies
-        protected Body Body;
 
-        public ImageRender(Entity e, string name, Body body)
+        public ImageRender(Entity e, string name)
             : base(e, name)
         {
             Origin = new Vector2(.5f, .5f);
-            Body = body;
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
-        public ImageRender(Entity e, string name, Texture2D texture, Body body)
+        public ImageRender(Entity e, string name, Texture2D texture)
             : base(e, name)
         {
             Texture = texture;
             Origin = new Vector2(.5f, .5f);
-            Body = body;
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
         public override void Draw(SpriteBatch sb)
@@ -58,12 +56,15 @@ namespace EntityEngineV4.Components.Rendering
                 DrawRect.Bottom > EntityGame.Camera.ScreenSpace.X ||
                 DrawRect.Right > EntityGame.Camera.ScreenSpace.Y ||
                 DrawRect.Left < EntityGame.Camera.ScreenSpace.Width)
-                sb.Draw(Texture, DrawRect, null, Color * Alpha, Body.Angle, Origin, Flip, Layer);
+                sb.Draw(Texture, DrawRect, null, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle, Origin, Flip, Layer);
         }
 
         public void LoadTexture(string location)
         {
             Texture = EntityGame.Game.Content.Load<Texture2D>(location);
         }
+
+        //Dependencies
+        public const int DEPENDENCY_BODY = 0;
     }
 }

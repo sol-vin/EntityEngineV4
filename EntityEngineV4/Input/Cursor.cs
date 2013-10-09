@@ -3,6 +3,7 @@ using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using EntityEngineV4.Engine.Debugging;
+using EntityEngineV4.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -47,7 +48,8 @@ namespace EntityEngineV4.Input
             Body.Position = new Vector2(400, 300);
 
             //Default rendering is a single white pixel.
-            Render = new ImageRender(this, "ImageRender", Assets.Pixel, Body);
+            Render = new ImageRender(this, "ImageRender", Assets.Pixel);
+            Render.Link(ImageRender.DEPENDENCY_BODY, Body);
             Render.Layer = 1f;
             Render.Scale = Vector2.One * 3f;
             Render.Color = Color.Black;

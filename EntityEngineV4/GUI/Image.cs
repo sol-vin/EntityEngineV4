@@ -10,7 +10,8 @@ namespace EntityEngineV4.GUI
         public Image(ControlHandler parent, string name, Texture2D texture)
             : base(parent, name)
         {
-            ImageRender = new ImageRender(this, "ImageRender", texture, Body);
+            ImageRender = new ImageRender(this, "ImageRender", texture);
+            ImageRender.Link(ImageRender.DEPENDENCY_BODY, Body);
             Selectable = false;
         }
     }

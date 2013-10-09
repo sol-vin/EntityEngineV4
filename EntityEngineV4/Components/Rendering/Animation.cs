@@ -46,7 +46,7 @@ namespace EntityEngineV4.Components.Rendering
         {
             get
             {
-                Vector2 position = Body.Position;
+                Vector2 position = GetLink<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
                     (int)(position.X + Origin.X * Scale.X),
                     (int)(position.Y + Origin.Y * Scale.Y),
@@ -56,7 +56,7 @@ namespace EntityEngineV4.Components.Rendering
         }
 
         public Animation(Entity e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond, Body body)
-            : base(e, name, texture, body)
+            : base(e, name, texture)
         {
             TileSize = tileSize;
             FramesPerSecond = framesPerSecond;
@@ -68,7 +68,7 @@ namespace EntityEngineV4.Components.Rendering
         }
 
         public Animation(Entity e, string name, Body body)
-            : base(e, name, body)
+            : base(e, name)
         {
             FrameTimer = new Timer(e, Name + ".FrameTimer");
             FrameTimer.LastEvent += AdvanceNextFrame;
@@ -86,7 +86,7 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(Texture, DrawRect, CurrentFrameRect, Color * Alpha, Body.Angle,
+            sb.Draw(Texture, DrawRect, CurrentFrameRect, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle,
                     Origin, Flip, Layer);
         }
 
@@ -113,5 +113,8 @@ namespace EntityEngineV4.Components.Rendering
         {
             FrameTimer.Stop();
         }
+
+        //Dependencies
+        public const int DEPENDENCY_BODY = 0;
     }
 }
