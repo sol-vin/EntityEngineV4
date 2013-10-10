@@ -35,22 +35,22 @@ namespace EntityEngineV4.Input
 
         public override bool Pressed()
         {
-            return InputHandler.ButtonPressed(Button, PlayerIndex);
+            return InputService.ButtonPressed(Button, PlayerIndex);
         }
 
         public override bool Released()
         {
-            return InputHandler.ButtonReleased(Button, PlayerIndex);
+            return InputService.ButtonReleased(Button, PlayerIndex);
         }
 
         public override bool Down()
         {
-            return InputHandler.ButtonDown(Button, PlayerIndex);
+            return InputService.ButtonDown(Button, PlayerIndex);
         }
 
         public override bool Up()
         {
-            return InputHandler.ButtonUp(Button, PlayerIndex);
+            return InputService.ButtonUp(Button, PlayerIndex);
         }
     }
 
@@ -108,13 +108,13 @@ namespace EntityEngineV4.Input
             switch (Stick)
             {
                 case Sticks.Left:
-                    Position = new Vector2(InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Left.X,
-                                           InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Left.Y);
+                    Position = new Vector2(InputService.GamePadStates[(int)PlayerIndex].ThumbSticks.Left.X,
+                                           InputService.GamePadStates[(int)PlayerIndex].ThumbSticks.Left.Y);
                     break;
 
                 case Sticks.Right:
-                    Position = new Vector2(InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.X,
-                                    InputHandler.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.Y);
+                    Position = new Vector2(InputService.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.X,
+                                    InputService.GamePadStates[(int)PlayerIndex].ThumbSticks.Right.Y);
                     break;
             }
         }
@@ -175,11 +175,11 @@ namespace EntityEngineV4.Input
             switch (Trigger)
             {
                 case Triggers.Left:
-                    Value = InputHandler.GamePadStates[(int)PlayerIndex].Triggers.Left;
+                    Value = InputService.GamePadStates[(int)PlayerIndex].Triggers.Left;
                     break;
 
                 case Triggers.Right:
-                    Value = InputHandler.GamePadStates[(int)PlayerIndex].Triggers.Right;
+                    Value = InputService.GamePadStates[(int)PlayerIndex].Triggers.Right;
                     break;
             }
         }

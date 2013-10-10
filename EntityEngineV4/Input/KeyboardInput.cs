@@ -17,7 +17,7 @@ namespace EntityEngineV4.Input
             set
             {
                 _key = value;
-                InputHandler.Flush();
+                InputService.Flush();
             }
         }
 
@@ -29,22 +29,22 @@ namespace EntityEngineV4.Input
 
         public override bool Pressed()
         {
-            return InputHandler.KeyPressed(Key);
+            return InputService.KeyPressed(Key);
         }
 
         public override bool Released()
         {
-            return InputHandler.KeyReleased(Key);
+            return InputService.KeyReleased(Key);
         }
 
         public override bool Down()
         {
-            return InputHandler.KeyDown(Key);
+            return InputService.KeyDown(Key);
         }
 
         public override bool Up()
         {
-            return InputHandler.KeyUp(Key);
+            return InputService.KeyUp(Key);
         }
     }
 }

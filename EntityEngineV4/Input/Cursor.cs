@@ -67,9 +67,9 @@ namespace EntityEngineV4.Input
             if (GotFocus != null) GotFocus(this);
 
             //Get the Cursor's position and set it to our own for seamless changing.
-            if(MouseHandler.Cursor != null)
-                Position = MouseHandler.Cursor.Position;
-            MouseHandler.Cursor = this;
+            if(MouseService.Cursor != null)
+                Position = MouseService.Cursor.Position;
+            MouseService.Cursor = this;
             HasFocus = true;
 
             Visible = true;
@@ -94,7 +94,7 @@ namespace EntityEngineV4.Input
             if (HasFocus)
             {
                 HasFocus = false;
-                MouseHandler.Cursor = null;
+                MouseService.Cursor = null;
             }
         }
     }
@@ -267,11 +267,11 @@ namespace EntityEngineV4.Input
 
         public override void Update(GameTime gt)
         {
-            if(!HasFocus && (MouseHandler.Delta != Point.Zero || MouseHandler.IsMouseButtonDown(MouseButton.LeftButton)))
+            if(!HasFocus && (MouseService.Delta != Point.Zero || MouseService.IsMouseButtonDown(MouseButton.LeftButton)))
                 OnGetFocus(this);
             if(HasFocus)
             {
-                Position = new Vector2(Position.X - MouseHandler.Delta.X, Position.Y - MouseHandler.Delta.Y);
+                Position = new Vector2(Position.X - MouseService.Delta.X, Position.Y - MouseService.Delta.Y);
 
                 //Move it with the camera.
                 Position += EntityGame.Camera.Delta;
@@ -291,22 +291,22 @@ namespace EntityEngineV4.Input
 
         public override bool Down()
         {
-            return MouseHandler.IsMouseButtonDown(MouseButton.LeftButton);
+            return MouseService.IsMouseButtonDown(MouseButton.LeftButton);
         }
 
         public override bool Pressed()
         {
-            return MouseHandler.IsMouseButtonPressed(MouseButton.LeftButton);
+            return MouseService.IsMouseButtonPressed(MouseButton.LeftButton);
         }
 
         public override bool Released()
         {
-            return MouseHandler.IsMouseButtonReleased(MouseButton.LeftButton);
+            return MouseService.IsMouseButtonReleased(MouseButton.LeftButton);
         }
 
         public override bool Up()
         {
-            return MouseHandler.IsMouseButtonUp(MouseButton.LeftButton);
+            return MouseService.IsMouseButtonUp(MouseButton.LeftButton);
         }
 
         public override void Draw(SpriteBatch sb)

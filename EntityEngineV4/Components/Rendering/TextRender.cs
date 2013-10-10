@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,7 +15,7 @@ namespace EntityEngineV4.Components.Rendering
             get
             {
                 Vector2 position;
-                position = _body.Position;
+                position = GetLink<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle((int)position.X, (int)position.Y, (int)(Bounds.X), (int)(Bounds.Y));
             }
         }
@@ -24,32 +25,32 @@ namespace EntityEngineV4.Components.Rendering
             get { return new Vector2(Font.MeasureString(Text).X * Scale.X, Font.MeasureString(Text).Y * Scale.Y); }
         }
 
-        //Dependencies
-        private Body _body;
-
-        public TextRender(Entity entity, string name, Body body)
+        public TextRender(Entity entity, string name)
             : base(entity, name)
         {
-            _body = body;
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
-        public TextRender(Entity entity, string name, SpriteFont font, string text, Body body)
+        public TextRender(Entity entity, string name, SpriteFont font, string text)
             : base(entity, name)
         {
             Text = text;
             Font = font;
-            _body = body;
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
         public override void Draw(SpriteBatch sb)
         {
             if (EntityGame.Camera.ScreenSpace.Intersects(DrawRect))
-                sb.DrawString(Font, Text, _body.Position + Origin, Color * Alpha, _body.Angle, Origin, Scale, Flip, Layer);
+                sb.DrawString(Font, Text, GetLink<Body>(DEPENDENCY_BODY).Position + Origin, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle, Origin, Scale, Flip, Layer);
         }
 
         public void LoadFont(string location)
         {
             Font = EntityGame.Game.Content.Load<SpriteFont>(location);
         }
+
+        //dependencies
+        public const int DEPENDENCY_BODY = 0;
     }
 }

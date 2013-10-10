@@ -89,7 +89,7 @@ namespace EntityEngineV4.Input
             {
                 if (PressedEvent != null) PressedEvent(this);
             }
-            if (Released())
+            else if (Released())
             {
                 if (ReleasedEvent != null) ReleasedEvent(this);
             }

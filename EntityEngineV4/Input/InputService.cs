@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace EntityEngineV4.Input
 {
-    public class InputHandler : Service
+    public class InputService : Service
     {
         public static GameTime GameTime { get; private set; }
 
@@ -54,8 +54,8 @@ namespace EntityEngineV4.Input
 
         #region Constructor Region
 
-        public InputHandler(EntityState stateref)
-            : base(stateref, "InputHandler")
+        public InputService(EntityState stateref)
+            : base(stateref, "InputService")
         {
             _keyboardState = Keyboard.GetState();
             _lastKeyboardState = Keyboard.GetState();

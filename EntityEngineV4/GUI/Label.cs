@@ -26,9 +26,11 @@ namespace EntityEngineV4.GUI
         public Label(IComponent parent, string name)
             : base(parent, name)
         {
-            TextRender = new TextRender(this, "TextRender", Assets.Font, name, Body);
+            TextRender = new TextRender(this, "TextRender", Assets.Font, name);
+            TextRender.Link(TextRender.DEPENDENCY_BODY, Body);
             TextRender.Text = name;
             TextRender.Layer = 1f;
+
             Body.Bounds = TextRender.Font.MeasureString(Text);
             TextRender.Color = Color.Black;
             Selectable = false;

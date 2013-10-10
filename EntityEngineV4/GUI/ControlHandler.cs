@@ -42,7 +42,7 @@ namespace EntityEngineV4.GUI
             UseMouse = useMouse;
 
             //Check to see if the mouse service is present, if not, log and disable mouse
-            if (!stateref.CheckService<MouseHandler>())
+            if (!stateref.CheckService<MouseService>())
             {
                 UseMouse = false;
                 EntityGame.Log.Write("Mouse was disabled on this state, switching UseMouse to false. Next time, please specify UseMouse in constructor", this, Alert.Warning);
@@ -188,7 +188,7 @@ namespace EntityEngineV4.GUI
 
         public bool TestMouseCollision(Control c)
         {
-            return c.Body.BoundingRect.Contains(new Point((int)MouseHandler.Cursor.Position.X, (int)MouseHandler.Cursor.Position.Y));
+            return c.Body.BoundingRect.Contains(new Point((int)MouseService.Cursor.Position.X, (int)MouseService.Cursor.Position.Y));
         }
 
         public void UpdateMouse()
@@ -205,12 +205,12 @@ namespace EntityEngineV4.GUI
                         CurrentControl.OnFocusLost(CurrentControl);
                     _currentcontrol = control.TabPosition;
                     control.OnFocusGain(control);
-                    if (MouseHandler.Cursor.Pressed())
+                    if (MouseService.Cursor.Pressed())
                         control.Press();
-                    else if (MouseHandler.Cursor.Released())
+                    else if (MouseService.Cursor.Released())
                         control.Release();
 
-                    if (MouseHandler.Cursor.Down())
+                    if (MouseService.Cursor.Down())
                         control.Down();
                 }
                 else if (CurrentControl == control) //If control is the current control and it lost focus

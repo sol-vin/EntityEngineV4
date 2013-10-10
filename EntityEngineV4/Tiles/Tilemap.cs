@@ -41,10 +41,10 @@ namespace EntityEngineV4.Tiles
         {
             base.Update(gt);
 
-            if (MouseHandler.Cursor.Released())
+            if (MouseService.Cursor.Released())
             {
                 //Get a tile, if it's null dont do anything
-                Tile t = GetTileByPosition(MouseHandler.Cursor.Position);
+                Tile t = GetTileByPosition(MouseService.Cursor.Position);
                 if (t.Index != Tile.EMPTY && TileSelected != null)
                 {
                     TileSelected(t);

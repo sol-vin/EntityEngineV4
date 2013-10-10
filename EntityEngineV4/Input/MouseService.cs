@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace EntityEngineV4.Input
 {
-    public class MouseHandler : Service
+    public class MouseService : Service
     {
         public static Cursor _cursor;
         public static Cursor Cursor
@@ -50,8 +50,8 @@ namespace EntityEngineV4.Input
 
         public static Point Delta { get; private set; }
 
-        public MouseHandler(EntityState stateref, bool useDefaultCursors = false)
-            : base(stateref, "MouseHandler")
+        public MouseService(EntityState stateref, bool useDefaultCursors = false)
+            : base(stateref, "MouseService")
         {
             if (!useDefaultCursors)
             {
@@ -64,11 +64,11 @@ namespace EntityEngineV4.Input
 
         public void AddDefaultCursors()
         {
-            MouseCursor mc = new MouseCursor(this, "MouseHandler.MouseCursor");
+            MouseCursor mc = new MouseCursor(this, "MouseService.MouseCursor");
             DestroyEvent += mc.Destroy;
             mc.OnGetFocus();
             AddEntity(mc);
-            AddEntity(new ControllerCursor(this, "MouseHandler.ControllerCursor", ControllerCursor.MovementInput.Buttons));
+            AddEntity(new ControllerCursor(this, "MouseService.ControllerCursor", ControllerCursor.MovementInput.Buttons));
         }
 
         public override void Update(GameTime gt)

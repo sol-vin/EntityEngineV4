@@ -6,6 +6,10 @@ namespace EntityEngineV4.Data
 {
     public class Camera : Entity
     {
+        //TODO: Add rotation to camera
+        //TODO: Add collision detection to OBB for camera 
+        //      ^to test if it should render an object or not
+
         public readonly Vector2 DEFAULTVIEW = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);
 
         public Vector2 LastPosition { get; private set; }
@@ -17,7 +21,7 @@ namespace EntityEngineV4.Data
 
         public Rectangle DeadZone;
 
-        public enum FollowStyles
+        public enum FollowStyle
         {
             LockOn, Lerp
         }
@@ -72,6 +76,12 @@ namespace EntityEngineV4.Data
         public void View()
         {
             EntityGame.Camera = this;
+        }
+
+        public bool Intersects(Rectangle rect)
+        {
+            //TODO: Add OBB collision code here
+            return ScreenSpace.Intersects(rect);
         }
 
         public void FollowPoint(Body b)

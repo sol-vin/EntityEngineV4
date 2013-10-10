@@ -86,7 +86,7 @@
     <Compile Include="Input\DoubleInput.cs" />
     <Compile Include="Input\GamePadInput.cs" />
     <Compile Include="Input\Input.cs" />
-    <Compile Include="Input\InputHandler.cs" />
+    <Compile Include="Input\InputService.cs" />
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Data\Assets.cs" />
     <Compile Include="Components\Body.cs" />
@@ -98,7 +98,7 @@
     <Compile Include="Components\Rendering\ImageRender.cs" />
     <Compile Include="Components\Rendering\TextRender.cs" />
     <Compile Include="Components\Rendering\Animation.cs" />
-    <Compile Include="Input\MouseHandler.cs" />
+    <Compile Include="Input\MouseService.cs" />
     <Compile Include="Input\Cursor.cs" />
     <Compile Include="GUI\ControlHandler.cs" />
     <Compile Include="PowerTools\PowerTools.cs" />
