@@ -17,10 +17,22 @@ namespace EntityEngineV4.Engine
         /// Controls the order and depth of drawing this component
         /// </summary>
         public float Layer;
+
+        /// <summary>
+        /// If the Initialize() method has been called since it's creation
+        /// </summary>
+        public bool IsInitialized { get; private set; }
+
+        /// <summary>
+        /// Parent of this component
+        /// </summary>
         public IComponent Parent { get; private set; }
 
         public delegate void EventHandler(Component i);
 
+        /// <summary>
+        /// Used to subscribe this to it's parent's AddComponent()
+        /// </summary>
         public event EventHandler AddComponentEvent;
 
         public event EventHandler RemoveComponentEvent;
@@ -53,6 +65,8 @@ namespace EntityEngineV4.Engine
             Visible = true;
             parent.AddComponent(this);
             Id = EntityGame.GetID();
+
+            CreateDependencyList();
         }
 
         public Component(IComponent parent, string name)
@@ -67,10 +81,18 @@ namespace EntityEngineV4.Engine
                 e.AddComponent(this);
             }
             Id = EntityGame.GetID();
+
+            CreateDependencyList();
+        }
+
+        public virtual void Initialize()
+        {
+            IsInitialized = true;
         }
 
         public virtual void Update(GameTime gt)
         {
+            if(!IsInitialized) Initialize();
         }
 
         public virtual void Draw(SpriteBatch sb = null)
@@ -295,6 +317,11 @@ namespace EntityEngineV4.Engine
         {
             if(_linkTypes[index] == null) throw new IndexOutOfRangeException();
             return _linkTypes[index];
+        }
+
+        public virtual void CreateDependencyList()
+        {
+            
         }
     }
 }

@@ -23,7 +23,8 @@ namespace EntityEngineV4.GUI
 
 
             //Make our rectangles
-            _bodyImage = new ShapeTypes.Rectangle(this, "BodyImage", Body, true);
+            _bodyImage = new ShapeTypes.Rectangle(this, "BodyImage", true);
+            _bodyImage.Link(ShapeTypes.Rectangle.DEPENDENCY_BODY, Body);
             _bodyImage.Color = color;
         }
 

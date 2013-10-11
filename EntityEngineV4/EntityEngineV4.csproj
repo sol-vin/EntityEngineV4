@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Components\VectorComponent.cs" />
     <Compile Include="Components\Rendering\Primitives\Primitive.cs" />
     <Compile Include="Components\Rendering\SourceAnimation.cs" />
     <Compile Include="Data\Bitmask.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="PowerTools\RandomHelper.cs" />
     <Compile Include="PowerTools\SimpleBar.cs" />
     <Compile Include="PowerTools\TextureHelper.cs" />
-    <Compile Include="PowerTools\Particle.cs" />
+    <Compile Include="Components\Spawner.cs" />
     <Compile Include="Engine\IComponent.cs" />
     <Compile Include="Engine\Component.cs" />
     <Compile Include="Engine\Entity.cs" />

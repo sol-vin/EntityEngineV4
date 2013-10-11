@@ -21,8 +21,6 @@ namespace EntityEngineV4.Components
         public Physics(IComponent e, string name)
             : base(e, name)
         {
-            //Add our dependency links
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
         public override void Update(GameTime gt)
@@ -78,5 +76,10 @@ namespace EntityEngineV4.Components
 
         //Dependencies
         public const int DEPENDENCY_BODY = 0;
+        public override void CreateDependencyList()
+        {
+            base.CreateDependencyList();
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace EntityEngineV4.Engine
         private static PerformanceCounter _cpuCounter, _ramCounter;
         private DebugInfo _debugInfo;
 
-        public Color BackgroundColor = Color.Silver;
+        public static Color BackgroundColor = Color.Silver;
 
         public static bool Paused { get; protected set; }
 

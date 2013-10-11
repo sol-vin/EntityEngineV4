@@ -10,26 +10,11 @@ namespace EntityEngineV4.Components.Rendering.Primitives
     {
         public abstract class Primitive : Render
         {
-            public Body Body;
-
             public float Thickness = 1;
 
             protected Primitive(IComponent parent, string name)
                 : base(parent, name)
             {
-                Body = new Body(this, "Primitive.Body");
-            }
-
-            protected Primitive(IComponent parent, string name, Vector2 pos)
-                : base(parent, name)
-            {
-                Body = new Body(this, "Primitive.Body", pos);
-            }
-
-            protected Primitive(IComponent parent, string name, Body body)
-                : base(parent, name)
-            {
-                Body = body;
             }
 
             public static void DrawLine(SpriteBatch sb, Vector2 p1, Vector2 p2, float thickness, float layer, Color color)
@@ -41,15 +26,24 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                         angle, Vector2.Zero, new Vector2(length, thickness),
                         SpriteEffects.None, layer);
             }
+
+            //Dependencies
+            public const int DEPENDENCY_BODY = 0;
+
+            public override void CreateDependencyList()
+            {
+                base.CreateDependencyList();
+                AddLinkType(DEPENDENCY_BODY, typeof(Body));
+            }
         }
 
         public class Point : Primitive
         {
-            public float X { get { return Body.X; } set { Body.X = value; } }
+            public float X { get { return GetLink<Body>(DEPENDENCY_BODY).X; } set { GetLink<Body>(DEPENDENCY_BODY).X = value; } }
 
-            public float Y { get { return Body.Y; } set { Body.Y = value; } }
+            public float Y { get { return GetLink<Body>(DEPENDENCY_BODY).Y; } set { GetLink<Body>(DEPENDENCY_BODY).Y = value; } }
 
-            public float Angle { get { return Body.Angle; } set { Body.Angle = value; } }
+            public float Angle { get { return GetLink<Body>(DEPENDENCY_BODY).Angle; } set { GetLink<Body>(DEPENDENCY_BODY).Angle = value; } }
 
             public override Microsoft.Xna.Framework.Rectangle DrawRect
             {
@@ -68,8 +62,8 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Y = y;
             }
 
-            public Point(IComponent parent, string name, Body body)
-                : base(parent, name, body)
+            public Point(IComponent parent, string name)
+                : base(parent, name)
             {
             }
 
@@ -77,6 +71,14 @@ namespace EntityEngineV4.Components.Rendering.Primitives
             {
                 base.Draw(sb);
                 sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, new Vector2(DrawRect.Width / 2f, DrawRect.Height / 2f), Flip, Layer);
+            }
+
+            //Dependencies
+            public const int DEPENDENCY_POINT = 0;
+
+            public override void CreateDependencyList()
+            {
+                AddLinkType(DEPENDENCY_POINT, typeof(VectorComponent));
             }
         }
 
@@ -105,6 +107,16 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                             angle, Vector2.Zero, new Vector2(length, Thickness),
                             SpriteEffects.None, Layer);
                 }
+            }
+
+            //Dependencies
+            public const int DEPENDENCY_POINT1 = 0;
+            public const int DEPENDENCY_POINT2 = 1;
+
+            public override void CreateDependencyList()
+            {
+                AddLinkType(DEPENDENCY_POINT1, typeof(VectorComponent));
+                AddLinkType(DEPENDENCY_POINT2, typeof(VectorComponent));
             }
         }
 
@@ -142,15 +154,15 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
         public class Rectangle : Primitive
         {
-            public float X { get { return Body.X; } set { Body.X = value; } }
+            public float X { get { return GetLink<Body>(DEPENDENCY_BODY).X; } set { GetLink<Body>(DEPENDENCY_BODY).X = value; } }
 
-            public float Y { get { return Body.Y; } set { Body.Y = value; } }
+            public float Y { get { return GetLink<Body>(DEPENDENCY_BODY).Y; } set { GetLink<Body>(DEPENDENCY_BODY).Y = value; } }
 
-            public float Width { get { return Body.Width; } set { Body.Width = value; } }
+            public float Width { get { return GetLink<Body>(DEPENDENCY_BODY).Width; } set { GetLink<Body>(DEPENDENCY_BODY).Width = value; } }
 
-            public float Height { get { return Body.Height; } set { Body.Height = value; } }
+            public float Height { get { return GetLink<Body>(DEPENDENCY_BODY).Height; } set { GetLink<Body>(DEPENDENCY_BODY).Height = value; } }
 
-            public float Angle { get { return Body.Angle; } set { Body.Angle = value; } }
+            public float Angle { get { return GetLink<Body>(DEPENDENCY_BODY).Angle; } set { GetLink<Body>(DEPENDENCY_BODY).Angle = value; } }
 
             public override Vector2 Bounds { get { return new Vector2((Width + Thickness) * Scale.X, (Height + Thickness) * Scale.Y); } }
 
@@ -178,8 +190,8 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Origin = new Vector2(0, 0);
             }
 
-            public Rectangle(IComponent parent, string name, Body body, bool fill)
-                : base(parent, name, body)
+            public Rectangle(IComponent parent, string name, bool fill)
+                : base(parent, name)
             {
                 Fill = fill;
                 Origin = new Vector2(0, 0);
@@ -217,6 +229,9 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                     sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, Origin, Flip, Layer);
                 }
             }
+
+            //Dependencies
+            public const int DEPENDENCY_BODY = 0;
         }
     }
 }

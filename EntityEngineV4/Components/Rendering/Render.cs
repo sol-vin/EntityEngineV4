@@ -8,6 +8,7 @@ namespace EntityEngineV4.Components.Rendering
     public abstract class Render : Component
     {
         public float Alpha = 1f;
+        //TODO: Change tom RGBColor
         public Color Color = Color.White;
         public SpriteEffects Flip = SpriteEffects.None;
         public Vector2 Scale = Vector2.One;

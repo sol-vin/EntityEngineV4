@@ -210,7 +210,7 @@ namespace EntityEngineV4.PowerTools
         {
             public static float DotProduct(Vector2 a, Vector2 b)
             {
-                return a.X * b.X + a.Y * b.Y;
+                return a.X*b.X + a.Y*b.Y;
             }
 
             public static Vector2 GetNormal(Vector2 a, Vector2 b)
@@ -222,18 +222,49 @@ namespace EntityEngineV4.PowerTools
 
             public static float CrossProduct(Vector2 a, Vector2 b)
             {
-                return a.X * b.Y - a.Y * b.X;
+                return a.X*b.Y - a.Y*b.X;
             }
 
             public static Vector2 CrossProduct(Vector2 a, float scalar)
             {
-                return new Vector2(scalar * a.Y, -scalar * a.X);
+                return new Vector2(scalar*a.Y, -scalar*a.X);
             }
 
             public static Vector2 CrossProduct(float scalar, Vector2 a)
             {
-                return new Vector2(-scalar * a.Y, scalar * a.X);
+                return new Vector2(-scalar*a.Y, scalar*a.X);
+            }
+
+            public static Vector2 RotatePoint(Vector2 origin, float angle, Vector2 point)
+            {
+                float s = (float)Math.Sin(angle);
+                float c = (float)Math.Cos(angle);
+
+                // translate point back to origin:
+                point.X -= origin.X;
+                point.Y -= origin.Y;
+    
+                // rotate point
+                float xnew = point.X * c - point.Y * s;
+                float ynew = point.X * s + point.Y * c;
+
+                // translate point back:
+                point.X = xnew + origin.X;
+                point.Y = ynew + origin.Y;
+                return point;
             }
         }
-    }
+
+        public static float Lerp(float x, float y, float time)
+        {
+            return x + (y - x)*time;
+        }
+
+        private static Random _random = new Random();
+        public static float NextGaussian(float average, float variation)
+        {
+            return average + 2.0f * ((float)_random.NextDouble() - 0.5f) * variation;
+        }
+
+}
 }

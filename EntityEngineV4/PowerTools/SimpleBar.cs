@@ -66,8 +66,12 @@ namespace EntityEngineV4.PowerTools
             _fgBarBody.Height = body.Height;
             _fgBarBody.Width = body.Width;
 
-            _fgBar = new ShapeTypes.Rectangle(this, "FGBar", _fgBarBody, true);
-            _bgBar = new ShapeTypes.Rectangle(this, "BGBar", _bgBarBody, true);
+            _fgBar = new ShapeTypes.Rectangle(this, "FGBar", true);
+            _fgBar.Link(ShapeTypes.Rectangle.DEPENDENCY_BODY, _fgBarBody);
+
+            _bgBar = new ShapeTypes.Rectangle(this, "BGBar", true);
+            _bgBar.Link(ShapeTypes.Rectangle.DEPENDENCY_BODY, _bgBarBody);
+
         }
     }
 }

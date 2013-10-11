@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.PowerTools
 {
-    public class Particle : Entity
+    public class Spawn : Entity
     {
         public bool Destroyed = false;
 
@@ -17,15 +17,15 @@ namespace EntityEngineV4.PowerTools
             set { TimeToLiveTimer.Milliseconds = value; }
         }
 
-        public Emitter Emitter;
+        public Spawner Spawner;
         protected Timer TimeToLiveTimer;
 
-        public Particle(Emitter e, int ttl)
-            : base(e, e.Name + ".Particle")
+        public Spawn(Spawner e, int ttl)
+            : base(e, e.Name + ".Spawn")
         {
             Name = Name + Id;
 
-            Emitter = e;
+            Spawner = e;
 
             TimeToLiveTimer = new Timer(this, "Timer");
             TimeToLive = ttl;
@@ -45,17 +45,17 @@ namespace EntityEngineV4.PowerTools
         }
     }
 
-    public class FadeParticle : Particle
+    public class FadeSpawn : Spawn
     {
         public int FadeAge;
         public Render Render;
 
-        public FadeParticle(Emitter e, int ttl)
+        public FadeSpawn(Spawner e, int ttl)
             : base(e, ttl)
         {
         }
 
-        public FadeParticle(Emitter e, int fadeage, int ttl)
+        public FadeSpawn(Spawner e, int fadeage, int ttl)
             : base(e, ttl)
         {
             FadeAge = fadeage;
@@ -76,12 +76,12 @@ namespace EntityEngineV4.PowerTools
         }
     }
 
-    public class Emitter : Component
+    public class Spawner : Component
     {
         public bool AutoEmit;
         public int AutoEmitAmount = 1;
 
-        public Emitter(IComponent parent, string name)
+        public Spawner(IComponent parent, string name)
             : base(parent, name)
         {
         }
@@ -93,9 +93,9 @@ namespace EntityEngineV4.PowerTools
                 Emit(AutoEmitAmount);
         }
 
-        protected virtual Particle GenerateNewParticle()
+        protected virtual Spawn GenerateNewParticle()
         {
-            var p = new Particle(this, 30);
+            var p = new Spawn(this, 30);
             return p;
         }
 

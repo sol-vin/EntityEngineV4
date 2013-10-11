@@ -28,7 +28,7 @@ namespace EntityEngineV4.Components.Rendering
         public TextRender(Entity entity, string name)
             : base(entity, name)
         {
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
+           
         }
 
         public TextRender(Entity entity, string name, SpriteFont font, string text)
@@ -36,7 +36,6 @@ namespace EntityEngineV4.Components.Rendering
         {
             Text = text;
             Font = font;
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
         public override void Draw(SpriteBatch sb)
@@ -52,5 +51,10 @@ namespace EntityEngineV4.Components.Rendering
 
         //dependencies
         public const int DEPENDENCY_BODY = 0;
+        public override void CreateDependencyList()
+        {
+            base.CreateDependencyList();
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
+        }
     }
 }

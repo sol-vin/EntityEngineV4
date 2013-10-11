@@ -39,7 +39,6 @@ namespace EntityEngineV4.Components.Rendering
             : base(e, name)
         {
             Origin = new Vector2(.5f, .5f);
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
         public ImageRender(Entity e, string name, Texture2D texture)
@@ -47,7 +46,6 @@ namespace EntityEngineV4.Components.Rendering
         {
             Texture = texture;
             Origin = new Vector2(.5f, .5f);
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
         public override void Draw(SpriteBatch sb)
@@ -66,5 +64,10 @@ namespace EntityEngineV4.Components.Rendering
 
         //Dependencies
         public const int DEPENDENCY_BODY = 0;
+        public override void CreateDependencyList()
+        {
+            base.CreateDependencyList();
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
+        }
     }
 }

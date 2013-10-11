@@ -116,59 +116,52 @@ namespace EntityEngineV4.Collision
         //Dependencies
         private CollisionHandler _collisionHandler;
 
-        private Body _collisionBody;
-        private Physics _collisionPhysics;
-
         //Properties
 
         public Rectangle BoundingRect
         {
-            get { return _collisionBody.BoundingRect; }
-            set { _collisionBody.BoundingRect = value; }
+            get { return GetLink<Body>(DEPENDENCY_BODY).BoundingRect; }
+            set { GetLink<Body>(DEPENDENCY_BODY).BoundingRect = value; }
         }
 
         public Vector2 Position
         {
-            get { return _collisionBody.Position; }
-            set { _collisionBody.Position = value; }
+            get { return GetLink<Body>(DEPENDENCY_BODY).Position; }
+            set { GetLink<Body>(DEPENDENCY_BODY).Position = value; }
         }
 
         public Vector2 Bounds
         {
-            get { return _collisionBody.Bounds; }
-            set { _collisionBody.Bounds = value; }
+            get { return GetLink<Body>(DEPENDENCY_BODY).Bounds; }
+            set { GetLink<Body>(DEPENDENCY_BODY).Bounds = value; }
         }
 
         public Vector2 Velocity
         {
-            get { return _collisionPhysics.Velocity; }
-            set { _collisionPhysics.Velocity = value; }
+            get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Velocity; }
+            set { GetLink<Physics>(DEPENDENCY_PHYSICS).Velocity = value; }
         }
 
         public Vector2 PositionDelta
         {
-            get { return _collisionBody.Delta; }
+            get { return GetLink<Body>(DEPENDENCY_BODY).Delta; }
         }
 
         public Vector2 LastPosition
         {
-            get { return _collisionBody.LastPosition; }
+            get { return GetLink<Body>(DEPENDENCY_BODY).LastPosition; }
         }
 
         public Vector2 Delta
         {
-            get { return _collisionBody.Delta; }
+            get { return GetLink<Body>(DEPENDENCY_BODY).Delta; }
         }
 
-        public Collision(IComponent parent, string name, Shape shape, Body collisionBody)
+        public Collision(IComponent parent, string name, Shape shape)
             : base(parent, name)
         {
-            _collisionBody = collisionBody;
             _collisionHandler = GetService<CollisionHandler>();
 
-            _collisionPhysics = new Physics(Parent, name + ".Physics");
-            _collisionPhysics.Link(Physics.DEPENDENCY_BODY, _collisionBody);
-
             Shape = shape;
             Shape.Collision = this;
 
@@ -183,26 +176,25 @@ namespace EntityEngineV4.Collision
             _collisionHandler.AddCollision(this);
         }
 
-        public Collision(IComponent parent, string name, Shape shape, Body collisionBody, Physics collisionPhysics)
-            : base(parent, name)
+        public override void Initialize()
         {
-            _collisionBody = collisionBody;
-            _collisionHandler = EntityGame.ActiveState.GetService<CollisionHandler>();
-
-            _collisionPhysics = collisionPhysics;
-
-            Shape = shape;
-            Shape.Collision = this;
-
-            GroupMask = new Bitmask();
-            GroupMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
-
-            PairMask = new Bitmask();
-            PairMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
-
-            ResolutionGroupMask = new Bitmask();
-
-            _collisionHandler.AddCollision(this);
+            base.Initialize();
+            try
+            {
+                GetLink<Physics>(DEPENDENCY_PHYSICS);
+            }
+            catch
+            {
+                try
+                {
+                    Physics physics  = new Physics(this, "CollisionPhysics");
+                    physics.Link(Physics.DEPENDENCY_BODY, GetLink<Body>(DEPENDENCY_BODY));
+                }
+                catch
+                {
+                    throw new Exception("Body and Physics do not exist in the dependency list for " + Name);
+                }
+            }
         }
 
         public override void Destroy(IComponent i = null)
@@ -227,6 +219,17 @@ namespace EntityEngineV4.Collision
             _collidedWith.Add(c);
             if (CollideEvent != null)
                 CollideEvent(c);
+        }
+
+        //Dependencies
+        public const int DEPENDENCY_BODY = 0;
+        public const int DEPENDENCY_PHYSICS = 1;
+
+        public override void CreateDependencyList()
+        {
+            base.CreateDependencyList();
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
+            AddLinkType(DEPENDENCY_PHYSICS, typeof(Physics));
         }
     }
 }
