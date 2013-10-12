@@ -11,28 +11,28 @@ namespace EntityEngineV4.GUI
 
         public string Text
         {
-            get { return TextRender.Text; }
+            get { return Render.Text; }
             set
             {
-                TextRender.Text = value;
+                Render.Text = value;
 
-                Body.Bounds = TextRender.Font.MeasureString(TextRender.Text);
+                Body.Bounds = Render.Font.MeasureString(Render.Text);
             }
         }
 
         //Components
-        public TextRender TextRender;
+        public TextRender Render;
 
         public Label(IComponent parent, string name)
             : base(parent, name)
         {
-            TextRender = new TextRender(this, "TextRender", Assets.Font, name);
-            TextRender.Link(TextRender.DEPENDENCY_BODY, Body);
-            TextRender.Text = name;
-            TextRender.Layer = 1f;
+            Render = new TextRender(this, "Render", Assets.Font, name);
+            Render.Link(TextRender.DEPENDENCY_BODY, Body);
+            Render.Text = name;
+            Render.Layer = 1f;
 
-            Body.Bounds = TextRender.Font.MeasureString(Text);
-            TextRender.Color = Color.Black;
+            Body.Bounds = Render.Font.MeasureString(Text);
+            Render.Color = Color.Black;
             Selectable = false;
         }
     }

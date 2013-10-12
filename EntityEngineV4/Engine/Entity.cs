@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
+    [Serializable]
     public class Entity : HashSet<IComponent>, IComponent
     {
         public IComponent Parent { get; private set; }

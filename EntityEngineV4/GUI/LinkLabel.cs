@@ -16,13 +16,13 @@ namespace EntityEngineV4.GUI
         public override void OnFocusLost(Control c)
         {
             base.OnFocusLost(c);
-            TextRender.Color = Color;
+            Render.Color = Color;
         }
 
         public override void OnFocusGain(Control c)
         {
             base.OnFocusGain(c);
-            TextRender.Color = SelectedColor;
+            Render.Color = SelectedColor;
         }
     }
 }

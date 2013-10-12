@@ -30,6 +30,7 @@ namespace EntityEngineV4.Engine
         private static Process _selfProcess = Process.GetCurrentProcess();
         private static PerformanceCounter _cpuCounter, _ramCounter;
         private DebugInfo _debugInfo;
+        public static DebugInfo DebugInfo {get { return Self._debugInfo; }}
 
         public static Color BackgroundColor = Color.Silver;
 
@@ -170,8 +171,8 @@ namespace EntityEngineV4.Engine
                 CpuUsage = average / _cpuUsages.Count;
             }
 
-            _debugInfo.Visible = ShowDebugInfo;
-            _debugInfo.Update(gt);
+            DebugInfo.Visible = ShowDebugInfo;
+            DebugInfo.Update(gt);
         }
 
         public virtual void Draw(SpriteBatch sb = null)
@@ -189,8 +190,8 @@ namespace EntityEngineV4.Engine
             SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
                               DepthStencilState.None, RasterizerState.CullNone);
 
-            if (_debugInfo.Visible)
-                _debugInfo.Draw(SpriteBatch);
+            if (DebugInfo.Visible)
+                DebugInfo.Draw(SpriteBatch);
             SpriteBatch.End();
         }
 

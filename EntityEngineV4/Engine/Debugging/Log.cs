@@ -31,7 +31,7 @@ namespace EntityEngineV4.Engine.Debugging
     /// Logs information and messages based on inputs
     /// </summary>
     ///
-    public class Log
+    public class Log : IDisposable
     {
         public string LogLocation { get; private set; }
 
@@ -162,5 +162,6 @@ namespace EntityEngineV4.Engine.Debugging
         {
             _file.Close();
         }
+
     }
 }

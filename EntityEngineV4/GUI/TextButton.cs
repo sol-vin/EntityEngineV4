@@ -42,11 +42,11 @@ namespace EntityEngineV4.GUI
             Body.Position = position;
 
             _textBody = new Body(this, "TextBody");
-            TextRender = new TextRender(this, "TextRender", Assets.Font, "");
+            TextRender = new TextRender(this, "Render", Assets.Font, "");
             TextRender.Link(TextRender.DEPENDENCY_BODY, _textBody);
             TextRender.Layer = .9f;
 
-            //Start setting up TextRender's body
+            //Start setting up Render's body
             _textBody.Bounds = TextRender.Bounds;
             Body.Bounds = TextRender.Bounds + Spacing;
 
