@@ -4,15 +4,16 @@ namespace EntityEngineV4.PowerTools
 {
     public static class RandomHelper
     {
+        private static Random _random = new Random();
         /// <summary>
         /// Gets a randomized boolean.
         /// </summary>
         /// <param name="random">The random</param>
         /// <param name="chance">The chance of rolling true, 2 means its true 1/2 times</param>
         /// <returns></returns>
-        public static bool RandomBool(this Random random, int chance = 2)
+        public static bool RandomBool(int chance = 2)
         {
-            return (random.Next(0, chance) == 0);
+            return (_random.Next(0, chance) == 0);
         }
 
 
@@ -22,19 +23,31 @@ namespace EntityEngineV4.PowerTools
         /// <param name="random"></param>
         /// <param name="chance"></param>
         /// <returns></returns>
-        public static int GetSign(this Random random, int chance = 2)
+        public static int GetSign(int chance = 2)
         {
-            return (RandomBool(random, chance)) ? -1 : 1;
+            return (RandomBool(chance)) ? -1 : 1;
         }
 
-        public static float GetFloat(this Random random)
+        public static float GetFloat()
         {
-            return (float) random.NextDouble();
+            return (float) _random.NextDouble();
         }
 
-        public static float GetFloat(this Random random, float min, float max)
+        /// <summary>
+        /// Get's a randomf loat within the specified range
+        /// </summary>
+        /// <param name="random"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static float GetFloat(float min, float max)
         {
-            return min + (max - min) * GetFloat(random);
+            return min + (max - min) * GetFloat();
+        }
+        
+        public static float NextGaussian(float average, float variation)
+        {
+            return average + 2.0f * ((float)_random.NextDouble() - 0.5f) * variation;
         }
     }
 }

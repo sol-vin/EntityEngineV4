@@ -259,12 +259,5 @@ namespace EntityEngineV4.PowerTools
         {
             return x + (y - x)*time;
         }
-
-        private static Random _random = new Random();
-        public static float NextGaussian(float average, float variation)
-        {
-            return average + 2.0f * ((float)_random.NextDouble() - 0.5f) * variation;
-        }
-
-}
+    }
 }
