@@ -48,6 +48,8 @@ namespace EntityEngineV4.Components.Rendering
             Origin = new Vector2(.5f, .5f);
         }
 
+
+
         public override void Draw(SpriteBatch sb)
         {
             if (DrawRect.Top < EntityGame.Camera.ScreenSpace.Height ||

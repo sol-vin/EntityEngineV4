@@ -20,6 +20,11 @@ namespace EntityEngineV4.Engine
 
         bool Debug { get; set; }
 
+        /// <summary>
+        /// If the Initialize() method has been called since it's creation
+        /// </summary>
+        bool IsInitialized { get;}
+
         event Component.EventHandler AddComponentEvent, RemoveComponentEvent;
 
         event Entity.EventHandler AddEntityEvent, RemoveEntityEvent;
@@ -29,7 +34,7 @@ namespace EntityEngineV4.Engine
 
         event EventHandler DestroyEvent;
 
-       
+        void Initialize();
         void Update(GameTime gt);
         void Draw(SpriteBatch sb);
 

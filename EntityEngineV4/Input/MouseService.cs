@@ -71,6 +71,10 @@ namespace EntityEngineV4.Input
             AddEntity(new ControllerCursor(this, "MouseService.ControllerCursor", ControllerCursor.MovementInput.Buttons));
         }
 
+        public override void Initialize()
+        {
+        }
+
         public override void Update(GameTime gt)
         {
             Flush();

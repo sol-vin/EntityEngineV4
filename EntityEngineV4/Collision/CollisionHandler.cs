@@ -46,6 +46,11 @@ namespace EntityEngineV4.Collision
             _manifolds = new HashSet<Manifold>();
         }
 
+        public override void Initialize()
+        {
+            
+        }
+
         public override void Update(GameTime gt)
         {
             BroadPhase();

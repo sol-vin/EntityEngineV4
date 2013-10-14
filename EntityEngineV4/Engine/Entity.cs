@@ -32,6 +32,7 @@ namespace EntityEngineV4.Engine
         public bool Active { get; set; }
         public bool Visible { get; set; }
         public bool Debug { get; set; }
+        public bool IsInitialized { get; private set; }
 
         public Entity(IComponent parent, string name)
         {
@@ -45,8 +46,14 @@ namespace EntityEngineV4.Engine
                 parent.AddEntity(this);
         }
 
+        public virtual void Initialize()
+        {
+            IsInitialized = true;
+        }
+
         public virtual void Update(GameTime gt)
         {
+            if(!IsInitialized) Initialize();
             foreach (var component in this.ToList().Where(c => c.Active))
             {
                 component.Update(gt);
