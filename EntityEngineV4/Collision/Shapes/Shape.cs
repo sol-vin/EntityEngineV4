@@ -8,7 +8,7 @@ namespace EntityEngineV4.Collision.Shapes
 
         public abstract Vector2 Position { get; set; }
 
-        public abstract Rectangle BoundingBox { get; set; }
+        public virtual Rectangle BoundingBox { get; set; }
 
         public static implicit operator Collision(Shape c)
         {

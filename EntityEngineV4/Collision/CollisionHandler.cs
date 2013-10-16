@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using System.Security.AccessControl;
 using EntityEngineV4.Collision.Shapes;
 using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
@@ -324,6 +326,16 @@ namespace EntityEngineV4.Collision
             return m;
         }
 
+        public static Manifold CircleVSCircle(Circle a, Circle b)
+        {
+            var manifold = new Manifold(a.Collision, b.Collision);
+            manifold.Normal = a.Position - b.Position;
+            manifold.AreColliding = Math.Pow(a.Radius + b.Radius, 2) <
+                                    Math.Pow(manifold.Normal.X, 2) + Math.Pow(manifold.Normal.Y, 2);
+            //TODO: Add circle penetration depth
+            return manifold;
+        }
+
         //Collision resolver methods
         /// <summary>
         /// Uses a table to test collision between various shapes
@@ -335,7 +347,8 @@ namespace EntityEngineV4.Collision
         {
             if (a is AABB && b is AABB)
                 return AABBvsAABB((AABB)a, (AABB)b);
-
+            if (a is Circle && b is Circle)
+                return CircleVSCircle((Circle) a, (Circle) b);
             throw new Exception("No existing methods for this kind of collision!");
         }
     }
