@@ -53,50 +53,8 @@ namespace EntityEngineV4.Collision
         /// </summary>
         public Bitmask ResolutionGroupMask { get; protected set; }
 
-        //Collision Related Values
-
-        //// <summary>
-        /// Backing field for Mass.
-        /// </summary>
-        private float _mass = 1f;
-
-        /// <summary>
-        /// The mass of the object.
-        /// </summary>
-        /// <value>
-        /// The mass.
-        /// </value>
-        public float Mass
-        {
-            get { return _mass; }
-            set
-            {
-                if (value < 0) throw new Exception("Mass cannot be less than zero!");
-                _mass = value;
-
-                if (Math.Abs(value - 0) < .00001f)
-                    InvertedMass = 0;
-                else
-                    InvertedMass = 1 / _mass;
-            }
-        }
-
-        /// <summary>
-        /// Gets one divided by mass (1/mass).
-        /// </summary>
-        /// <value>
-        /// The inverted mass.
-        /// </value>
-        public float InvertedMass { get; private set; }
-
-        /// <summary>
-        /// Bounciness of this object
-        /// </summary>
-        public float Restitution = 0f;
-
         public Color DebugColor = Color.Magenta;
 
-        public Shape Shape;
         private bool _enabled = true;
 
         public bool Enabled
@@ -111,59 +69,39 @@ namespace EntityEngineV4.Collision
             }
         }
 
+        /// <summary>
+        /// Decides how the resolution will work, if there will be any at all.
+        /// </summary>
         public bool Immovable;
 
-        //Dependencies
-        private CollisionHandler _collisionHandler;
-
-        //Properties
-
-        public Rectangle BoundingRect
-        {
-            get { return GetLink<Body>(DEPENDENCY_BODY).BoundingRect; }
-            set { GetLink<Body>(DEPENDENCY_BODY).BoundingRect = value; }
-        }
-
+        //Dependency properties
         public Vector2 Position
         {
-            get { return GetLink<Body>(DEPENDENCY_BODY).Position; }
-            set { GetLink<Body>(DEPENDENCY_BODY).Position = value; }
-        }
+            get { return GetLink<Body>(DEPENEDENCY_BODY).Position; }
+            set { GetLink<Body>(DEPENEDENCY_BODY).Position = value; }
 
-        public Vector2 Bounds
-        {
-            get { return GetLink<Body>(DEPENDENCY_BODY).Bounds; }
-            set { GetLink<Body>(DEPENDENCY_BODY).Bounds = value; }
         }
 
         public Vector2 Velocity
         {
             get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Velocity; }
             set { GetLink<Physics>(DEPENDENCY_PHYSICS).Velocity = value; }
+
         }
 
-        public Vector2 PositionDelta
-        {
-            get { return GetLink<Body>(DEPENDENCY_BODY).Delta; }
-        }
+        public float Restitution { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Restitution; } }
+        public float Mass { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Mass; }}
+        public float InvertedMass { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).InvertedMass; } }
 
-        public Vector2 LastPosition
-        {
-            get { return GetLink<Body>(DEPENDENCY_BODY).LastPosition; }
-        }
+        
 
-        public Vector2 Delta
-        {
-            get { return GetLink<Body>(DEPENDENCY_BODY).Delta; }
-        }
+        //Dependencies
+        private CollisionHandler _collisionHandler;
 
-        public Collision(IComponent parent, string name, Shape shape)
+        public Collision(IComponent parent, string name)
             : base(parent, name)
         {
             _collisionHandler = GetService<CollisionHandler>();
-
-            Shape = shape;
-            Shape.Collision = this;
 
             GroupMask = new Bitmask();
             GroupMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
@@ -185,16 +123,21 @@ namespace EntityEngineV4.Collision
             }
             catch
             {
-                try
-                {
-                    Physics physics  = new Physics(this, "CollisionPhysics");
-                    physics.Link(Physics.DEPENDENCY_BODY, GetLink<Body>(DEPENDENCY_BODY));
-                }
-                catch
-                {
-                    throw new Exception("Body and Physics do not exist in the dependency list for " + Name);
-                }
+                throw new Exception("Physics does not exist in the dependency list for " + Name);
             }
+
+            try
+            {
+                 GetLink<Shape>(DEPENDENCY_SHAPE);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Shape does not exist in the dependency list for " + Name);
+
+            }
+
+            Link(DEPENEDENCY_BODY, GetLink(DEPENDENCY_PHYSICS).GetLink(Physics.DEPENDENCY_BODY));
+            GetLink(DEPENDENCY_SHAPE).Link(Shape.DEPENDENCY_BODY, GetLink(DEPENEDENCY_BODY));
         }
 
         public override void Destroy(IComponent i = null)
@@ -221,15 +164,22 @@ namespace EntityEngineV4.Collision
                 CollideEvent(c);
         }
 
-        //Dependencies
-        public const int DEPENDENCY_BODY = 0;
-        public const int DEPENDENCY_PHYSICS = 1;
+        //Public dependencies
+        public const int DEPENDENCY_PHYSICS = 0;
+        public const int DEPENDENCY_SHAPE = 1;
+
+        //Private Dependencies
+        /// <summary>
+        /// Body of the shape. Fufilled by Shape's body internally, ensuring the body this uses and the body shape uses are the same.
+        /// </summary>
+        private const int DEPENEDENCY_BODY = 2;
 
         public override void CreateDependencyList()
         {
             base.CreateDependencyList();
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
             AddLinkType(DEPENDENCY_PHYSICS, typeof(Physics));
+            AddLinkType(DEPENDENCY_SHAPE, typeof(Shape));
+            AddLinkType(DEPENEDENCY_BODY, typeof(Body));
         }
     }
 }

@@ -1,22 +1,21 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EntityEngineV4.Components;
+using EntityEngineV4.Engine;
+using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Collision.Shapes
 {
-    public abstract class Shape
+    public abstract class Shape : Component
     {
-        public Collision Collision;
-
-        public abstract Vector2 Position { get; set; }
-
-        public virtual Rectangle BoundingBox { get; set; }
-
-        public static implicit operator Collision(Shape c)
+        public abstract Vector2 Position { get; }
+        protected Shape(IComponent parent, string name) : base(parent, name)
         {
-            return c.Collision;
         }
-
-        protected Shape()
+        //Dependencies
+        public const int DEPENDENCY_BODY = 0;
+        public override void CreateDependencyList()
         {
+            base.CreateDependencyList();
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
     }
 }

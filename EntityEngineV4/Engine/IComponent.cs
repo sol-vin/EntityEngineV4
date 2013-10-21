@@ -41,6 +41,7 @@ namespace EntityEngineV4.Engine
         void Destroy(IComponent i = null);
 
         void AddComponent(Component c);
+        //TODO: Add get component through type of component
         //T GetComponent<T>() where T : Component;
         void RemoveComponent(Component c);
 

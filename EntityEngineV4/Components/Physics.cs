@@ -31,6 +31,46 @@ namespace EntityEngineV4.Components
             set { _angularForce = value; }
         }
 
+        //// <summary>
+        /// Backing field for Mass.
+        /// </summary>
+        private float _mass = 1f;
+
+        /// <summary>
+        /// The mass of the object.
+        /// </summary>
+        /// <value>
+        /// The mass.
+        /// </value>
+        public float Mass
+        {
+            get { return _mass; }
+            set
+            {
+                if (value < 0) throw new Exception("Mass cannot be less than zero!");
+                _mass = value;
+
+                if (Math.Abs(value - 0) < .00001f)
+                    InvertedMass = 0;
+                else
+                    InvertedMass = 1 / _mass;
+            }
+        }
+
+        /// <summary>
+        /// Gets one divided by mass (1/mass).
+        /// </summary>
+        /// <value>
+        /// The inverted mass.
+        /// </value>
+        public float InvertedMass { get; private set; }
+
+        /// <summary>
+        /// Bounciness of this object
+        /// </summary>
+        public float Restitution = 0f;
+
+
         
         public Physics(IComponent e, string name)
             : base(e, name)

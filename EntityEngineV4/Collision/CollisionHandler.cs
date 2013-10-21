@@ -65,7 +65,6 @@ namespace EntityEngineV4.Collision
 
                 if (CanObjectsResolve(manifold.A, manifold.B) || CanObjectsResolve(manifold.B, manifold.A))
                 {
-                    //TestAABBvsAABBResolveCollision(manifold);
                     ResolveCollision(manifold);
                 }
             }
@@ -148,22 +147,29 @@ namespace EntityEngineV4.Collision
         public void BroadPhase()
         {
             //Do a basic SAT test
+            //foreach (var pair in _pairs)
+            //{
+            //    Manifold m = AABBvsAABB(AABB.Create(pair.A), AABB.Create(pair.B));
+            //    if (m.AreColliding)
+            //    {
+            //        //Do our real test now.
+            //        if (pair.A.Shape is AABB && pair.B.Shape is AABB)
+            //            //If the shapes are both AABB's, skip the check, we already have it
+            //            _manifolds.Add(m);
+            //        else
+            //        {
+            //            m = CheckCollision(pair.A.Shape, pair.B.Shape);
+            //            if (m.AreColliding)
+            //                _manifolds.Add(m);
+            //        }
+            //    }
+            //}
+
             foreach (var pair in _pairs)
             {
-                Manifold m = AABBvsAABB(AABB.CreateAABB(pair.A.BoundingRect, pair.A), AABB.CreateAABB(pair.B.BoundingRect, pair.B));
+                Manifold m = CheckCollision(pair.A, pair.B);
                 if (m.AreColliding)
-                {
-                    //Do our real test now.
-                    if (pair.A.Shape is AABB && pair.B.Shape is AABB)
-                        //If the shapes are both AABB's, skip the check, we already have it
-                        _manifolds.Add(m);
-                    else
-                    {
-                        m = CheckCollision(pair.A.Shape, pair.B.Shape);
-                        if (m.AreColliding)
-                            _manifolds.Add(m);
-                    }
-                }
+                    _manifolds.Add(m);
             }
         }
 
@@ -189,10 +195,10 @@ namespace EntityEngineV4.Collision
 
         public static void ResolveCollision(Manifold m)
         {
-            Vector2 relVelocity = m.B.PositionDelta - m.A.PositionDelta;
+            Vector2 relVelocity = m.B.Velocity - m.A.Velocity;
             //Finds out if the objects are moving towards each other.
             //We only need to resolve collisions that are moving towards, not away.
-            float velAlongNormal = MathTools.Physics.DotProduct(relVelocity, m.Normal);
+            float velAlongNormal = relVelocity.X * m.Normal.X + relVelocity.Y * m.Normal.Y;
             if (velAlongNormal > 0)
                 return;
             float e = Math.Min(m.A.Restitution, m.B.Restitution);
@@ -207,133 +213,149 @@ namespace EntityEngineV4.Collision
                 m.B.Velocity += m.B.InvertedMass * impulse;
         }
 
+        public const float SLOP = 0.01f;
+        public const float PERCENT = 0.2f;
         public static void PositionalCorrection(Manifold m)
         {
-            const float percent = 0.2f;
-            const float slop = 0.01f;
-            Vector2 correction = Math.Max(m.PenetrationDepth - slop, 0.0f) / (m.A.InvertedMass + m.B.InvertedMass) * percent * m.Normal;
+            Vector2 correction = Math.Max(m.PenetrationDepth - SLOP, 0.0f) / (m.A.InvertedMass + m.B.InvertedMass) * PERCENT * m.Normal;
             if (CanObjectsResolve(m.A, m.B))
                 m.A.Position -= m.A.InvertedMass * correction;
             if (CanObjectsResolve(m.B, m.A))
                 m.B.Position += m.B.InvertedMass * correction;
         }
 
-        public static Manifold TestAABBvsAABB(AABB a, AABB b)
-        {
-            var m = new Manifold(a, b);
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Compares bounding boxes using Seperating Axis Thereom.
         /// </summary>
-        public static Manifold AABBvsAABB(AABB a, AABB b)
+        public static bool AABBvsAABB(AABB a, AABB b, ref Manifold manifold)
         {
-            //Start packing the manifold
-            var m = new Manifold(a, b);
-            m.Normal = a.Position - b.Position;
+            manifold.Normal = a.Position - b.Position;
 
             //Calculate half widths
             float aExtent = a.Width / 2f;
             float bExtent = b.Width / 2f;
 
             //Calculate the overlap.
-            float xExtent = aExtent + bExtent - Math.Abs(m.Normal.X);
+            float xExtent = aExtent + bExtent - Math.Abs(manifold.Normal.X);
 
             //If the overlap is greater than 0
             if (xExtent > 0)
             {
                 //Calculate half widths
-                aExtent = a.Height / 2f;
-                bExtent = b.Height / 2f;
+                aExtent = a.Height/2f;
+                bExtent = b.Height/2f;
 
                 //Calculate overlap
-                float yExtent = aExtent + bExtent - Math.Abs(m.Normal.Y);
+                float yExtent = aExtent + bExtent - Math.Abs(manifold.Normal.Y);
 
                 if (yExtent > 0)
                 {
                     //Variable to multiply the normal by to make the collision resolve
-                    Vector2 fixnormal;
+                    Vector2 faceNormal;
 
                     //Check to see which axis has the biggest "penetration" ;D
 
                     //Collision is happening on Y axis
                     if (xExtent > yExtent)
                     {
-                        if (m.Normal.X < 0)
-                            fixnormal = -Vector2.UnitX;
+                        if (manifold.Normal.X < 0)
+                            faceNormal = -Vector2.UnitX;
                         else
-                            fixnormal = Vector2.UnitX;
+                            faceNormal = Vector2.UnitX;
+                        manifold.PenetrationDepth = xExtent;
 
-                        if (m.B.BoundingRect.Top > m.A.BoundingRect.Top && m.A.BoundingRect.Top < m.B.BoundingRect.Bottom)
-                        {
-                            if (m.A.AllowCollisionDirection.HasMatchingBit(DOWN))
-                                m.A.CollisionDirection.CombineMask(DOWN);
-                            if (m.B.AllowCollisionDirection.HasMatchingBit(UP))
-                                m.B.CollisionDirection.CombineMask(UP);
-                        }
-                        else if (m.A.BoundingRect.Top > m.B.BoundingRect.Top && m.B.BoundingRect.Top < m.A.BoundingRect.Bottom)
-                        {
-                            if (m.A.AllowCollisionDirection.HasMatchingBit(UP))
-                                m.A.CollisionDirection.CombineMask(UP);
-                            if (m.B.AllowCollisionDirection.HasMatchingBit(DOWN))
-                                m.B.CollisionDirection.CombineMask(DOWN);
-                        }
+                        manifold.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * faceNormal.X;
+                        manifold.AreColliding = true;
 
-                        m.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * fixnormal.X;
-                        m.PenetrationDepth = xExtent;
+                        //TODO: Finish collision code
+                        /// Need to find the axis of deepest penetration and only display flags from that side
+                        /// UNLESS the penetration depth on the other sides are more than half the width. 
+                        //A First
+                        if (a.Top > b.Top && a.Top < b.Bottom && manifold.A.AllowCollisionDirection.HasMatchingBit(UP))
+                            manifold.A.CollisionDirection.CombineMask(UP);
+                        if (a.Bottom < b.Bottom && a.Bottom > b.Top && manifold.A.AllowCollisionDirection.HasMatchingBit(DOWN))
+                            manifold.A.CollisionDirection.CombineMask(DOWN);
+                        if (a.Left > b.Left && a.Left < b.Right && manifold.A.AllowCollisionDirection.HasMatchingBit(LEFT))
+                            manifold.A.CollisionDirection.CombineMask(LEFT);
+                        if (a.Right < b.Right && a.Right > b.Left && manifold.A.AllowCollisionDirection.HasMatchingBit(RIGHT))
+                            manifold.A.CollisionDirection.CombineMask(RIGHT);
+
+                        //B next
+                        if (b.Top > a.Top && b.Top < a.Bottom && manifold.B.AllowCollisionDirection.HasMatchingBit(UP))
+                            manifold.B.CollisionDirection.CombineMask(UP);
+                        if (b.Bottom < a.Bottom && b.Bottom > a.Top && manifold.B.AllowCollisionDirection.HasMatchingBit(DOWN))
+                            manifold.B.CollisionDirection.CombineMask(DOWN);
+                        if (b.Left > a.Left && b.Left < a.Right && manifold.B.AllowCollisionDirection.HasMatchingBit(LEFT))
+                            manifold.B.CollisionDirection.CombineMask(LEFT);
+                        if (b.Right < a.Right && b.Right > a.Left && manifold.B.AllowCollisionDirection.HasMatchingBit(RIGHT))
+                            manifold.B.CollisionDirection.CombineMask(RIGHT);
+                        return true;
                     }
-                    //Collision happening on X axis
+                        //Collision happening on X axis
                     else
                     {
-                        if (m.Normal.Y < 0)
-                            fixnormal = -Vector2.UnitY;
+                        if (manifold.Normal.Y < 0)
+                            faceNormal = -Vector2.UnitY;
                         else
-                            fixnormal = Vector2.UnitY;
-                        if (m.B.BoundingRect.Left > m.A.BoundingRect.Left &&
-                            m.A.BoundingRect.Left < m.B.BoundingRect.Right)
-                        {
-                            if (m.A.AllowCollisionDirection.HasMatchingBit(RIGHT))
-                                m.A.CollisionDirection.CombineMask(RIGHT);
-                            if (m.B.AllowCollisionDirection.HasMatchingBit(LEFT))
-                                m.B.CollisionDirection.CombineMask(LEFT);
-                        }
-                        else if (m.A.BoundingRect.Left > m.B.BoundingRect.Left &&
-                            m.B.BoundingRect.Left < m.A.BoundingRect.Right)
-                        {
-                            if (m.A.AllowCollisionDirection.HasMatchingBit(LEFT))
-                                m.A.CollisionDirection.CombineMask(LEFT);
-                            if (m.B.AllowCollisionDirection.HasMatchingBit(RIGHT))
-                                m.B.CollisionDirection.CombineMask(RIGHT);
-                        }
+                            faceNormal = Vector2.UnitY;
 
-                        m.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * fixnormal.Y;
-                        m.PenetrationDepth = yExtent;
+                        manifold.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * faceNormal.Y;
+                        manifold.PenetrationDepth = yExtent;
+                        manifold.AreColliding = true;
+
+                        //A First
+                        if (a.Top > b.Top && a.Top < b.Bottom && manifold.A.AllowCollisionDirection.HasMatchingBit(UP))
+                            manifold.A.CollisionDirection.CombineMask(UP);
+                        if (a.Bottom < b.Bottom && a.Bottom > b.Top && manifold.A.AllowCollisionDirection.HasMatchingBit(DOWN))
+                            manifold.A.CollisionDirection.CombineMask(DOWN);
+                        if (a.Left > b.Left && a.Left < b.Right && manifold.A.AllowCollisionDirection.HasMatchingBit(LEFT))
+                            manifold.A.CollisionDirection.CombineMask(LEFT);
+                        if (a.Right < b.Right && a.Right > b.Left && manifold.A.AllowCollisionDirection.HasMatchingBit(RIGHT))
+                            manifold.A.CollisionDirection.CombineMask(RIGHT);
+
+                        //B First
+                        if (b.Top > a.Top && b.Top < a.Bottom && manifold.B.AllowCollisionDirection.HasMatchingBit(UP))
+                            manifold.B.CollisionDirection.CombineMask(UP);
+                        if (b.Bottom < a.Bottom && b.Bottom > a.Top && manifold.B.AllowCollisionDirection.HasMatchingBit(DOWN))
+                            manifold.B.CollisionDirection.CombineMask(DOWN);
+                        if (b.Left > a.Left && b.Left < a.Right && manifold.B.AllowCollisionDirection.HasMatchingBit(LEFT))
+                            manifold.B.CollisionDirection.CombineMask(LEFT);
+                        if (b.Right < a.Right && b.Right > a.Left && manifold.B.AllowCollisionDirection.HasMatchingBit(RIGHT))
+                            manifold.B.CollisionDirection.CombineMask(RIGHT);
+                        return true;
                     }
-                    //Check to see if any flags actually got toggled.
-                    //If they didn't then, ensure that the manifold reports they don't collide.
-                    if (m.A.AllowCollisionDirection == 0 ||
-                        m.B.AllowCollisionDirection == 0 ||
-                        m.B.CollisionDirection == 0 ||
-                        m.A.CollisionDirection == 0)
-                        m.AreColliding = false;
-                    else
-                        m.AreColliding = true;
-                    return m;
                 }
+                return false;
             }
-            m.AreColliding = false;
-            return m;
+            return false;
         }
 
-        public static Manifold CircleVSCircle(Circle a, Circle b)
+        public static bool CircleVSCircle(Circle a, Circle b, ref Manifold manifold)
         {
-            var manifold = new Manifold(a.Collision, b.Collision);
             manifold.Normal = a.Position - b.Position;
-            manifold.AreColliding = Math.Pow(a.Radius + b.Radius, 2) <
-                                    Math.Pow(manifold.Normal.X, 2) + Math.Pow(manifold.Normal.Y, 2);
-            //TODO: Add circle penetration depth
-            return manifold;
+            manifold.Normal *= manifold.Normal;
+            if (manifold.Normal.LengthSquared() > a.Radius + b.Radius)
+            {
+                //Set manifold for failure
+                manifold.AreColliding = false;
+                return false;
+            }
+
+            float d = manifold.Normal.Length();
+            if (Math.Abs(d) > SLOP)
+            {
+                manifold.PenetrationDepth = a.Radius + b.Radius - d;
+                manifold.AreColliding = true;
+                return true;
+            }
+            else
+            {
+                //find which one is bigger
+                float maxRadius = Math.Max(a.Radius, b.Radius);
+                manifold.PenetrationDepth = maxRadius;
+                manifold.AreColliding = true;
+                return true;
+            }
         }
 
         //Collision resolver methods
@@ -343,13 +365,22 @@ namespace EntityEngineV4.Collision
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Manifold CheckCollision(Shape a, Shape b)
+        public static Manifold CheckCollision(Collision a, Collision b)
         {
-            if (a is AABB && b is AABB)
-                return AABBvsAABB((AABB)a, (AABB)b);
-            if (a is Circle && b is Circle)
-                return CircleVSCircle((Circle) a, (Circle) b);
-            throw new Exception("No existing methods for this kind of collision!");
+            Shape aShape, bShape;
+            aShape = a.GetLink<Shape>(Collision.DEPENDENCY_SHAPE);
+            bShape = b.GetLink<Shape>(Collision.DEPENDENCY_SHAPE);
+
+            Manifold manifold = new Manifold(a,b);
+
+            if (aShape is AABB && bShape is AABB)
+                AABBvsAABB((AABB)aShape, (AABB)bShape, ref manifold);
+            else if (aShape is Circle && bShape is Circle)
+                CircleVSCircle((Circle)aShape, (Circle)bShape, ref manifold);
+            else
+                throw new Exception("No existing methods for this kind of collision!");
+
+            return manifold;
         }
     }
 }
