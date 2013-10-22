@@ -73,6 +73,8 @@ namespace EntityEngineV4.Components
         public Body(IComponent e, string name)
             : base(e, name)
         {
+            if (EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent += UpdateLast;
         }
 
         public Body(IComponent e, string name, Vector2 position)
@@ -80,6 +82,13 @@ namespace EntityEngineV4.Components
         {
             Position = position;
             LastPosition = position;
+            if (EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent += UpdateLast;
+        }
+
+        private void UpdateLast()
+        {
+            LastPosition = Position;
         }
 
         public override void Update(GameTime gt)
@@ -112,6 +121,13 @@ namespace EntityEngineV4.Components
                 drawwindow = new Rectangle(BoundingRect.Right, BoundingRect.Y, 1, BoundingRect.Height);
                 sb.Draw(Assets.Pixel, drawwindow, null, DebugColor, 0, Vector2.Zero, SpriteEffects.None, 1f);
             }
+        }
+
+        public override void Destroy(IComponent i = null)
+        {
+            base.Destroy(i);
+            EntityGame.ActiveState.PreUpdateEvent -= UpdateLast;
+
         }
 
         public void FaceDelta(float offset = 0)

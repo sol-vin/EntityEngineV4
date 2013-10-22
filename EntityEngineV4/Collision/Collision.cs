@@ -5,6 +5,7 @@ using EntityEngineV4.Collision.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
+using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -135,9 +136,13 @@ namespace EntityEngineV4.Collision
                 throw new Exception("Shape does not exist in the dependency list for " + Name);
 
             }
-
-            Link(DEPENEDENCY_BODY, GetLink(DEPENDENCY_PHYSICS).GetLink(Physics.DEPENDENCY_BODY));
-            GetLink(DEPENDENCY_SHAPE).Link(Shape.DEPENDENCY_BODY, GetLink(DEPENEDENCY_BODY));
+            //Make sure shape and physics are on the same body.
+            if (GetLink(DEPENDENCY_PHYSICS).GetLink(Physics.DEPENDENCY_BODY).Id !=
+                GetLink(DEPENDENCY_SHAPE).GetLink(Shape.DEPENDENCY_BODY).Id)
+            {
+                EntityGame.Log.Write("Shape and Physics dependencies do not have the same body dependency", this, Alert.Error);
+                throw new Exception("Shape and Physics do not share the same body");
+            }
         }
 
         public override void Destroy(IComponent i = null)

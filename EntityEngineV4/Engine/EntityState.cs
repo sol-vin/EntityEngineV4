@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EntityEngineV4.Components;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
@@ -15,6 +16,8 @@ namespace EntityEngineV4.Engine
 
         public event Component.EventHandler AddComponentEvent;
         public event Component.EventHandler RemoveComponentEvent;
+
+        public event Timer.TimerEvent PreUpdateEvent;
 
         public event Entity.EventHandler AddEntityEvent;
         public event Entity.EventHandler RemoveEntityEvent;
@@ -169,10 +172,17 @@ namespace EntityEngineV4.Engine
             Services.Clear();
         }
 
+        public virtual void PreUpdate()
+        {
+            if (PreUpdateEvent != null) PreUpdateEvent();
+        }
+
         public virtual void Update(GameTime gt)
         {
             if(!IsInitialized) Initialize();
             if (Destroyed) return;
+
+            PreUpdate();
 
             foreach (var service in Services.ToArray().Where(s => s.Active))
             {

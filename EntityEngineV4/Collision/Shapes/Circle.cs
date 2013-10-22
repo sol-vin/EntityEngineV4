@@ -13,21 +13,18 @@ namespace EntityEngineV4.Collision.Shapes
         public float Radius;
         public override Vector2 Position
         {
-            get { return GetLink<Body>(DEPENDENCY_BODY).Position; }
+            get { return GetLink<Body>(DEPENDENCY_BODY).Position + Offset; }
         }
 
-        public float X { get { return GetLink<Body>(DEPENDENCY_BODY).X + Radius; } }
-        public float Y { get { return GetLink<Body>(DEPENDENCY_BODY).Y + Radius; } }
+        public float X { get { return GetLink<Body>(DEPENDENCY_BODY).X + Offset.X; } }
+        public float Y { get { return GetLink<Body>(DEPENDENCY_BODY).Y + Offset.Y; } }
 
         public float Diameter { get { return Radius*2; } }
 
-        public float Top { get { return GetLink<Body>(DEPENDENCY_BODY).Y + Radius; } }
-        /// <summary>
-        /// Add one extra radius to compensate for the origin "point"
-        /// </summary>
-        public float Bottom { get { return GetLink<Body>(DEPENDENCY_BODY).Y + Radius*3; } }
-        public float Left { get { return GetLink<Body>(DEPENDENCY_BODY).X + Radius; } }
-        public float Right { get { return GetLink<Body>(DEPENDENCY_BODY).X + Radius*3; } }
+        public float Top { get { return GetLink<Body>(DEPENDENCY_BODY).Y; } }
+        public float Bottom { get { return GetLink<Body>(DEPENDENCY_BODY).Y + Radius*2; } }
+        public float Left { get { return GetLink<Body>(DEPENDENCY_BODY).X; } }
+        public float Right { get { return GetLink<Body>(DEPENDENCY_BODY).X + Radius*2; } }
         
 
         public Circle(IComponent parent, string name, float radius = 0f) : base(parent, name)
