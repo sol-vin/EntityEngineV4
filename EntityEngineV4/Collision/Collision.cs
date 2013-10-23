@@ -93,8 +93,8 @@ namespace EntityEngineV4.Collision
         public float Restitution { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Restitution; } }
         public float Mass { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Mass; }}
         public float InvertedMass { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).InvertedMass; } }
+        public Vector2 Delta { get { return GetLink<Body>(DEPENEDENCY_BODY).Delta; } }
 
-        
 
         //Dependencies
         private CollisionHandler _collisionHandler;
@@ -143,6 +143,8 @@ namespace EntityEngineV4.Collision
                 EntityGame.Log.Write("Shape and Physics dependencies do not have the same body dependency", this, Alert.Error);
                 throw new Exception("Shape and Physics do not share the same body");
             }
+
+            Link(DEPENEDENCY_BODY, GetLink(DEPENDENCY_PHYSICS).GetLink(Physics.DEPENDENCY_BODY));
         }
 
         public override void Destroy(IComponent i = null)

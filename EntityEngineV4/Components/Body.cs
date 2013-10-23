@@ -98,8 +98,6 @@ namespace EntityEngineV4.Components
 
         public override void Draw(SpriteBatch sb)
         {
-            LastPosition = Position;
-
             base.Draw(sb);
             if (Debug)
             {
