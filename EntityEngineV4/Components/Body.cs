@@ -8,6 +8,12 @@ namespace EntityEngineV4.Components
 {
     public class Body : Component
     {
+        public static implicit operator VectorComponent(Body b)
+        {
+            VectorComponent v = new VectorComponent(null, "TempVector");
+            v.Vector = b.Position;
+            return v;
+        }
         public float Angle;
 
         public Vector2 LastPosition { get; private set; }
