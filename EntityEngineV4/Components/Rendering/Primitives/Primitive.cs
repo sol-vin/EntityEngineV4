@@ -197,7 +197,48 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Origin = new Vector2(0, 0);
             }
 
-            public override void Draw(SpriteBatch sb)
+
+            public override void Draw(SpriteBatch sb = null)
+            {
+                base.Draw(sb);
+                if (!Fill)
+                {
+                    if (!Fill)
+                    {
+                        float minx = X + (Thickness / 2) + Origin.X;
+                        float miny = Y + (Thickness / 2) + Origin.Y;
+                        //TODO: Fix thickness issue
+                        //Draw our top line
+                        sb.Draw(Assets.Pixel,
+                                new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X, Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
+
+                        //Left line
+                        sb.Draw(Assets.Pixel,
+                                new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X * Bounds.X, Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
+
+                        //Essentially these are the same as the top and bottom just rotated 180 degrees
+                        //I have to do it this way instead of setting the origin to a negative value because XNA
+                        //seems to ignore origins when they are negative
+                        //Right Line
+                        sb.Draw(Assets.Pixel,
+                                new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X * Bounds.X, Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
+
+                        //Bottom Line
+                        sb.Draw(Assets.Pixel,
+                                new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X, Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
+                    }
+                    else
+                    {
+                        sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, Origin, Flip, Layer);
+                    }
+                }
+                else
+                {
+                    sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, Origin, Flip, Layer);
+                }
+            }
+
+            public void Draw1(SpriteBatch sb)
             {
                 base.Draw(sb);
                 if (!Fill)

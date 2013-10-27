@@ -13,6 +13,10 @@ namespace EntityEngineV4.Engine.Services
         {
         }
 
+        public override void Initialize()
+        {
+        }
+
         public override void Update(GameTime gt)
         {
             

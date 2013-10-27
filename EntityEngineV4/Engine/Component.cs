@@ -66,6 +66,10 @@ namespace EntityEngineV4.Engine
             parent.AddComponent(this);
             Id = EntityGame.GetID();
 
+            //Subscribe to the pre update ensuring it will initialize the component
+            if (EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent += SubscribePreUpdate;
+
             CreateDependencyList();
         }
 
@@ -81,6 +85,10 @@ namespace EntityEngineV4.Engine
                 e.AddComponent(this);
             }
             Id = EntityGame.GetID();
+
+            //Subscribe to the pre update ensuring it will initialize the component
+            if (EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent += SubscribePreUpdate;
 
             CreateDependencyList();
         }
@@ -113,7 +121,18 @@ namespace EntityEngineV4.Engine
             RemoveEntityEvent = null;
             DestroyEvent = null;
 
+            //Unsubscribe to the pre update ensuring it will initialize the component
+            if(EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate;
+
             EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
+        }
+
+        private void SubscribePreUpdate()
+        {
+            //Initialize
+            if(!IsInitialized) Initialize();
+            EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
         }
 
         public virtual void AddComponent(Component c)

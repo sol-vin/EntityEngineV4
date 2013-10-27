@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EntityEngineV4.Components;
+using EntityEngineV4.Engine;
+using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Collision.Shapes
 {
@@ -6,50 +8,26 @@ namespace EntityEngineV4.Collision.Shapes
     {
         public override Vector2 Position
         {
-            get { return Collision.Position; }
-            set { Collision.Position = value; }
+            get { return GetLink<Body>(DEPENDENCY_BODY).Position; }
         }
 
-        public float Width
-        {
-            get { return Collision.Bounds.X; }
-            set { Collision.Bounds = new Vector2(value, Collision.Bounds.Y); }
-        }
+        public float X { get { return GetLink<Body>(DEPENDENCY_BODY).X; } }
+        public float Y { get { return GetLink<Body>(DEPENDENCY_BODY).Y; } }
 
-        public float Height
-        {
-            get { return Collision.Bounds.Y; }
-            set { Collision.Bounds = new Vector2(Collision.Bounds.X, value); }
-        }
+        public float Width {get { return GetLink<Body>(DEPENDENCY_BODY).Width; }}
+        public float Height { get { return GetLink<Body>(DEPENDENCY_BODY).Height; } }
 
-        public float Top { get { return Position.Y; } }
+        public float Top { get { return GetLink<Body>(DEPENDENCY_BODY).Top; } }
+        public float Bottom { get { return GetLink<Body>(DEPENDENCY_BODY).Bottom; } }        
+        public float Left { get { return GetLink<Body>(DEPENDENCY_BODY).Left; } }
+        public float Right { get { return GetLink<Body>(DEPENDENCY_BODY).Right; } }
 
-        public float Left { get { return Position.X; } }
-
-        public float Right { get { return Position.X + Collision.Bounds.X; } }
-
-        public float Bottom { get { return Position.Y + Collision.Bounds.Y; } }
-
-        public override Rectangle BoundingBox
-        {
-            get { return new Rectangle((int)Position.X, (int)Position.Y, (int)Collision.Bounds.X, (int)Collision.Bounds.Y); }
-            set
-            {
-                Collision.Position = new Vector2(value.X, value.Y);
-                Collision.Bounds = new Vector2(value.Width, value.Height);
-            }
-        }
-
-        public AABB()
-            : base()
+        public AABB(IComponent parent, string name) : base(parent, name)
         {
         }
 
-        public static AABB CreateAABB(Rectangle r, Collision c)
-        {
-            AABB a = new AABB();
-            a.Collision = c;
-            return a;
-        }
+        //Dependencies
+        public new const int DEPENDENCY_COLLISION = 0;
+        public new const int DEPENDENCY_BODY = 1;
     }
 }

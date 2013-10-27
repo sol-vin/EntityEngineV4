@@ -253,6 +253,16 @@ namespace EntityEngineV4.PowerTools
                 point.Y = ynew + origin.Y;
                 return point;
             }
+
+            public static float GetAngle(Vector2 vector)
+            {
+                return GetAngle(Vector2.Zero, vector);
+            }
+
+            public static float GetAngle(Vector2 vector1, Vector2 vector2)
+            {
+                return (float)Math.Atan2(vector1.X - vector2.X, vector1.Y - vector2.Y);
+            }
         }
 
         public static float Lerp(float x, float y, float time)

@@ -8,9 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.GUI
 {
-    public delegate void ControlEventHandler(Control c);
+    
     public class ControlHandler : Service
     {
+        public delegate void ControlEventHandler(Control c);
+
         private Control[,] _controls;
 
         public bool UseMouse;
@@ -47,6 +49,11 @@ namespace EntityEngineV4.GUI
                 UseMouse = false;
                 EntityGame.Log.Write("Mouse was disabled on this state, switching UseMouse to false. Next time, please specify UseMouse in constructor", this, Alert.Warning);
             }
+        }
+
+        public override void Initialize()
+        {
+            
         }
 
         public override void Update(GameTime gt)

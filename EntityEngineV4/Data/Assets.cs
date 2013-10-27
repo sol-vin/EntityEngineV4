@@ -1,3 +1,5 @@
+using EntityEngineV4.Components.Rendering;
+using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,6 +8,7 @@ namespace EntityEngineV4.Data
     public struct Assets
     {
         public static Texture2D Pixel;
+        public static Texture2D Circle;
         public static SpriteFont Font;
 
         public static void LoadConent(Game game)
@@ -16,6 +19,8 @@ namespace EntityEngineV4.Data
             Pixel.SetData(pixeldata);
 
             Font = game.Content.Load<SpriteFont>(@"EntityEngine/font");
+
+            Circle = EntityGame.Game.Content.Load<Texture2D>(@"EntityEngine/circle");
         }
     }
 }

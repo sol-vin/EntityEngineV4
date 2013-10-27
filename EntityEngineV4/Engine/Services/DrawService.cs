@@ -11,10 +11,15 @@ namespace EntityEngineV4.Engine.Services
 {
     public class DrawService : Service
     {
-        private Stack<Component> _drawables = new Stack<Component>();
+        private SortedDictionary<float, Component> _drawables = new SortedDictionary<float, Component>();
 
         public DrawService(EntityState stateRef, string name) : base(stateRef, name)
         {
+        }
+
+        public override void Initialize()
+        {
+            
         }
 
         public override void Update(GameTime gt)

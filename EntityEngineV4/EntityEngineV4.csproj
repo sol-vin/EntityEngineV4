@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Collision\Shapes\Circle.cs" />
     <Compile Include="Components\VectorComponent.cs" />
     <Compile Include="Components\Rendering\Primitives\Primitive.cs" />
     <Compile Include="Components\Rendering\SourceAnimation.cs" />

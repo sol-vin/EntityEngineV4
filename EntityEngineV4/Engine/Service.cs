@@ -33,6 +33,7 @@ namespace EntityEngineV4.Engine
         public bool Active { get; private set; }
         public bool Visible { get; private set; }
         public bool Debug { get; set; }
+        public bool IsInitialized { get; private set; }
 
         protected Service(EntityState stateRef, string name)
         {
@@ -46,8 +47,12 @@ namespace EntityEngineV4.Engine
             Visible = true;
         }
 
+        public abstract void Initialize();
 
-        public abstract void Update(GameTime gt);
+        public virtual void Update(GameTime gt)
+        {
+            if(!IsInitialized) Initialize();
+        }
 
         public abstract void Draw(SpriteBatch sb);
 

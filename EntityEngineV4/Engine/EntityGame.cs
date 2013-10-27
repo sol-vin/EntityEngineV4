@@ -63,7 +63,7 @@ namespace EntityEngineV4.Engine
         public bool Active { get; private set; }
         public bool Visible { get; private set; }
         public bool Debug { get; set; }
-
+        public bool IsInitialized { get; private set; }
         public static EntityGame Self { get; private set; }
 
 
@@ -109,6 +109,10 @@ namespace EntityEngineV4.Engine
             _cpuCounter = new PerformanceCounter("Process", "% Processor Time", p.ProcessName);
 
             MakeWindow(g, viewport);
+        }
+
+        public void Initialize()
+        {
         }
 
         public static void MakeGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)

@@ -7,7 +7,7 @@ namespace EntityEngineV4.Components
     public class Physics : Component
     {
         public float AngularVelocity;
-        public float AngularVelocityDrag = 1f;
+        public float AngularDrag = 1f;
 
         /// <summary>
         /// The velcocity if the object measured in px/frame
@@ -18,6 +18,60 @@ namespace EntityEngineV4.Components
         public Vector2 Acceleration = Vector2.Zero;
         private Vector2 _force = Vector2.Zero;
 
+        public Vector2 Force
+        {
+            get { return _force; }
+            set { _force = value; }
+        }
+
+        private float _angularForce = 0f;
+        public float AngularForce
+        {
+            get { return _angularForce; }
+            set { _angularForce = value; }
+        }
+
+        //// <summary>
+        /// Backing field for Mass.
+        /// </summary>
+        private float _mass = 1f;
+
+        /// <summary>
+        /// The mass of the object.
+        /// </summary>
+        /// <value>
+        /// The mass.
+        /// </value>
+        public float Mass
+        {
+            get { return _mass; }
+            set
+            {
+                if (value < 0) throw new Exception("Mass cannot be less than zero!");
+                _mass = value;
+
+                if (Math.Abs(value - 0) < .00001f)
+                    InvertedMass = 0;
+                else
+                    InvertedMass = 1 / _mass;
+            }
+        }
+
+        /// <summary>
+        /// Gets one divided by mass (1/mass).
+        /// </summary>
+        /// <value>
+        /// The inverted mass.
+        /// </value>
+        public float InvertedMass { get; private set; }
+
+        /// <summary>
+        /// Bounciness of this object
+        /// </summary>
+        public float Restitution = 0f;
+
+
+        
         public Physics(IComponent e, string name)
             : base(e, name)
         {
@@ -29,7 +83,10 @@ namespace EntityEngineV4.Components
             Velocity += _force;
             _force = Vector2.Zero;
             Velocity *= Drag;
-            AngularVelocity *= AngularVelocityDrag;
+
+            AngularVelocity += _angularForce;
+            AngularVelocity *= AngularDrag;
+            _angularForce = 0f;
 
             GetLink<Body>(DEPENDENCY_BODY).Position += Velocity;
             GetLink<Body>(DEPENDENCY_BODY).Angle += AngularVelocity;
@@ -66,12 +123,17 @@ namespace EntityEngineV4.Components
         {
             Physics p = new Physics(Parent, Name);
             p.AngularVelocity = AngularVelocity;
-            p.AngularVelocityDrag = AngularVelocityDrag;
+            p.AngularDrag = AngularDrag;
             p.Drag = Drag;
             p.Velocity = Velocity;
             p.Acceleration = Acceleration;
             p.Link(DEPENDENCY_BODY, GetLink(DEPENDENCY_BODY));
             return p;
+        }
+
+        public void AddAngularForce(float force)
+        {
+            _angularForce += force;
         }
 
         //Dependencies

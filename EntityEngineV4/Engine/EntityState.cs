@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EntityEngineV4.Components;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
@@ -15,6 +16,8 @@ namespace EntityEngineV4.Engine
 
         public event Component.EventHandler AddComponentEvent;
         public event Component.EventHandler RemoveComponentEvent;
+
+        public event Timer.TimerEvent PreUpdateEvent;
 
         public event Entity.EventHandler AddEntityEvent;
         public event Entity.EventHandler RemoveEntityEvent;
@@ -33,17 +36,18 @@ namespace EntityEngineV4.Engine
         public bool Active { get; private set; }
         public bool Visible { get; private set; }
         public bool Debug { get; set; }
+        public bool IsInitialized { get; private set; }
         public bool Created { get; private set; }
         protected bool Destroyed;
 
         public List<Service> Services;
         
-        public enum CreateAction
+        public enum InitializeAction
         {
             OncePerShow, OnceInLife
         }
 
-        public CreateAction CreateActionOnShow = CreateAction.OnceInLife;
+        public InitializeAction InitializeActionOnShow = InitializeAction.OnceInLife;
 
         public EntityState()
         {
@@ -63,7 +67,7 @@ namespace EntityEngineV4.Engine
             Name = name;
 
             Services = new List<Service>();
-            ShownEvent += s => Create();
+            //ShownEvent += s => Initialize();
 
             Active = true;
             Visible = true;
@@ -133,10 +137,10 @@ namespace EntityEngineV4.Engine
             return result != null;
         }
 
-        public virtual void Create()
+        public virtual void Initialize()
         {
+            IsInitialized = true;
             Reset();
-            Created = true;
         }
 
         public virtual void Show()
@@ -146,13 +150,13 @@ namespace EntityEngineV4.Engine
             if (ShownEvent != null)
                 ShownEvent(this);
 
-            switch (CreateActionOnShow)
+            switch (InitializeActionOnShow)
             {
-                case CreateAction.OnceInLife:
-                    if(!Created) Create();
+                case InitializeAction.OnceInLife:
+                    if(!IsInitialized) Initialize();
                     break;
-                case CreateAction.OncePerShow:
-                    Create();
+                case InitializeAction.OncePerShow:
+                    Initialize();
                     break;
 
             }
@@ -168,9 +172,17 @@ namespace EntityEngineV4.Engine
             Services.Clear();
         }
 
+        public virtual void PreUpdate()
+        {
+            if (PreUpdateEvent != null) PreUpdateEvent();
+        }
+
         public virtual void Update(GameTime gt)
         {
+            if(!IsInitialized) Initialize();
             if (Destroyed) return;
+
+            PreUpdate();
 
             foreach (var service in Services.ToArray().Where(s => s.Active))
             {
