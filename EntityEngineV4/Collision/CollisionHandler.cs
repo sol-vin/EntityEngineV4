@@ -97,6 +97,19 @@ namespace EntityEngineV4.Collision
             _pairs.RemoveWhere(pair => pair.A.Equals(c) || pair.B.Equals(c));
         }
 
+        public HashSet<Collision> GetColliding()
+        {
+            HashSet<Collision> output = new HashSet<Collision>();
+
+            foreach (var manifold in  _manifolds)
+            {
+                output.Add(manifold.A);
+                output.Add(manifold.B);
+            }
+
+            return output;
+        }
+
         /// <summary>
         /// Reconfigures the pairs for a Collision c
         /// </summary>
@@ -332,9 +345,11 @@ namespace EntityEngineV4.Collision
 
         public static bool CircleVSCircle(Circle a, Circle b, ref Manifold manifold)
         {
-            manifold.Normal = a.Position - b.Position;
-            manifold.Normal *= manifold.Normal;
-            if (manifold.Normal.LengthSquared() > a.Radius + b.Radius)
+            manifold.Normal = b.Position - a.Position;
+            float r = a.Radius + b.Radius;
+            r *= r;
+            float l = manifold.Normal.LengthSquared();
+            if (l > r)
             {
                 //Set manifold for failure
                 manifold.AreColliding = false;
@@ -342,7 +357,7 @@ namespace EntityEngineV4.Collision
             }
 
             float d = manifold.Normal.Length();
-            if (Math.Abs(d) > SLOP)
+            if (Math.Abs(d) > float.Epsilon)
             {
                 manifold.PenetrationDepth = a.Radius + b.Radius - d;
                 manifold.AreColliding = true;

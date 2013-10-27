@@ -27,6 +27,7 @@ namespace EntityEngineV4.Collision.Shapes
         }
 
         //Dependencies
-        public const int DEPENDENCY_BODY = 0;
+        public new const int DEPENDENCY_COLLISION = 0;
+        public new const int DEPENDENCY_BODY = 1;
     }
 }

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using EntityEngineV4.Components;
+using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Collision.Shapes
 {
@@ -25,14 +27,59 @@ namespace EntityEngineV4.Collision.Shapes
         public float Bottom { get { return GetLink<Body>(DEPENDENCY_BODY).Y + Radius*2; } }
         public float Left { get { return GetLink<Body>(DEPENDENCY_BODY).X; } }
         public float Right { get { return GetLink<Body>(DEPENDENCY_BODY).X + Radius*2; } }
-        
+
+        public Color DebugColorWhenNotColliding = new Color(255, 0, 0, 30);
+        public Color DebugColorWhenColliding = new Color(0, 255, 0, 30);
+
 
         public Circle(IComponent parent, string name, float radius = 0f) : base(parent, name)
         {
             Radius = radius;
         }
 
+        public override void Update(GameTime gt)
+        {
+            base.Update(gt);
+        }
+
+        private float _pixeltoscale = 1f;
+        public override void Draw(SpriteBatch sb)
+        {
+            if (Debug)
+            {
+                
+                if (GetLink<Collision>(DEPENDENCY_COLLISION).IsColliding)
+                {
+                    _pixeltoscale = Diameter / Assets.Circle.Width;
+                    sb.Draw(Assets.Circle,
+                        Position-new Vector2(Radius),
+                        null,
+                        DebugColorWhenColliding,
+                        0f,
+                        Vector2.Zero,
+                        _pixeltoscale,
+                        SpriteEffects.None,
+                        1f);
+                }
+                else
+                {
+                    _pixeltoscale = Diameter / Assets.Circle.Width;
+                    sb.Draw(Assets.Circle,
+                        Position - new Vector2(Radius),
+                        null,
+                        DebugColorWhenNotColliding,
+                        0f,
+                        Vector2.Zero,
+                        _pixeltoscale,
+                        SpriteEffects.None,
+                        1f);
+                }
+            }
+            base.Draw(sb);
+        }
+
         //Dependencies
-        public const int DEPENDENCY_BODY = 0;
+        public new const int DEPENDENCY_COLLISION = 0;
+        public new const int DEPENDENCY_BODY = 1;
     }
 }

@@ -104,6 +104,8 @@ namespace EntityEngineV4.Collision
         {
             _collisionHandler = GetService<CollisionHandler>();
 
+            EntityGame.ActiveState.PreUpdateEvent += _collidedWith.Clear;
+
             GroupMask = new Bitmask();
             GroupMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
@@ -161,7 +163,6 @@ namespace EntityEngineV4.Collision
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
-            _collidedWith.Clear();
         }
 
         public void OnCollision(Collision c)

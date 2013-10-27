@@ -137,6 +137,8 @@ namespace EntityEngineV4.Engine
             c.RemoveServiceEvent += RemoveService;
             c.GetServiceEvent += GetService;
 
+            DestroyEvent += c.Destroy;
+
             if (AddComponentEvent != null)
                 AddComponentEvent(c);
         }

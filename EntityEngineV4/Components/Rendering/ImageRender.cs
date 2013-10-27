@@ -14,8 +14,8 @@ namespace EntityEngineV4.Components.Rendering
             {
                 Vector2 position = GetLink<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
-                    (int)((int)position.X + Origin.X * Scale.X),
-                    (int)((int)position.Y + Origin.Y * Scale.Y),
+                    (int)(position.X + Origin.X * Scale.X),
+                    (int)(position.Y + Origin.Y * Scale.Y),
                     (int)(Bounds.X),
                     (int)(Bounds.Y));
             }
@@ -38,14 +38,12 @@ namespace EntityEngineV4.Components.Rendering
         public ImageRender(Entity e, string name)
             : base(e, name)
         {
-            Origin = new Vector2(.5f, .5f);
         }
 
         public ImageRender(Entity e, string name, Texture2D texture)
             : base(e, name)
         {
             Texture = texture;
-            Origin = new Vector2(.5f, .5f);
         }
 
 

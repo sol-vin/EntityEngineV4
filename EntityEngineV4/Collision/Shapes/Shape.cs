@@ -13,10 +13,12 @@ namespace EntityEngineV4.Collision.Shapes
         {
         }
         //Dependencies
-        public const int DEPENDENCY_BODY = 0;
+        public const int DEPENDENCY_COLLISION = 0;
+        public const int DEPENDENCY_BODY = 1;
         public override void CreateDependencyList()
         {
             base.CreateDependencyList();
+            AddLinkType(DEPENDENCY_COLLISION, typeof(Collision));
             AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
     }
