@@ -130,7 +130,8 @@ namespace EntityEngineV4.Input
     {
         public PlayerIndex PlayerIndex;
         public Triggers Trigger;
-        public float Threshold = .7f;
+        public float DownThreshold = .7f;
+        public float DeadZone = .1f;
 
         public float Value { get; private set; }
 
@@ -150,22 +151,22 @@ namespace EntityEngineV4.Input
 
         public override bool Released()
         {
-            return Up() && _lastvalue > Threshold;
+            return Up() && _lastvalue > DownThreshold;
         }
 
         public override bool Pressed()
         {
-            return Down() && _lastvalue <= Threshold;
+            return Down() && _lastvalue <= DownThreshold;
         }
 
         public override bool Down()
         {
-            return Value > Threshold;
+            return Value > DownThreshold;
         }
 
         public override bool Up()
         {
-            return Value <= Threshold;
+            return Value <= DownThreshold;
         }
 
         public override void Update(GameTime gt)

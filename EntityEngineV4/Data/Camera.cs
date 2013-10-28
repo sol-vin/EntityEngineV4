@@ -1,6 +1,7 @@
 ﻿using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Data
 {
@@ -16,15 +17,18 @@ namespace EntityEngineV4.Data
 
         public Vector2 Delta { get { return Position - LastPosition; } }
 
-        public Vector2 Position = new Vector2();
+        public Vector2 Position = Vector2.Zero;
         public float Zoom = 1f;
 
         public Rectangle DeadZone;
 
         public enum FollowStyle
         {
-            LockOn, Lerp
+            LockOn, Lerp, None
         }
+
+        public FollowStyle FollowType = FollowStyle.None;
+        public Vector2 FollowOffset = Vector2.Zero;
 
         public Body Target { get; private set; }
 
@@ -64,13 +68,20 @@ namespace EntityEngineV4.Data
             Position = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);
         }
 
-        public void Update()
+        public override void Update(GameTime gt)
+        {
+            base.Update(gt);
+            if (FollowType != FollowStyle.None && Target != null)
+            {
+                if (FollowType == FollowStyle.LockOn)
+                    Position = Target.Position + FollowOffset;
+            }
+        }
+
+        public override void Draw(SpriteBatch sb)
         {
             LastPosition = Position;
-
-            if (Target != null)
-            {
-            }
+            base.Draw(sb);
         }
 
         public void View()
@@ -87,6 +98,7 @@ namespace EntityEngineV4.Data
         public void FollowPoint(Body b)
         {
             Target = b;
+            FollowType = FollowStyle.LockOn;
         }
 
         public void Flash()

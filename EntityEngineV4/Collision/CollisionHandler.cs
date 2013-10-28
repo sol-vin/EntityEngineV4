@@ -97,9 +97,9 @@ namespace EntityEngineV4.Collision
             _pairs.RemoveWhere(pair => pair.A.Equals(c) || pair.B.Equals(c));
         }
 
-        public HashSet<Collision> GetColliding()
+        public IEnumerable<Collision> GetColliding()
         {
-            HashSet<Collision> output = new HashSet<Collision>();
+            var output = new HashSet<Collision>();
 
             foreach (var manifold in  _manifolds)
             {

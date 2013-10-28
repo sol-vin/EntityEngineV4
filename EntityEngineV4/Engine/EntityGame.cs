@@ -142,7 +142,7 @@ namespace EntityEngineV4.Engine
         public virtual void Update(GameTime gt)
         {
             GameTime = gt;
-            Camera.Update();
+            Camera.Update(gt);
             ActiveState.Update(gt);
 
             _cpuUsages.Add(_cpuCounter.NextValue());
@@ -184,9 +184,9 @@ namespace EntityEngineV4.Engine
             _frameCounter++;
 
             Game.GraphicsDevice.Clear(BackgroundColor);
-            Game.GraphicsDevice.Clear(BackgroundColor);
 
-            StartDrawing();
+            StartDrawing(Camera);
+            Camera.Draw(SpriteBatch);
             ActiveState.Draw(SpriteBatch);
 
             StopDrawing();

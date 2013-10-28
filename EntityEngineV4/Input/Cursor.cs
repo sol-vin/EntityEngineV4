@@ -168,11 +168,12 @@ namespace EntityEngineV4.Input
                         OnGetFocus(this);
                     if (HasFocus)
                     {
+                        //TODO: Use normalized positition for this.
                         Position = new Vector2(Position.X + AnalogStick.Position.X*MovementSpeed.X,
                                                Position.Y - AnalogStick.Position.Y*MovementSpeed.Y);
 
                         //Move it with the camera.
-                        Position += EntityGame.Camera.Delta;
+                        //Position += EntityGame.Camera.Delta;
 
                         //Keep it from leaving the bounds of the window.
                         if (Body.Position.X < EntityGame.Camera.ScreenSpace.Left)
