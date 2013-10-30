@@ -6,7 +6,7 @@ namespace EntityEngineV4.Components.Rendering
 {
     public class ImageRender : Render
     {
-        public Texture2D Texture { get; set; }
+        public Texture2D Texture { get; private set; }
 
         public override Rectangle DrawRect
         {
@@ -60,6 +60,11 @@ namespace EntityEngineV4.Components.Rendering
         public void LoadTexture(string location)
         {
             Texture = EntityGame.Game.Content.Load<Texture2D>(location);
+        }
+
+        public void SetTexture(Texture2D texture)
+        {
+            Texture = texture;
         }
 
         //Dependencies

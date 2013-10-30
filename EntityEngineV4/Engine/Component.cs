@@ -121,7 +121,7 @@ namespace EntityEngineV4.Engine
             RemoveEntityEvent = null;
             DestroyEvent = null;
 
-            //Unsubscribe to the pre update ensuring it will initialize the component
+            //Unsubscribe to the pre update ensuring it will not initialize the component
             if(EntityGame.ActiveState != null)
                 EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate;
 

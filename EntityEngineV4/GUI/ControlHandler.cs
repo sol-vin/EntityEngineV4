@@ -51,7 +51,7 @@ namespace EntityEngineV4.GUI
             }
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             
         }

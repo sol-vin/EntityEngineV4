@@ -71,7 +71,7 @@ namespace EntityEngineV4.Input
 
         #region XNA methods
 
-        public override void Initialize()
+        public void Initialize()
         {
         }
 

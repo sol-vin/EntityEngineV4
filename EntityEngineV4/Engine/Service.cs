@@ -45,16 +45,34 @@ namespace EntityEngineV4.Engine
 
             Active = true;
             Visible = true;
+
+            //Subscribe to the pre update ensuring it will initialize the component before hand,if not
+            //it will defer intialization until the first Update.
+            if (EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent += SubscribePreUpdate;
         }
 
-        public abstract void Initialize();
+        public void Initialize()
+        {
+            
+        }
+
+        private void SubscribePreUpdate()
+        {
+            //Initialize
+            if (!IsInitialized) Initialize();
+            EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
+        }
 
         public virtual void Update(GameTime gt)
         {
-            if(!IsInitialized) Initialize();
+            if (!IsInitialized) Initialize();
         }
 
-        public abstract void Draw(SpriteBatch sb);
+        public virtual void Draw(SpriteBatch sb)
+        {
+            
+        }
 
         public virtual void Destroy(IComponent i = null)
         {
@@ -69,6 +87,10 @@ namespace EntityEngineV4.Engine
             AddEntityEvent = null;
             RemoveEntityEvent = null;
             DestroyEvent = null;
+
+            //Unsubscribe to the pre update ensuring it will not initialize the component
+            if (EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate;
 
             EntityGame.Log.Write("Destroyed", this, Alert.Info);
         }

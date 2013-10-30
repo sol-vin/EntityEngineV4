@@ -62,8 +62,10 @@
     <Compile Include="Collision\Shapes\Shape.cs" />
     <Compile Include="Data\Camera.cs" />
     <Compile Include="Data\Color.cs" />
+    <Compile Include="Data\XmlFile.cs" />
     <Compile Include="Engine\Debugging\DebugInfo.cs" />
     <Compile Include="Engine\Debugging\Log.cs" />
+    <Compile Include="Engine\Services\AssetCollector.cs" />
     <Compile Include="Engine\Services\DrawService.cs" />
     <Compile Include="Engine\Services\UpdateService.cs" />
     <Compile Include="GUI\Button.cs" />

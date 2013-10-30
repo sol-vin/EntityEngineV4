@@ -13,7 +13,7 @@ namespace EntityEngineV4.Engine.Services
         {
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
         }
 

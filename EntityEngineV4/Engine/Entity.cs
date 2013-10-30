@@ -41,6 +41,10 @@ namespace EntityEngineV4.Engine
             Id = EntityGame.GetID();
             Active = true;
             Visible = true;
+            
+            //Subscribe to the pre update ensuring it will initialize the component
+            if (EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent += SubscribePreUpdate;
 
             if(parent != null)
                 parent.AddEntity(this);
@@ -49,6 +53,13 @@ namespace EntityEngineV4.Engine
         public virtual void Initialize()
         {
             IsInitialized = true;
+        }
+
+        private void SubscribePreUpdate()
+        {
+            //Initialize
+            if (!IsInitialized) Initialize();
+            EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
         }
 
         public virtual void Update(GameTime gt)
@@ -81,6 +92,10 @@ namespace EntityEngineV4.Engine
             AddEntityEvent = null;
             RemoveEntityEvent = null;
             DestroyEvent = null;
+
+            //Unsubscribe to the pre update ensuring it will not initialize the component
+            if (EntityGame.ActiveState != null)
+                EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate;
 
             EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
         }
