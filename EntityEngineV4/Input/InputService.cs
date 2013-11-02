@@ -54,7 +54,7 @@ namespace EntityEngineV4.Input
 
         #region Constructor Region
 
-        public InputService(EntityState stateref)
+        public InputService(State stateref)
             : base(stateref, "InputService")
         {
             _keyboardState = Keyboard.GetState();

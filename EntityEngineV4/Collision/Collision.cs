@@ -78,31 +78,31 @@ namespace EntityEngineV4.Collision
         //Dependency properties
         public Vector2 Position
         {
-            get { return GetLink<Body>(DEPENEDENCY_BODY).Position; }
-            set { GetLink<Body>(DEPENEDENCY_BODY).Position = value; }
+            get { return GetDependency<Body>(DEPENEDENCY_BODY).Position; }
+            set { GetDependency<Body>(DEPENEDENCY_BODY).Position = value; }
 
         }
 
         public Vector2 Velocity
         {
-            get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Velocity; }
-            set { GetLink<Physics>(DEPENDENCY_PHYSICS).Velocity = value; }
+            get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).Velocity; }
+            set { GetDependency<Physics>(DEPENDENCY_PHYSICS).Velocity = value; }
 
         }
 
-        public float Restitution { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Restitution; } }
-        public float Mass { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).Mass; }}
-        public float InvertedMass { get { return GetLink<Physics>(DEPENDENCY_PHYSICS).InvertedMass; } }
-        public Vector2 Delta { get { return GetLink<Body>(DEPENEDENCY_BODY).Delta; } }
+        public float Restitution { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).Restitution; } }
+        public float Mass { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).Mass; }}
+        public float InvertedMass { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).InvertedMass; } }
+        public Vector2 Delta { get { return GetDependency<Body>(DEPENEDENCY_BODY).Delta; } }
 
 
         //Dependencies
         private CollisionHandler _collisionHandler;
 
-        public Collision(IComponent parent, string name)
+        public Collision(Node parent, string name)
             : base(parent, name)
         {
-            _collisionHandler = GetService<CollisionHandler>();
+            _collisionHandler = GetState<State>().GetService<CollisionHandler>();
 
             EntityGame.ActiveState.PreUpdateEvent += _collidedWith.Clear;
 
@@ -122,7 +122,7 @@ namespace EntityEngineV4.Collision
             base.Initialize();
             try
             {
-                GetLink<Physics>(DEPENDENCY_PHYSICS);
+                GetDependency<Physics>(DEPENDENCY_PHYSICS);
             }
             catch
             {
@@ -131,7 +131,7 @@ namespace EntityEngineV4.Collision
 
             try
             {
-                 GetLink<Shape>(DEPENDENCY_SHAPE);
+                 GetDependency<Shape>(DEPENDENCY_SHAPE);
             }
             catch (Exception)
             {
@@ -139,19 +139,19 @@ namespace EntityEngineV4.Collision
 
             }
             //Make sure shape and physics are on the same body.
-            if (GetLink(DEPENDENCY_PHYSICS).GetLink(Physics.DEPENDENCY_BODY).Id !=
-                GetLink(DEPENDENCY_SHAPE).GetLink(Shape.DEPENDENCY_BODY).Id)
+            if (GetDependency(DEPENDENCY_PHYSICS).GetDependency(Physics.DEPENDENCY_BODY).Id !=
+                GetDependency(DEPENDENCY_SHAPE).GetDependency(Shape.DEPENDENCY_BODY).Id)
             {
                 EntityGame.Log.Write("Shape and Physics dependencies do not have the same body dependency", this, Alert.Error);
                 throw new Exception("Shape and Physics do not share the same body");
             }
 
-            Link(DEPENEDENCY_BODY, GetLink(DEPENDENCY_PHYSICS).GetLink(Physics.DEPENDENCY_BODY));
+            LinkDependency(DEPENEDENCY_BODY, GetDependency(DEPENDENCY_PHYSICS).GetDependency(Physics.DEPENDENCY_BODY));
         }
 
-        public override void Destroy(IComponent i = null)
+        public override void Destroy(IComponent sender = null)
         {
-            base.Destroy(i);
+            base.Destroy(sender);
             _collisionHandler.RemoveCollision(this);
         }
 

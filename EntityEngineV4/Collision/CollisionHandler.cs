@@ -40,7 +40,7 @@ namespace EntityEngineV4.Collision
         /// </summary>
         private HashSet<Manifold> _manifolds;
 
-        public CollisionHandler(EntityState stateref)
+        public CollisionHandler(State stateref)
             : base(stateref, "CollisionHandler")
         {
             _collideables = new List<Collision>();
@@ -378,8 +378,8 @@ namespace EntityEngineV4.Collision
         public static Manifold CheckCollision(Collision a, Collision b)
         {
             Shape aShape, bShape;
-            aShape = a.GetLink<Shape>(Collision.DEPENDENCY_SHAPE);
-            bShape = b.GetLink<Shape>(Collision.DEPENDENCY_SHAPE);
+            aShape = a.GetDependency<Shape>(Collision.DEPENDENCY_SHAPE);
+            bShape = b.GetDependency<Shape>(Collision.DEPENDENCY_SHAPE);
 
             Manifold manifold = new Manifold(a,b);
 

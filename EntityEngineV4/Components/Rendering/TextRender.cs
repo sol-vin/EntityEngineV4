@@ -15,7 +15,7 @@ namespace EntityEngineV4.Components.Rendering
             get
             {
                 Vector2 position;
-                position = GetLink<Body>(DEPENDENCY_BODY).Position;
+                position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle((int)position.X, (int)position.Y, (int)(Bounds.X), (int)(Bounds.Y));
             }
         }
@@ -41,7 +41,7 @@ namespace EntityEngineV4.Components.Rendering
         public override void Draw(SpriteBatch sb)
         {
             if (EntityGame.Camera.ScreenSpace.Intersects(DrawRect))
-                sb.DrawString(Font, Text, GetLink<Body>(DEPENDENCY_BODY).Position + Origin, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle, Origin, Scale, Flip, Layer);
+                sb.DrawString(Font, Text, GetDependency<Body>(DEPENDENCY_BODY).Position + Origin, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle, Origin, Scale, Flip, Layer);
         }
 
         public void LoadFont(string location)

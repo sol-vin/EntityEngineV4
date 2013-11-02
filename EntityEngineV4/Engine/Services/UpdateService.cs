@@ -9,7 +9,7 @@ namespace EntityEngineV4.Engine.Services
 {
     public class UpdateService : Service
     {
-        public UpdateService(EntityState stateRef, string name) : base(stateRef, name)
+        public UpdateService(State state, string name) : base(state, name)
         {
         }
 

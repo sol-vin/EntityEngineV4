@@ -62,7 +62,7 @@ namespace EntityEngineV4.Data
             }
         }
 
-        public Camera(IComponent parent, string name)
+        public Camera(Node parent, string name)
             : base(parent, name)
         {
             Position = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);

@@ -15,7 +15,7 @@ namespace EntityEngineV4.Engine.Debugging
     {
         //TODO: Allow users to change position!
 
-        public DebugInfo(IComponent parent, string name) : base(parent, name)
+        public DebugInfo(Node parent, string name) : base(parent, name)
         {
         }
 
@@ -26,7 +26,6 @@ namespace EntityEngineV4.Engine.Debugging
             Text = "RAM: " + Math.Floor(EntityGame.RamUsage / 1024 / 1024) + Environment.NewLine;
             Text += "CPU: " + Math.Round(EntityGame.CpuUsage, 1) + @"%" + Environment.NewLine;
             Text += "FPS: " + EntityGame.FrameRate + Environment.NewLine;
-            Text += "Active: " + EntityGame.ActiveState.Count;
 
             //Change this so the X value is static, create an enum that will decide
             //where to put the debug info

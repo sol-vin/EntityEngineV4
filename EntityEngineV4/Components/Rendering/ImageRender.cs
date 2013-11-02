@@ -12,7 +12,7 @@ namespace EntityEngineV4.Components.Rendering
         {
             get
             {
-                Vector2 position = GetLink<Body>(DEPENDENCY_BODY).Position;
+                Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
                     (int)(position.X + Origin.X * Scale.X),
                     (int)(position.Y + Origin.Y * Scale.Y),
@@ -54,7 +54,7 @@ namespace EntityEngineV4.Components.Rendering
                 DrawRect.Bottom > EntityGame.Camera.ScreenSpace.X ||
                 DrawRect.Right > EntityGame.Camera.ScreenSpace.Y ||
                 DrawRect.Left < EntityGame.Camera.ScreenSpace.Width)
-                sb.Draw(Texture, DrawRect, null, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle, Origin, Flip, Layer);
+                sb.Draw(Texture, DrawRect, null, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle, Origin, Flip, Layer);
         }
 
         public void LoadTexture(string location)

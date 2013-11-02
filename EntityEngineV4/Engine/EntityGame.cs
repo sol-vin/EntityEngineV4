@@ -12,7 +12,7 @@ namespace EntityEngineV4.Engine
     public class EntityGame : IComponent
     {
         public static Camera Camera;
-        public static EntityState ActiveState;
+        public static State ActiveState;
 
         public static bool ShowDebugInfo;
 
@@ -45,29 +45,20 @@ namespace EntityEngineV4.Engine
         public static Rectangle Viewport { get; set; }
 
 
-        public static uint LastID { get; private set; }
-        public IComponent Parent { get; private set; }
-
-        public event Component.EventHandler AddComponentEvent;
-        public event Component.EventHandler RemoveComponentEvent;
-        public event Entity.EventHandler AddEntityEvent;
-        public event Entity.EventHandler RemoveEntityEvent;
-        public event Service.EventHandler AddServiceEvent;
-        public event Service.EventHandler RemoveServiceEvent;
-        public event Service.ReturnHandler GetServiceEvent;
+        public static int LastID { get; private set; }
 
         public event EventHandler DestroyEvent;
 
         public string Name { get; private set; }
-        public uint Id { get; private set; }
-        public bool Active { get; private set; }
-        public bool Visible { get; private set; }
+        public int Id { get; private set; }
+        public bool Active { get; set; }
+        public bool Visible { get; set; }
         public bool Debug { get; set; }
-        public bool IsInitialized { get; private set; }
+        public bool Initialized { get; private set; }
+        public bool Destroyed { get; private set; }
+        public float Order { get; set; }
+        public float Layer { get; set; }
         public static EntityGame Self { get; private set; }
-
-
-
 
         private EntityGame(Game game, SpriteBatch spriteBatch)
         {
@@ -113,21 +104,30 @@ namespace EntityEngineV4.Engine
 
         public void Initialize()
         {
+            Initialized = true;
         }
+
+        public void Reset()
+        {
+            Initialized = false;
+        }
+
 
         public static void MakeGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)
         {
             Self = new EntityGame(game, g, spriteBatch, viewport);
             Self.Name = "EntityGame";
+            Self.Id = GetID();
         }
 
         public static void MakeGame(Game game, SpriteBatch spriteBatch)
         {
             Self = new EntityGame(game, spriteBatch);
             Self.Name = "EntityGame";
+            Self.Id = GetID();
         }
 
-        public void Destroy(IComponent i = null)
+        public void Destroy(IComponent sender = null)
         {
             Game = null;
             GameTime = null;
@@ -199,76 +199,6 @@ namespace EntityEngineV4.Engine
             SpriteBatch.End();
         }
 
-        public void AddComponent(Component c)
-        {
-            if (AddComponentEvent != null)
-            {
-                AddComponentEvent(c);
-            }
-            else
-            {
-                Log.Write("AddComponent called with no methods subscribed", this, Alert.Warning);
-            }
-        }
-
-        public void RemoveComponent(Component c)
-        {
-            if (RemoveComponentEvent != null)
-            {
-                RemoveComponentEvent(c);
-            }
-            else
-            {
-                Log.Write("RemoveComponent called with no methods subscribed", this, Alert.Warning);
-            }
-        }
-
-        public void AddEntity(Entity c)
-        {
-            ActiveState.AddEntity(c);
-            if (AddEntityEvent != null)
-            {
-                AddEntityEvent(c);
-            }
-        }
-
-        public void RemoveEntity(Entity c)
-        {
-            ActiveState.RemoveEntity(c);
-            if (RemoveEntityEvent != null)
-            {
-                RemoveEntityEvent(c);
-            }
-        }
-
-
-        public void AddService(Service s)
-        {
-            if (AddServiceEvent != null)
-            {
-                AddServiceEvent(s);
-            }
-            ActiveState.AddService(s);
-        }
-
-        public void RemoveService(Service s)
-        {
-            if (RemoveServiceEvent != null)
-            {
-                RemoveServiceEvent(s);
-            }
-            ActiveState.RemoveService(s);
-        }
-
-        public T GetService<T>() where T : Service
-        {
-            return ActiveState.GetService<T>();
-        }
-        public Service GetService(Type t)
-        {
-            return ActiveState.GetService(t);
-        }
-
         public static void StartDrawing(Camera camera)
         {
             SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
@@ -306,12 +236,12 @@ namespace EntityEngineV4.Engine
             Log.Write("Created window with params " + r.ToString(), Alert.Info);
         }
 
-        public static uint GetID()
+        public static int GetID()
         {
             return LastID++;
         }
 
-        public static void SwitchState(EntityState state)
+        public static void SwitchState(State state)
         {
             ActiveState = state;
             ActiveState.Show();

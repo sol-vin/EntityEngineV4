@@ -45,7 +45,7 @@ namespace EntityEngineV4.Components.Rendering
         {
             get
             {
-                Vector2 position = GetLink<Body>(DEPENDENCY_BODY).Position;
+                Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
                     (int)(position.X + Origin.X * Scale.X),
                     (int)(position.Y + Origin.Y * Scale.Y),
@@ -98,7 +98,7 @@ namespace EntityEngineV4.Components.Rendering
         public override void Draw(SpriteBatch sb)
         {
             Rectangle sourcerect = _sourcerectangles[CurrentFrame];
-            sb.Draw(Texture, DrawRect, sourcerect, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle,
+            sb.Draw(Texture, DrawRect, sourcerect, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle,
                     Origin, Flip, Layer);
         }
 

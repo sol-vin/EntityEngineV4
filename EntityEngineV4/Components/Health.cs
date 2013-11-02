@@ -15,13 +15,13 @@ namespace EntityEngineV4.Components
 
         public event Entity.EventHandler DiedEvent;
 
-        public Health(IComponent e, string name)
-            : base(e, name)
+        public Health(Node parent, string name)
+            : base(parent, name)
         {
         }
 
-        public Health(IComponent e, string name, int hp)
-            : base(e, name)
+        public Health(Node parent, string name, int hp)
+            : base(parent, name)
         {
             HitPoints = hp;
         }

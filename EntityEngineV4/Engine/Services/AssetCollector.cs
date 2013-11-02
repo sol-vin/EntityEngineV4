@@ -14,7 +14,7 @@ namespace EntityEngineV4.Engine.Services
     {
         private Dictionary<string,object> _assets = new Dictionary<string,object>();
 
-        public AssetCollector(EntityState stateRef) : base(stateRef, "AssetCollector")
+        public AssetCollector(State state) : base(state, "AssetCollector")
         {
         }
 

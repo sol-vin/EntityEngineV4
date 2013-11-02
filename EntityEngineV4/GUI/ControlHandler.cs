@@ -36,7 +36,7 @@ namespace EntityEngineV4.GUI
 
         public event ControlEventHandler FocusChanged;
 
-        public ControlHandler(EntityState stateref, bool useMouse = true)
+        public ControlHandler(State stateref, bool useMouse = true)
             : base(stateref, "ControlHandler")
         {
             _controls = new Control[1, 1];
@@ -102,7 +102,7 @@ namespace EntityEngineV4.GUI
                 _controls[c.TabPosition.X, c.TabPosition.Y] = null;
             }
 
-            RemoveEntity(c);
+            c.Destroy(this);
         }
 
         private void ResizeControlCollection(int x, int y)

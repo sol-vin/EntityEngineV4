@@ -72,8 +72,8 @@ namespace EntityEngineV4.Components
 
 
         
-        public Physics(IComponent e, string name)
-            : base(e, name)
+        public Physics(Node parent, string name)
+            : base(parent, name)
         {
         }
 
@@ -88,13 +88,13 @@ namespace EntityEngineV4.Components
             AngularVelocity *= AngularDrag;
             _angularForce = 0f;
 
-            GetLink<Body>(DEPENDENCY_BODY).Position += Velocity;
-            GetLink<Body>(DEPENDENCY_BODY).Angle += AngularVelocity;
+            GetDependency<Body>(DEPENDENCY_BODY).Position += Velocity;
+            GetDependency<Body>(DEPENDENCY_BODY).Angle += AngularVelocity;
         }
 
         public void Thrust(float power)
         {
-            var angle = GetLink<Body>(DEPENDENCY_BODY).Angle;
+            var angle = GetDependency<Body>(DEPENDENCY_BODY).Angle;
             Thrust(power, angle);
         }
 
@@ -106,12 +106,12 @@ namespace EntityEngineV4.Components
 
         public void FaceVelocity()
         {
-            GetLink<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(Velocity.X, -Velocity.Y);
+            GetDependency<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(Velocity.X, -Velocity.Y);
         }
 
         public void FaceVelocity(Vector2 velocity)
         {
-            GetLink<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(velocity.X, velocity.Y);
+            GetDependency<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(velocity.X, velocity.Y);
         }
 
         public void AddForce(Vector2 force)
@@ -127,7 +127,7 @@ namespace EntityEngineV4.Components
             p.Drag = Drag;
             p.Velocity = Velocity;
             p.Acceleration = Acceleration;
-            p.Link(DEPENDENCY_BODY, GetLink(DEPENDENCY_BODY));
+            p.LinkDependency(DEPENDENCY_BODY, GetDependency(DEPENDENCY_BODY));
             return p;
         }
 

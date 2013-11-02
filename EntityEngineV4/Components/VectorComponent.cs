@@ -18,12 +18,12 @@ namespace EntityEngineV4.Components
             return new Vector2(v.X, v.Y);
         }
 
-        public VectorComponent(IComponent parent, string name) : base(parent, name)
+        public VectorComponent(Node parent, string name) : base(parent, name)
         {
             Vector = new Vector2();
         }
 
-        public VectorComponent(IComponent parent, string name ,Vector2 vector) : base(parent, name)
+        public VectorComponent(Node parent, string name ,Vector2 vector) : base(parent, name)
         {
             Vector = vector;
         }

@@ -15,24 +15,24 @@ namespace EntityEngineV4.Collision.Shapes
         public float Radius;
         public override Vector2 Position
         {
-            get { return GetLink<Body>(DEPENDENCY_BODY).Position + Offset; }
+            get { return GetDependency<Body>(DEPENDENCY_BODY).Position + Offset; }
         }
 
-        public float X { get { return GetLink<Body>(DEPENDENCY_BODY).X + Offset.X; } }
-        public float Y { get { return GetLink<Body>(DEPENDENCY_BODY).Y + Offset.Y; } }
+        public float X { get { return GetDependency<Body>(DEPENDENCY_BODY).X + Offset.X; } }
+        public float Y { get { return GetDependency<Body>(DEPENDENCY_BODY).Y + Offset.Y; } }
 
         public float Diameter { get { return Radius*2; } }
 
-        public float Top { get { return GetLink<Body>(DEPENDENCY_BODY).Y; } }
-        public float Bottom { get { return GetLink<Body>(DEPENDENCY_BODY).Y + Radius*2; } }
-        public float Left { get { return GetLink<Body>(DEPENDENCY_BODY).X; } }
-        public float Right { get { return GetLink<Body>(DEPENDENCY_BODY).X + Radius*2; } }
+        public float Top { get { return GetDependency<Body>(DEPENDENCY_BODY).Y; } }
+        public float Bottom { get { return GetDependency<Body>(DEPENDENCY_BODY).Y + Radius*2; } }
+        public float Left { get { return GetDependency<Body>(DEPENDENCY_BODY).X; } }
+        public float Right { get { return GetDependency<Body>(DEPENDENCY_BODY).X + Radius*2; } }
 
         public Color DebugColorWhenNotColliding = new Color(255, 0, 0, 30);
         public Color DebugColorWhenColliding = new Color(0, 255, 0, 30);
 
 
-        public Circle(IComponent parent, string name, float radius = 0f) : base(parent, name)
+        public Circle(Node parent, string name, float radius = 0f) : base(parent, name)
         {
             Radius = radius;
         }
@@ -48,7 +48,7 @@ namespace EntityEngineV4.Collision.Shapes
             if (Debug)
             {
                 
-                if (GetLink<Collision>(DEPENDENCY_COLLISION).IsColliding)
+                if (GetDependency<Collision>(DEPENDENCY_COLLISION).IsColliding)
                 {
                     _pixeltoscale = Diameter / Assets.Circle.Width;
                     sb.Draw(Assets.Circle,

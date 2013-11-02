@@ -107,7 +107,7 @@ namespace EntityEngineV4.Engine.Debugging
             _file.Flush();
         }
 
-        public void Write(string message, IComponent sender, Alert l)
+        public void Write(string message, Node sender, Alert l)
         {
             //Find out if our alert is not high enough to publish
             if (l.Rank < HighestAlertLevel.Rank)
@@ -118,8 +118,7 @@ namespace EntityEngineV4.Engine.Debugging
                 sendersname = sender.Parent.Name + "->" + sender.Name;
             else if (sender is Component)
             {
-                Component c = (Component)sender;
-                sendersname = c.Parent.Name + "->" + c.Name;
+                sendersname = sender.Parent.Name + "->" + sender.Name;
             }
             else if (sender is Service)
             {
@@ -146,6 +145,31 @@ namespace EntityEngineV4.Engine.Debugging
             _file.WriteLine(logline);
             _file.Flush();
         }
+
+        public void Write(string message, IComponent sender, Alert l)
+        {
+            //Find out if our alert is not high enough to publish
+            if (l.Rank < HighestAlertLevel.Rank)
+                return;
+
+            string logline =
+                "[" + DateTime.Now.Month + "-" + DateTime.Now.Day + " : " + DateTime.Now.Hour + ":" +
+                DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond +
+                //[Month-Day : HH:MM:SS:MS]
+                DateTime.Now.Millisecond + "]" + " - [" + l + "]" +
+                " - [Sender: " + sender.Name + "] - " + message;
+
+            if (CheckLogSize())
+            {
+                Id++;
+                LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
+                          DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
+            }
+
+            _file.WriteLine(logline);
+            _file.Flush();
+        }
+
 
         public bool CheckLogSize()
         {

@@ -30,7 +30,7 @@ namespace EntityEngineV4.Components.Rendering
         /// </summary>
         public virtual Vector2 Bounds { get; set; }
 
-        protected Render(IComponent parent, string name)
+        protected Render(Node parent, string name)
             : base(parent, name)
         {
             Layer = 0.5f;

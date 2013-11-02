@@ -74,8 +74,8 @@ namespace EntityEngineV4.Components
         /// <summary>
         /// Initializes a new instance of the <see cref="Timer"/> class.
         /// </summary>
-        public Timer(IComponent e, string name)
-            : base(e, name)
+        public Timer(Node parent, string name)
+            : base(parent, name)
         {
             Alive = false;
         }

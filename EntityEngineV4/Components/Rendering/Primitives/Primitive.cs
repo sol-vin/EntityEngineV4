@@ -12,7 +12,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
         {
             public float Thickness = 1;
 
-            protected Primitive(IComponent parent, string name)
+            protected Primitive(Node parent, string name)
                 : base(parent, name)
             {
             }
@@ -39,11 +39,11 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
         public class Point : Primitive
         {
-            public float X { get { return GetLink<Body>(DEPENDENCY_BODY).X; } set { GetLink<Body>(DEPENDENCY_BODY).X = value; } }
+            public float X { get { return GetDependency<Body>(DEPENDENCY_BODY).X; } set { GetDependency<Body>(DEPENDENCY_BODY).X = value; } }
 
-            public float Y { get { return GetLink<Body>(DEPENDENCY_BODY).Y; } set { GetLink<Body>(DEPENDENCY_BODY).Y = value; } }
+            public float Y { get { return GetDependency<Body>(DEPENDENCY_BODY).Y; } set { GetDependency<Body>(DEPENDENCY_BODY).Y = value; } }
 
-            public float Angle { get { return GetLink<Body>(DEPENDENCY_BODY).Angle; } set { GetLink<Body>(DEPENDENCY_BODY).Angle = value; } }
+            public float Angle { get { return GetDependency<Body>(DEPENDENCY_BODY).Angle; } set { GetDependency<Body>(DEPENDENCY_BODY).Angle = value; } }
 
             public override Microsoft.Xna.Framework.Rectangle DrawRect
             {
@@ -62,7 +62,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Y = y;
             }
 
-            public Point(IComponent parent, string name)
+            public Point(Node parent, string name)
                 : base(parent, name)
             {
             }
@@ -86,7 +86,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
         {
             public Vector2 Point1, Point2;
 
-            public Line(IComponent parent, string name, Vector2 point1, Vector2 point2)
+            public Line(Node parent, string name, Vector2 point1, Vector2 point2)
                 : base(parent, name)
             {
                 Point1 = point1;
@@ -154,15 +154,15 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
         public class Rectangle : Primitive
         {
-            public float X { get { return GetLink<Body>(DEPENDENCY_BODY).X; } set { GetLink<Body>(DEPENDENCY_BODY).X = value; } }
+            public float X { get { return GetDependency<Body>(DEPENDENCY_BODY).X; } set { GetDependency<Body>(DEPENDENCY_BODY).X = value; } }
 
-            public float Y { get { return GetLink<Body>(DEPENDENCY_BODY).Y; } set { GetLink<Body>(DEPENDENCY_BODY).Y = value; } }
+            public float Y { get { return GetDependency<Body>(DEPENDENCY_BODY).Y; } set { GetDependency<Body>(DEPENDENCY_BODY).Y = value; } }
 
-            public float Width { get { return GetLink<Body>(DEPENDENCY_BODY).Width; } set { GetLink<Body>(DEPENDENCY_BODY).Width = value; } }
+            public float Width { get { return GetDependency<Body>(DEPENDENCY_BODY).Width; } set { GetDependency<Body>(DEPENDENCY_BODY).Width = value; } }
 
-            public float Height { get { return GetLink<Body>(DEPENDENCY_BODY).Height; } set { GetLink<Body>(DEPENDENCY_BODY).Height = value; } }
+            public float Height { get { return GetDependency<Body>(DEPENDENCY_BODY).Height; } set { GetDependency<Body>(DEPENDENCY_BODY).Height = value; } }
 
-            public float Angle { get { return GetLink<Body>(DEPENDENCY_BODY).Angle; } set { GetLink<Body>(DEPENDENCY_BODY).Angle = value; } }
+            public float Angle { get { return GetDependency<Body>(DEPENDENCY_BODY).Angle; } set { GetDependency<Body>(DEPENDENCY_BODY).Angle = value; } }
 
             public override Vector2 Bounds { get { return new Vector2((Width + Thickness) * Scale.X, (Height + Thickness) * Scale.Y); } }
 
@@ -178,7 +178,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
             public bool Fill;
 
-            public Rectangle(IComponent parent, string name, float x, float y, float width, float height, bool fill = false)
+            public Rectangle(Node parent, string name, float x, float y, float width, float height, bool fill = false)
                 : base(parent, name)
             {
                 X = x;
@@ -190,7 +190,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Origin = new Vector2(0, 0);
             }
 
-            public Rectangle(IComponent parent, string name, bool fill)
+            public Rectangle(Node parent, string name, bool fill)
                 : base(parent, name)
             {
                 Fill = fill;

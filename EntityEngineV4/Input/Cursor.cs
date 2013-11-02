@@ -38,7 +38,7 @@ namespace EntityEngineV4.Input
         public abstract bool Up();
 
 
-        public Cursor(IComponent parent, string name)
+        public Cursor(Node parent, string name)
             : base(parent, name)
         {
             Active = true;
@@ -49,7 +49,7 @@ namespace EntityEngineV4.Input
 
             //Default rendering is a single white pixel.
             Render = new ImageRender(this, "ImageRender", Assets.Pixel);
-            Render.Link(ImageRender.DEPENDENCY_BODY, Body);
+            Render.LinkDependency(ImageRender.DEPENDENCY_BODY, Body);
             Render.Layer = 1f;
             Render.Scale = Vector2.One * 3f;
             Render.Color = Color.Black;
@@ -85,9 +85,9 @@ namespace EntityEngineV4.Input
             Visible = false;
         }
 
-        public override void Destroy(IComponent i = null)
+        public override void Destroy(IComponent sender = null)
         {
-            base.Destroy(i);
+            base.Destroy(sender);
 
             GotFocus = null;
             LostFocus = null;
@@ -126,12 +126,12 @@ namespace EntityEngineV4.Input
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="name"></param>
-        public ControllerCursor(IComponent parent, string name)
+        public ControllerCursor(Node parent, string name)
             : base(parent, name)
         {
             MakeDefault();
         }
-        public ControllerCursor(IComponent parent, string name, MovementInput input)
+        public ControllerCursor(Node parent, string name, MovementInput input)
             : base(parent, name)
         {
             switch(input)
@@ -261,7 +261,7 @@ namespace EntityEngineV4.Input
 
     public class MouseCursor : Cursor
     {
-        public MouseCursor(IComponent parent, string name) : base(parent, name)
+        public MouseCursor(Node parent, string name) : base(parent, name)
         {
 
         }

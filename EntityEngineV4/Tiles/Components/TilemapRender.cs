@@ -96,8 +96,8 @@ namespace EntityEngineV4.Tiles.Components
         {
             return new Rectangle
                 {
-                    X = (int)(x * TileSize.X * Scale.X) + (int)GetLink<Body>(DEPENDENCY_BODY).Position.X,
-                    Y = (int)(y * TileSize.Y * Scale.Y) + (int)GetLink<Body>(DEPENDENCY_BODY).Position.Y,
+                    X = (int)(x * TileSize.X * Scale.X) + (int)GetDependency<Body>(DEPENDENCY_BODY).Position.X,
+                    Y = (int)(y * TileSize.Y * Scale.Y) + (int)GetDependency<Body>(DEPENDENCY_BODY).Position.Y,
                     Width = (int)(TileSize.X * Scale.X),
                     Height = (int)(TileSize.Y * Scale.Y)
                 };
@@ -140,18 +140,18 @@ namespace EntityEngineV4.Tiles.Components
             get
             {
                 return new Rectangle(
-                    (int)GetLink<Body>(DEPENDENCY_BODY).X, 
-                    (int)GetLink<Body>(DEPENDENCY_BODY).Y, 
-                    (int)(GetLink<Body>(DEPENDENCY_BODY).Width * Scale.X), 
-                    (int)(GetLink<Body>(DEPENDENCY_BODY).Height * Scale.Y));
+                    (int)GetDependency<Body>(DEPENDENCY_BODY).X, 
+                    (int)GetDependency<Body>(DEPENDENCY_BODY).Y, 
+                    (int)(GetDependency<Body>(DEPENDENCY_BODY).Width * Scale.X), 
+                    (int)(GetDependency<Body>(DEPENDENCY_BODY).Height * Scale.Y));
             }
         }
 
         public override void Update(GameTime gt)
         {
             base.Update(gt);
-            GetLink<Body>(DEPENDENCY_BODY).Width = TileSize.X * (_tiles.GetUpperBound(0) + 1);
-            GetLink<Body>(DEPENDENCY_BODY).Height = TileSize.Y * (_tiles.GetUpperBound(1) + 1);
+            GetDependency<Body>(DEPENDENCY_BODY).Width = TileSize.X * (_tiles.GetUpperBound(0) + 1);
+            GetDependency<Body>(DEPENDENCY_BODY).Height = TileSize.Y * (_tiles.GetUpperBound(1) + 1);
 
         }
 

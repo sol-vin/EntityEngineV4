@@ -9,7 +9,6 @@ namespace EntityEngineV4.PowerTools
 {
     public class Spawn : Entity
     {
-        public bool Destroyed = false;
 
         public int TimeToLive
         {
@@ -38,10 +37,9 @@ namespace EntityEngineV4.PowerTools
             base.Update(gt);
         }
 
-        public override void Destroy(IComponent i = null)
+        public override void Destroy(IComponent sender = null)
         {
-            base.Destroy(i);
-            Destroyed = true;
+            base.Destroy(sender);
         }
     }
 
@@ -81,7 +79,7 @@ namespace EntityEngineV4.PowerTools
         public bool AutoEmit;
         public int AutoEmitAmount = 1;
 
-        public Spawner(IComponent parent, string name)
+        public Spawner(Node parent, string name)
             : base(parent, name)
         {
         }

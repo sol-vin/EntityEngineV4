@@ -37,13 +37,13 @@ namespace EntityEngineV4.GUI
             set { _bodyImage.Color = value; }
         }
         
-        public TextButton(IComponent parent, string name, Vector2 position, RGBColor color) :base(parent, name)
+        public TextButton(Node parent, string name, Vector2 position, RGBColor color) :base(parent, name)
         {
             Body.Position = position;
 
             _textBody = new Body(this, "TextBody");
             TextRender = new TextRender(this, "Render", Assets.Font, "");
-            TextRender.Link(TextRender.DEPENDENCY_BODY, _textBody);
+            TextRender.LinkDependency(TextRender.DEPENDENCY_BODY, _textBody);
             TextRender.Layer = .9f;
 
             //Start setting up Render's body
@@ -55,7 +55,7 @@ namespace EntityEngineV4.GUI
 
             //Make our rectangles
             _bodyImage = new ShapeTypes.Rectangle(this, "BodyImage", true);
-            _bodyImage.Link(ShapeTypes.Rectangle.DEPENDENCY_BODY, Body);
+            _bodyImage.LinkDependency(ShapeTypes.Rectangle.DEPENDENCY_BODY, Body);
             _bodyImage.Color = color;
         }
 
