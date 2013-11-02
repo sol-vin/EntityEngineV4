@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
@@ -30,7 +31,10 @@ namespace EntityEngineV4.Input
 
         public event CursorEventHandler GotFocus , LostFocus;
 
-        public bool HasFocus { get; protected set; }
+        public bool HasFocus
+        {
+            get; protected set;
+        }
 
         public abstract bool Down();
         public abstract bool Pressed();
@@ -62,14 +66,19 @@ namespace EntityEngineV4.Input
             base.Draw(sb);
         }
 
-        public void OnGetFocus(Cursor c = null)
+        public void GetFocus(Cursor c)
         {
             if (GotFocus != null) GotFocus(this);
 
             //Get the Cursor's position and set it to our own for seamless changing.
             if(MouseService.Cursor != null)
+            {
                 Position = MouseService.Cursor.Position;
+                MouseService.Cursor.LoseFocus();
+            }
+
             MouseService.Cursor = this;
+
             HasFocus = true;
 
             Visible = true;
@@ -77,12 +86,14 @@ namespace EntityEngineV4.Input
             EntityGame.Log.Write("Got focus!", this, Alert.Info);
         }
 
-        public void OnLostFocus(Cursor newCursor)
+        public void LoseFocus()
         {
-            if (LostFocus != null) LostFocus(newCursor);
+            if (LostFocus != null) LostFocus(this);
             HasFocus = false;
 
             Visible = false;
+
+            EntityGame.Log.Write("Lost focus!", this, Alert.Info);
         }
 
         public override void Destroy(IComponent sender = null)
@@ -126,21 +137,16 @@ namespace EntityEngineV4.Input
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="name"></param>
-        public ControllerCursor(Node parent, string name)
+        public ControllerCursor(MouseService parent, string name)
             : base(parent, name)
         {
+            Input = MovementInput.Analog;
             MakeDefault();
         }
         public ControllerCursor(Node parent, string name, MovementInput input)
             : base(parent, name)
         {
-            switch(input)
-            {
-                case MovementInput.Analog:
-                    break;
-                case MovementInput.Buttons:
-                    break;
-            }
+            Input = input;
 
             MakeDefault();
         }
@@ -165,7 +171,7 @@ namespace EntityEngineV4.Input
             {
                 case MovementInput.Analog:
                     if (!HasFocus && (AnalogStickMoved() || SelectKey.Down()))
-                        OnGetFocus(this);
+                        GetFocus(this);
                     if (HasFocus)
                     {
                         //TODO: Use normalized positition for this.
@@ -189,7 +195,7 @@ namespace EntityEngineV4.Input
                     break;
                 case MovementInput.Buttons:
                     if (!HasFocus && ButtonPressed() || SelectKey.Down())
-                        OnGetFocus(this);
+                        GetFocus(this);
                     if (HasFocus)
                     {
                         Position = new Vector2(
@@ -269,7 +275,7 @@ namespace EntityEngineV4.Input
         public override void Update(GameTime gt)
         {
             if(!HasFocus && (MouseService.Delta != Point.Zero || MouseService.IsMouseButtonDown(MouseButton.LeftButton)))
-                OnGetFocus(this);
+                GetFocus(this);
             if(HasFocus)
             {
                 Position = new Vector2(Position.X - MouseService.Delta.X, Position.Y - MouseService.Delta.Y);

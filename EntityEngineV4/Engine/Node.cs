@@ -38,7 +38,8 @@ namespace EntityEngineV4.Engine
         public Node(Node parent, string name)
         {
             Name = name;
-
+            Active = true;
+            Visible = true;
             SetParent(parent);
         }
 
@@ -129,6 +130,7 @@ namespace EntityEngineV4.Engine
         public State GetState()
         {
             if (IsRoot) return this as State; //We found the root, return it.
+            if(Parent == null) throw new Exception(String.Format("{0} is not root but, has a null parent.", Name));
             return Parent.GetState(); //Resursively call up the chain until we find the root
         }
 
@@ -150,6 +152,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Update(GameTime gt)
         {
+            if (!Initialized) Initialize();
         }
 
         public virtual void Draw(SpriteBatch sb)
@@ -158,7 +161,7 @@ namespace EntityEngineV4.Engine
 
         public void UpdateChildren(GameTime gt)
         {
-            foreach (var child in Children.ToArray())
+            foreach (var child in Children.ToArray().Where(c => c.Active))
             {
                 child.Update(gt);
                 child.UpdateChildren(gt);
@@ -167,7 +170,7 @@ namespace EntityEngineV4.Engine
 
         public void DrawChildren(SpriteBatch sb)
         {
-            foreach (var child in Children.ToArray())
+            foreach (var child in Children.ToArray().Where(c => c.Visible))
             {
                 child.Draw(sb);
                 child.DrawChildren(sb);

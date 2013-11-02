@@ -8,28 +8,7 @@ namespace EntityEngineV4.Input
 {
     public class MouseService : Service
     {
-        public static Cursor _cursor;
-        public static Cursor Cursor
-        {
-            get { return _cursor; }
-            set
-            {
-                //Get out of a situation where we have the same controlling cursor
-                if (_cursor == null || value == null)
-                {
-                    _cursor = value;
-                    return;
-                }
-
-                if ( _cursor.Id == value.Id) return;
-
-                //Make it lose focus
-                _cursor.OnLostFocus(value);
-
-                //Change the reference
-                _cursor = value;
-            }
-        }
+        public static Cursor Cursor { get; set; }
         private static MouseState _mousestate;
 
         public static MouseState MouseState
@@ -65,9 +44,10 @@ namespace EntityEngineV4.Input
         public void AddDefaultCursors()
         {
             MouseCursor mc = new MouseCursor(this, "MouseService.MouseCursor");
-            mc.OnGetFocus();
+            mc.GetFocus(mc);
             
-            new ControllerCursor(this, "MouseService.ControllerCursor", ControllerCursor.MovementInput.Buttons);
+            var cc = new ControllerCursor(this, "MouseService.ControllerCursor", ControllerCursor.MovementInput.Buttons);
+            cc.Visible = false;
         }
 
         public void Initialize()
