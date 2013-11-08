@@ -48,6 +48,7 @@ namespace EntityEngineV4.Engine
         public static int LastID { get; private set; }
 
         public event EventHandler DestroyEvent;
+        public static event State.EventHandler StateChanged;
 
         public string Name { get; private set; }
         public int Id { get; private set; }
@@ -68,8 +69,8 @@ namespace EntityEngineV4.Engine
             SpriteBatch = spriteBatch;
             Assets.LoadConent(game);
 
-            _debugInfo = new DebugInfo(null, "DebugInfo");
-            _debugInfo.Visible = false;
+            //Inject debug info into active state
+            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
 
             Log = new Log();
 
@@ -89,8 +90,9 @@ namespace EntityEngineV4.Engine
             Viewport = viewport;
             Assets.LoadConent(game);
 
-            _debugInfo = new DebugInfo(null, "DebugInfoLabel");
-            _debugInfo.Visible = false;
+            //Inject debug info into active state
+            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
+
 
             Camera = new Camera(null, "EntityEngineDefaultCamera");
 
@@ -175,8 +177,11 @@ namespace EntityEngineV4.Engine
                 CpuUsage = average / _cpuUsages.Count;
             }
 
-            DebugInfo.Visible = ShowDebugInfo;
-            DebugInfo.Update(gt);
+            if(_debugInfo != null)
+            {
+                _debugInfo.Visible = ShowDebugInfo;
+                _debugInfo.Update(gt);
+            }
         }
 
         public virtual void Draw(SpriteBatch sb = null)
@@ -194,8 +199,8 @@ namespace EntityEngineV4.Engine
             SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
                               DepthStencilState.None, RasterizerState.CullNone);
 
-            if (DebugInfo.Visible)
-                DebugInfo.Draw(SpriteBatch);
+            if (_debugInfo != null && _debugInfo.Visible)
+                _debugInfo.Draw(SpriteBatch);
             SpriteBatch.End();
         }
 
@@ -244,7 +249,9 @@ namespace EntityEngineV4.Engine
         public static void SwitchState(State state)
         {
             ActiveState = state;
-            ActiveState.Show();
+
+            if (StateChanged != null)
+                StateChanged(state);
         }
     }
 }

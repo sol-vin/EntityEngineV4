@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
-    public class Node : IComponent
+    public class Node : HashSet<Node>, IComponent
     {
         public delegate void EventHandler(Node node);
 
@@ -29,7 +30,6 @@ namespace EntityEngineV4.Engine
         //Node fields
         public Node Parent { get; private set; }
         public virtual bool IsRoot {get { return false; }}
-        protected readonly HashSet<Node> Children = new HashSet<Node>();
 
         //Node Events
         public event EventHandler NodeAdded , NodeRemoved; //Called if any node is added below this node in it's tree
@@ -50,7 +50,7 @@ namespace EntityEngineV4.Engine
             node.NodeAdded += NodeAdded;
             node.NodeRemoved += NodeRemoved;
 
-            Children.Add(node);
+            Add(node);
 
             if (ChildAdded != null) ChildAdded(node);
             if (NodeAdded != null) NodeAdded(node);
@@ -67,7 +67,7 @@ namespace EntityEngineV4.Engine
 
             node.NodeRemoved -= NodeRemoved;
 
-            return Children.Remove(node);
+            return Remove(node);
         }
 
         public bool RemoveChild(int id)
@@ -82,28 +82,28 @@ namespace EntityEngineV4.Engine
 
         public Node GetChild(int id)
         {
-            Node node = Children.FirstOrDefault(c => c.Id == id);
+            Node node = this.FirstOrDefault(c => c.Id == id);
             if(node == null) throw new Exception("Node's id was not found in children!");
             return node;
         }
 
         public Node GetChild(string name)
         {
-            Node node = Children.FirstOrDefault(c => c.Name == name);
+            Node node = this.FirstOrDefault(c => c.Name == name);
             if (node == null) throw new Exception("Node's name was not found in children!");
             return node;
         }
 
         public T GetChild<T>(int id) where T : Node
         {
-            Node node = Children.FirstOrDefault(c => c.Id == id);
+            Node node = this.FirstOrDefault(c => c.Id == id);
             if (node == null) throw new Exception("Node's id was not found in children!");
             return (T)node;
         }
 
         public T GetChild<T>(string name) where T : Node
         {
-            Node node = Children.FirstOrDefault(c => c.Name == name);
+            Node node = this.FirstOrDefault(c => c.Name == name);
             if (node == null) throw new Exception("Node's name was not found in children!");
             return (T)node;
         }
@@ -161,7 +161,7 @@ namespace EntityEngineV4.Engine
 
         public void UpdateChildren(GameTime gt)
         {
-            foreach (var child in Children.ToArray().Where(c => c.Active))
+            foreach (var child in this.ToArray().Where(c => c.Active))
             {
                 child.Update(gt);
                 child.UpdateChildren(gt);
@@ -170,7 +170,7 @@ namespace EntityEngineV4.Engine
 
         public void DrawChildren(SpriteBatch sb)
         {
-            foreach (var child in Children.ToArray().Where(c => c.Visible))
+            foreach (var child in this.ToArray().Where(c => c.Visible))
             {
                 child.Draw(sb);
                 child.DrawChildren(sb);
@@ -182,10 +182,10 @@ namespace EntityEngineV4.Engine
             if (DestroyEvent != null)
                 DestroyEvent(sender);
 
-            if(Parent!=null)
+            if(!IsRoot)
                 Parent.RemoveChild(this);
 
-            foreach (var child in Children.ToArray())
+            foreach (var child in this.ToArray())
             {
                 child.Destroy(this);
             }

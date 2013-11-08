@@ -60,21 +60,24 @@ namespace EntityEngineV4.Engine
             Service s = node as Service;
             if (s != null)
             {
-                Services.Remove(s);
+                bool removed = Services.Remove(s);
                 if (ServiceRemoved != null) ServiceRemoved(s);
+                return removed;
             }
             return base.RemoveChild(node);
         }
 
         public override void AddChild(Node node)
         {
-            base.AddChild(node);
-
             Service s = node as Service;
             if (s != null)
             {
                 Services.Add(s);
                 if (ServiceAdded != null) ServiceAdded(s);
+            }
+            else
+            {
+                base.AddChild(node);
             }
         }
 
@@ -116,7 +119,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Show()
         {
-            EntityGame.ActiveState = this;
+            EntityGame.SwitchState(this);
 
             if (ShownEvent != null)
                 ShownEvent(this);
@@ -138,7 +141,7 @@ namespace EntityEngineV4.Engine
         public override void Reset()
         {
             base.Reset();
-            foreach (var child in Children.ToArray())
+            foreach (var child in this.ToArray())
             {
                 child.Destroy(this);
             }
@@ -157,24 +160,24 @@ namespace EntityEngineV4.Engine
 
             PreUpdate();
 
-            //foreach (var service in Services.ToArray().Where(s => s.Active))
-            //{
-            //    service.Update(gt);
-            //}
+            foreach (var service in Services.ToArray().Where(s => s.Active))
+            {
+                service.Update(gt);
+                service.UpdateChildren(gt);
+            }
 
-            //TODO: Replace with update service
             UpdateChildren(gt);
         }
 
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
-            //foreach (var service in Services.ToArray().Where(s => s.Active))
-            //{
-            //    service.Draw(sb);
-            //}
+            foreach (var service in Services.ToArray().Where(s => s.Active))
+            {
+                service.Draw(sb);
+                service.DrawChildren(sb);
+            }
 
-            //TODO: Replace with draw service
             DrawChildren(sb);
         }
 
