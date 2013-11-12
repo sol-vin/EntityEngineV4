@@ -92,9 +92,7 @@ namespace EntityEngineV4.Engine
 
             //Inject debug info into active state
             StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
-
-
-            Camera = new Camera(null, "EntityEngineDefaultCamera");
+            StateChanged += state => Camera = new Camera(state, "EntityEngineDefaultCamera");
 
             Log = new Log();
             Process p = Process.GetCurrentProcess();

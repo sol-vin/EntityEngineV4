@@ -16,15 +16,12 @@ namespace EntityEngineV4.PowerTools
             set { TimeToLiveTimer.Milliseconds = value; }
         }
 
-        public Spawner Spawner;
         protected Timer TimeToLiveTimer;
 
-        public Spawn(Spawner e, int ttl)
-            : base(e, e.Name + ".Spawn")
+        public Spawn(Node parent, int ttl)
+            : base(parent, parent.Name + ".Spawn")
         {
             Name = Name + Id;
-
-            Spawner = e;
 
             TimeToLiveTimer = new Timer(this, "Timer");
             TimeToLive = ttl;
@@ -48,13 +45,13 @@ namespace EntityEngineV4.PowerTools
         public int FadeAge;
         public Render Render;
 
-        public FadeSpawn(Spawner e, int ttl)
-            : base(e, ttl)
+        public FadeSpawn(Node parent, int ttl)
+            : base(parent, ttl)
         {
         }
 
-        public FadeSpawn(Spawner e, int fadeage, int ttl)
-            : base(e, ttl)
+        public FadeSpawn(Node parent, int fadeage, int ttl)
+            : base(parent, ttl)
         {
             FadeAge = fadeage;
         }

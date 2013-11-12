@@ -1,11 +1,12 @@
-﻿using EntityEngineV4.Components;
+﻿using System;
+using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Data
 {
-    public class Camera : Entity
+    public class Camera : Node
     {
         //TODO: Add rotation to camera
         //TODO: Add collision detection to OBB for camera 
@@ -103,6 +104,8 @@ namespace EntityEngineV4.Data
 
         public void Flash()
         {
+            //TODO: Implement Flash
+            throw new NotImplementedException();
         }
     }
 }

@@ -153,9 +153,9 @@ namespace EntityEngineV4.Engine
             if (PreUpdateEvent != null) PreUpdateEvent();
         }
 
-        public virtual void Update(GameTime gt)
+        public override void Update(GameTime gt)
         {
-            if(!Initialized) Initialize();
+            base.Update(gt);
             if (Destroyed) return;
 
             PreUpdate();
@@ -185,10 +185,6 @@ namespace EntityEngineV4.Engine
         {
             base.Destroy(sender);
             Reset();
-
-            //Start off with a fresh camera.
-            Camera c = new Camera(this, Name + ".Camera");
-            c.View();
 
             EntityGame.Log.Write("Destoyed", this, Alert.Info);
         }

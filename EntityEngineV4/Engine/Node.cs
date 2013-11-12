@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
+//using System.Threading;
 using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,8 +12,6 @@ namespace EntityEngineV4.Engine
     public class Node : HashSet<Node>, IComponent
     {
         public delegate void EventHandler(Node node);
-
-        
 
         //IComponent fields
         public string Name { get; protected set; }
@@ -45,6 +43,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void AddChild(Node node)
         {
+            if(node.IsRoot) throw new Exception("Child node cannot be a root node!");
             if(node == null) throw new NullReferenceException("Node can not be null when adding as a child!");
 
             node.NodeAdded += NodeAdded;
@@ -60,11 +59,11 @@ namespace EntityEngineV4.Engine
         {
             if (node == null) throw new NullReferenceException("Can not remove a null node!");
 
-            node.NodeAdded -= NodeAdded;
-
             if (ChildRemoved != null) ChildRemoved(node);
             if (NodeRemoved != null) NodeRemoved(node);
 
+
+            node.NodeAdded -= NodeAdded;
             node.NodeRemoved -= NodeRemoved;
 
             return Remove(node);
@@ -108,23 +107,43 @@ namespace EntityEngineV4.Engine
             return (T)node;
         }
 
+        public T GetChild<T>() where T : Node
+        {
+            Node node = this.FirstOrDefault(c => c.GetType() == typeof (T));
+            if (node == null) throw new Exception("Node's name was not found in children!");
+            return (T)node;
+        }
+
         public void SetParent(Node node)
         {
             if(IsRoot && node != null) throw new Exception("Root cannot have a parent");
+            else if (IsRoot && node == null) return;
+            else if(node == null) throw new NullReferenceException("Parent node cannot be null!");
 
             if (Parent != null) //Unhook before we do anything
             {
                 Parent.RemoveChild(this);
             }
 
-            if(node != null)
-            {
-                //If node is null, this is totally fine if this node is the root.
-                Parent = node;
+            //If node is null, this is totally fine if this node is the root.
+            Parent = node;
 
-                //Add as a child to the parent
-                Parent.AddChild(this);
-            }
+            //Add as a child to the parent
+            Parent.AddChild(this);
+        }
+
+        public Node GetRoot()
+        {
+            if (IsRoot) return this; //We found the root, return it.
+            if (Parent == null) throw new Exception(String.Format("{0} is not root but, has a null parent.", Name));
+            return Parent.GetRoot(); //Resursively call up the chain until we find the root
+        }
+
+        public T GetRoot<T>()where T : Node
+        {
+            if (IsRoot) return this as T; //We found the root, return it.
+            if (Parent == null) throw new Exception(String.Format("{0} is not root but, has a null parent.", Name));
+            return Parent.GetRoot<T>(); //Resursively call up the chain until we find the root
         }
 
         public State GetState()
@@ -179,16 +198,16 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent sender = null)
         {
-            if (DestroyEvent != null)
-                DestroyEvent(sender);
-
-            if(!IsRoot)
-                Parent.RemoveChild(this);
-
             foreach (var child in this.ToArray())
             {
                 child.Destroy(this);
             }
+
+            if (!IsRoot)
+                Parent.RemoveChild(this);
+
+            if (DestroyEvent != null)
+                DestroyEvent(this);
 
             Destroyed = true;
             EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
