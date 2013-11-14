@@ -15,7 +15,16 @@ namespace EntityEngineV4.Engine
         {
             get { return true; }
         }
+
+        /// <summary>
+        /// Object pool for nodes with Node.IsObject true, this will provide faster Update and Draw times on objects.
+        /// </summary>
+        private HashSet<Node> _objects = new HashSet<Node>();
+ 
+        public Stack<ActionRequest> Requests = new Stack<ActionRequest>();
+
         public event Timer.TimerEvent PreUpdateEvent;
+        public event Timer.TimerEvent PostUpdateEvent;
 
         public event Service.EventHandler ServiceAdded;
         public event Service.EventHandler ServiceRemoved;
@@ -23,7 +32,7 @@ namespace EntityEngineV4.Engine
         public delegate void EventHandler(State state);
         public event EventHandler ShownEvent;
 
-        public List<Service> Services;
+        public HashSet<Service> Services = new HashSet<Service>();
 
         public enum InitializeAction
         {
@@ -34,25 +43,8 @@ namespace EntityEngineV4.Engine
 
         public State(string name) : base(null, name)
         {
-            Services = new List<Service>();
-
             Active = true;
             Visible = true;
-
-            //Keep track of all nodes being added/removed, state will know because all NodeAdded/Rmoved events trickle 
-            //up the parent chain to root.
-            NodeAdded += OnNodeAdded;
-            NodeRemoved += OnNodeRemoved;
-        }
-
-        private void OnNodeRemoved(Node node)
-        {
-            ActiveNodes--;
-        }
-
-        private void OnNodeAdded(Node node)
-        {
-            ActiveNodes++;
         }
 
         public override bool RemoveChild(Node node)
@@ -60,6 +52,11 @@ namespace EntityEngineV4.Engine
             Service s = node as Service;
             if (s != null)
             {
+                if (UpdatingServices)
+                {
+                    Requests.Push(new ActionRequest(null, node, NodeAction.RemoveService));
+                    return false;
+                }
                 bool removed = Services.Remove(s);
                 if (ServiceRemoved != null) ServiceRemoved(s);
                 return removed;
@@ -72,7 +69,14 @@ namespace EntityEngineV4.Engine
             Service s = node as Service;
             if (s != null)
             {
-                Services.Add(s);
+                if (UpdatingServices)
+                {
+                    Requests.Push(new ActionRequest(null, node, NodeAction.AddService));
+                }
+                else
+                {
+                    Services.Add(s);
+                }
                 if (ServiceAdded != null) ServiceAdded(s);
             }
             else
@@ -81,7 +85,34 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public int ActiveNodes { get; private set; }
+        public void AddObject(Node n)
+        {
+            if(!n.IsObject) throw new Exception("Node tried to AddObject despite having Node.IsObject == false.");
+            if(UpdatingObjects)
+            {
+                Requests.Push(new ActionRequest(null, n, NodeAction.AddObject));
+            }
+            else
+            {
+                _objects.Add(n);
+            }
+        } 
+
+        public bool RemoveObject(Node n)
+        {
+            if(!n.IsObject) throw new Exception("Node tried to RemoveObject despite having Node.IsObject == false.");
+            if(UpdatingObjects)
+            {
+                Requests.Push(new ActionRequest(null, n, NodeAction.RemoveObject));
+                return false;
+            }
+            else
+            {
+                return _objects.Remove(n);
+            }
+        }
+
+        public int ActiveNodes { get { return _objects.Count; } }
 
 
         public T GetService<T>() where T : Service
@@ -146,12 +177,55 @@ namespace EntityEngineV4.Engine
                 child.Destroy(this);
             }
             Services.Clear();
+            _objects.Clear();
+            Requests.Clear();
         }
 
         public virtual void PreUpdate()
         {
             if (PreUpdateEvent != null) PreUpdateEvent();
         }
+
+        public int RequestsProcessed { get; private set; }
+        public virtual void PostUpdate()
+        {
+            if (PostUpdateEvent != null) PostUpdateEvent();
+            RequestsProcessed = 0;
+            while (Requests.Count != 0)
+            {
+                ActionRequest request = Requests.Pop();
+                switch (request.Action)
+                {
+                    case NodeAction.AddChild:
+                        request.Parent.AddChild(request.Child);
+                        break;
+                    case NodeAction.RemoveChild:
+                        request.Parent.RemoveChild(request.Child);
+                        break;
+                    case NodeAction.AddObject:
+                        AddObject(request.Child);
+                        break;
+                    case NodeAction.RemoveObject:
+                        RemoveObject(request.Child);
+                        break;
+                    case NodeAction.AddService:
+                        AddChild(request.Child);
+                        break;
+                    case NodeAction.RemoveService:
+                        AddChild(request.Child);
+                        break;
+                    case NodeAction.Destory:
+                        request.Child.Destroy(request.Parent);
+                        break;
+                }
+
+                RequestsProcessed++;
+            }
+        }
+
+        public bool UpdatingServices { get; private set; }
+        public bool UpdatingObjects { get; private set; }
+
 
         public override void Update(GameTime gt)
         {
@@ -160,25 +234,45 @@ namespace EntityEngineV4.Engine
 
             PreUpdate();
 
-            foreach (var service in Services.ToArray().Where(s => s.Active))
+            UpdatingServices = true;
+            foreach (var service in Services.Where(s => s.Active))
             {
                 service.Update(gt);
                 service.UpdateChildren(gt);
             }
+            UpdatingServices = false;
 
             UpdateChildren(gt);
+
+            UpdatingObjects = true;
+            foreach (var obj in _objects.Where(o => o.Active))
+            {
+                obj.Update(gt);
+                obj.UpdateChildren(gt);
+            }
+            UpdatingObjects = false;
+
+
+            PostUpdate();
         }
 
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
-            foreach (var service in Services.ToArray().Where(s => s.Active))
+
+            foreach (var service in Services.Where(s => s.Visible))
             {
                 service.Draw(sb);
                 service.DrawChildren(sb);
             }
 
             DrawChildren(sb);
+
+            foreach (var o in _objects.Where(o => o.Visible))
+            {
+                o.Draw(sb);
+                o.DrawChildren(sb);
+            }
         }
 
         public override void Destroy(IComponent sender = null)
@@ -188,5 +282,24 @@ namespace EntityEngineV4.Engine
 
             EntityGame.Log.Write("Destoyed", this, Alert.Info);
         }
+    }
+
+    public struct ActionRequest
+    {
+        public Node Parent;
+        public Node Child;
+        public NodeAction Action;
+
+        public ActionRequest(Node parent, Node child, NodeAction action)
+        {
+            Parent = parent;
+            Child = child;
+            Action = action;
+        }
+    }
+
+    public enum NodeAction
+    {
+        AddChild, RemoveChild, AddObject, RemoveObject, AddService, RemoveService, Destory
     }
 }

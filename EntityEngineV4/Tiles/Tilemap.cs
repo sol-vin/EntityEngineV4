@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Tiles
 {
-    public class Tilemap : Entity
+    public class Tilemap : Node
     {
         //TODO: Finish Tilemap
 

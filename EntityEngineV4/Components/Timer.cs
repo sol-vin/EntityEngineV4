@@ -43,7 +43,7 @@ namespace EntityEngineV4.Components
             {
                 if(value < 0)
                 {
-                    EntityGame.Log.Write("Milliseconds was attempted to get a negative value!", this, Alert.Warning);
+                    EntityGame.Log.Write("Milliseconds was attempted to set a negative value!", this, Alert.Warning);
                     _millseconds = 0;
                     return;
                 }
@@ -130,9 +130,13 @@ namespace EntityEngineV4.Components
         /// </summary>
         protected virtual void OnLast()
         {
-            if (LastEvent != null)
+            while (TickTime > Milliseconds)
             {
-                LastEvent();
+                TickTime -= Milliseconds;
+                if (LastEvent != null)
+                {
+                    LastEvent();
+                }
             }
         }
 

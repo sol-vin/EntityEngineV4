@@ -25,14 +25,14 @@ namespace EntityEngineV4.Components.Rendering
             get { return new Vector2(Font.MeasureString(Text).X * Scale.X, Font.MeasureString(Text).Y * Scale.Y); }
         }
 
-        public TextRender(Entity entity, string name)
-            : base(entity, name)
+        public TextRender(Node node, string name)
+            : base(node, name)
         {
            
         }
 
-        public TextRender(Entity entity, string name, SpriteFont font, string text)
-            : base(entity, name)
+        public TextRender(Node node, string name, SpriteFont font, string text)
+            : base(node, name)
         {
             Text = text;
             Font = font;

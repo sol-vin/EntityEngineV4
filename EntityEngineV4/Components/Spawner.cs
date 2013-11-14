@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.PowerTools
 {
-    public class Spawn : Entity
+    public class Spawn : Node
     {
 
         public int TimeToLive

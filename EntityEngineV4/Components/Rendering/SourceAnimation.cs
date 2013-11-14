@@ -64,7 +64,7 @@ namespace EntityEngineV4.Components.Rendering
             get { return _sourcerectangles[CurrentFrame]; }
         }
 
-        public SourceAnimation(Entity e, string name)
+        public SourceAnimation(Node e, string name)
             : base(e, name)
         {
             FrameTimer = new Timer(e, Name + ".FrameTimer");
@@ -73,7 +73,7 @@ namespace EntityEngineV4.Components.Rendering
             _sourcerectangles = new Rectangle[1];
         }
 
-        public SourceAnimation(Entity e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond)
+        public SourceAnimation(Node e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond)
             : base(e, name, texture)
         {
             FramesPerSecond = framesPerSecond;

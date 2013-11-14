@@ -55,7 +55,7 @@ namespace EntityEngineV4.Components.Rendering
             }
         }
 
-        public Animation(Entity e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond, Body body)
+        public Animation(Node e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond, Body body)
             : base(e, name, texture)
         {
             TileSize = tileSize;
@@ -67,7 +67,7 @@ namespace EntityEngineV4.Components.Rendering
             FrameTimer.LastEvent += AdvanceNextFrame;
         }
 
-        public Animation(Entity e, string name, Body body)
+        public Animation(Node e, string name, Body body)
             : base(e, name)
         {
             FrameTimer = new Timer(e, Name + ".FrameTimer");

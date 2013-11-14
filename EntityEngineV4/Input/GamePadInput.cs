@@ -9,7 +9,7 @@ namespace EntityEngineV4.Input
         private readonly PlayerIndex _pi;
         private Buttons _button;
 
-        public GamepadInput(Entity e, string name, Buttons button, PlayerIndex pi)
+        public GamepadInput(Node e, string name, Buttons button, PlayerIndex pi)
             : base(e, name)
         {
             _button = button;
@@ -68,7 +68,7 @@ namespace EntityEngineV4.Input
 
 
 
-        public GamePadAnalog(Entity parent, string name, Sticks stick, PlayerIndex pi)
+        public GamePadAnalog(Node parent, string name, Sticks stick, PlayerIndex pi)
             : base(parent, name)
         {
             Stick = stick;
@@ -137,13 +137,13 @@ namespace EntityEngineV4.Input
 
         private float _lastvalue;
 
-        public GamePadTrigger(Entity entity, string name)
-            : base(entity, name)
+        public GamePadTrigger(Node node, string name)
+            : base(node, name)
         {
         }
 
-        public GamePadTrigger(Entity entity, string name, Triggers trigger, PlayerIndex pi)
-            : base(entity, name)
+        public GamePadTrigger(Node node, string name, Triggers trigger, PlayerIndex pi)
+            : base(node, name)
         {
             Trigger = trigger;
             PlayerIndex = pi;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 //using System.Threading;
 using EntityEngineV4.Engine.Debugging;
+using EntityEngineV4.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,11 +27,20 @@ namespace EntityEngineV4.Engine
         public event Engine.EventHandler DestroyEvent;
 
         //Node fields
+        /// <summary>
+        /// Parent node to this Node, if IsRoot is true this will be null!
+        /// </summary>
         public Node Parent { get; private set; }
+        /// <summary>
+        /// Whether or not this node is the root of it's tree
+        /// </summary>
         public virtual bool IsRoot {get { return false; }}
+        /// <summary>
+        /// Whether or not this node should be in the Update/Draw pool.
+        /// </summary>
+        public virtual bool IsObject {get { return false; }}
+        public bool UpdatingChildren { get; private set; }
 
-        //Node Events
-        public event EventHandler NodeAdded , NodeRemoved; //Called if any node is added below this node in it's tree
         public event EventHandler ChildAdded , ChildRemoved; //Called only if this node had AddChild called
 
         public Node(Node parent, string name)
@@ -43,30 +53,37 @@ namespace EntityEngineV4.Engine
 
         public virtual void AddChild(Node node)
         {
-            if(node.IsRoot) throw new Exception("Child node cannot be a root node!");
             if(node == null) throw new NullReferenceException("Node can not be null when adding as a child!");
+            if (node.IsRoot) throw new Exception("Child node cannot be a root node!");
+            if (node.IsObject)
+            {
+                GetState().AddObject(node);
+            }
 
-            node.NodeAdded += NodeAdded;
-            node.NodeRemoved += NodeRemoved;
-
-            Add(node);
+            if (UpdatingChildren)
+            {
+                //File a request
+                GetState().Requests.Push(new ActionRequest(this, node, NodeAction.AddChild));
+            }
+            else
+                Add(node);
 
             if (ChildAdded != null) ChildAdded(node);
-            if (NodeAdded != null) NodeAdded(node);
         }
 
         public virtual bool RemoveChild(Node node)
         {
             if (node == null) throw new NullReferenceException("Can not remove a null node!");
-
             if (ChildRemoved != null) ChildRemoved(node);
-            if (NodeRemoved != null) NodeRemoved(node);
 
-
-            node.NodeAdded -= NodeAdded;
-            node.NodeRemoved -= NodeRemoved;
-
-            return Remove(node);
+            if (UpdatingChildren)
+            {
+                //File a request
+                GetState().Requests.Push(new ActionRequest(this, node, NodeAction.RemoveChild));
+                return false;
+            }
+            else
+                return Remove(node);
         }
 
         public bool RemoveChild(int id)
@@ -110,22 +127,21 @@ namespace EntityEngineV4.Engine
         public T GetChild<T>() where T : Node
         {
             Node node = this.FirstOrDefault(c => c.GetType() == typeof (T));
-            if (node == null) throw new Exception("Node's name was not found in children!");
+            if (node == null) throw new Exception("Node of type " + typeof (T) + " was not found in children!");
             return (T)node;
         }
 
         public void SetParent(Node node)
         {
             if(IsRoot && node != null) throw new Exception("Root cannot have a parent");
-            else if (IsRoot && node == null) return;
-            else if(node == null) throw new NullReferenceException("Parent node cannot be null!");
+            if (IsRoot) return;
+            if(node == null) throw new NullReferenceException("Parent node cannot be null!");
 
             if (Parent != null) //Unhook before we do anything
             {
                 Parent.RemoveChild(this);
             }
 
-            //If node is null, this is totally fine if this node is the root.
             Parent = node;
 
             //Add as a child to the parent
@@ -180,16 +196,19 @@ namespace EntityEngineV4.Engine
 
         public void UpdateChildren(GameTime gt)
         {
-            foreach (var child in this.ToArray().Where(c => c.Active))
+            if (Count == 0) return;
+            UpdatingChildren = true;
+            foreach (var child in this.Where(c => c.Active && !c.IsObject))
             {
                 child.Update(gt);
                 child.UpdateChildren(gt);
             }
+            UpdatingChildren = false;
         }
 
         public void DrawChildren(SpriteBatch sb)
         {
-            foreach (var child in this.ToArray().Where(c => c.Visible))
+            foreach (var child in this.Where(c => c.Visible && !c.IsObject))
             {
                 child.Draw(sb);
                 child.DrawChildren(sb);
@@ -198,6 +217,12 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent sender = null)
         {
+            if (UpdatingChildren)
+            {
+                GetState().Requests.Push(new ActionRequest(null, this, NodeAction.Destory));
+                return;
+            }
+
             foreach (var child in this.ToArray())
             {
                 child.Destroy(this);
@@ -206,6 +231,8 @@ namespace EntityEngineV4.Engine
             if (!IsRoot)
                 Parent.RemoveChild(this);
 
+            if (IsObject)
+                GetState().RemoveObject(this);
             if (DestroyEvent != null)
                 DestroyEvent(this);
 

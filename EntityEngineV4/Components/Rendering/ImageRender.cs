@@ -35,12 +35,12 @@ namespace EntityEngineV4.Components.Rendering
         }
 
 
-        public ImageRender(Entity e, string name)
+        public ImageRender(Node e, string name)
             : base(e, name)
         {
         }
 
-        public ImageRender(Entity e, string name, Texture2D texture)
+        public ImageRender(Node e, string name, Texture2D texture)
             : base(e, name)
         {
             Texture = texture;

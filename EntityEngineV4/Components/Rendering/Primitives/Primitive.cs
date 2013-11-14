@@ -55,7 +55,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 return new Vector2(p.X, p.Y);
             }
 
-            public Point(Entity parent, string name, int x = 0, int y = 0)
+            public Point(Node parent, string name, int x = 0, int y = 0)
                 : base(parent, name)
             {
                 X = x;
@@ -124,7 +124,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
         {
             public Vector2 Point1, Point2, Point3;
 
-            public Triangle(Entity parent, string name, Vector2 point1, Vector2 point2, Vector2 point3)
+            public Triangle(Node parent, string name, Vector2 point1, Vector2 point2, Vector2 point3)
                 : base(parent, name)
             {
                 Point1 = point1;
@@ -132,7 +132,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Point3 = point3;
             }
 
-            public Triangle(Entity parent, string name, Vector2 point1, Vector2 point2, Vector2 point3, Color color)
+            public Triangle(Node parent, string name, Vector2 point1, Vector2 point2, Vector2 point3, Color color)
                 : base(parent, name)
             {
                 Point1 = point1;

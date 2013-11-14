@@ -114,19 +114,19 @@ namespace EntityEngineV4.Engine.Debugging
                 return;
 
             string sendersname;
-            if (sender is Entity)
-                sendersname = sender.Parent.Name + "->" + sender.Name;
+            if (sender.IsRoot)
+                sendersname = "[R]" + sender.Name;
             else if (sender is Component)
             {
-                sendersname = sender.Parent.Name + "->" + sender.Name;
+                sendersname = "[C]" + sender.Parent.Name + "->" + sender.Name;
             }
             else if (sender is Service)
             {
-                sendersname = sender.Parent.Name + "->" + sender.Name;
-            }
+                sendersname = "[S]" + sender.Parent.Name + "->" + sender.Name;
+            } 
             else
             {
-                sendersname = sender.Name;
+                sendersname = "[N]" + sender.Name;
             }
             string logline =
                 "[" + DateTime.Now.Month + "-" + DateTime.Now.Day + " : " + DateTime.Now.Hour + ":" +

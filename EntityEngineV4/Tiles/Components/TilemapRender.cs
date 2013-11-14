@@ -16,7 +16,7 @@ namespace EntityEngineV4.Tiles.Components
         public Point TileSize;
         public Vector2 Scale = Vector2.One;
 
-        public TilemapRender(Entity parent, string name, Texture2D texture, Point size, Point tileSize)
+        public TilemapRender(Node parent, string name, Texture2D texture, Point size, Point tileSize)
             : base(parent, name)
         {
             Texture = texture;
@@ -28,7 +28,7 @@ namespace EntityEngineV4.Tiles.Components
             AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
-        public TilemapRender(Entity parent, string name, Texture2D texture, Tile[,] tiles, Point tileSize)
+        public TilemapRender(Node parent, string name, Texture2D texture, Tile[,] tiles, Point tileSize)
             : base(parent, name)
         {
             Texture = texture;

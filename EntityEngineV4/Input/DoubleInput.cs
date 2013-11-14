@@ -9,7 +9,7 @@ namespace EntityEngineV4.Input
         public KeyboardInput Key;
         public GamepadInput Button;
 
-        public DoubleInput(Entity parent, string name, Keys key, Buttons button, PlayerIndex pi)
+        public DoubleInput(Node parent, string name, Keys key, Buttons button, PlayerIndex pi)
             : base(parent, name)
         {
             Key = new KeyboardInput(parent, name + "key", key);

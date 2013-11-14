@@ -11,8 +11,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace EntityEngineV4.Input
 {
-    public abstract class Cursor : Entity
+    public abstract class Cursor : Node
     {
+        public override bool IsObject
+        {
+            get { return true; }
+        }
+
         //Hidden because we don't want people messing with it all willy nilly
         protected Body Body;
 

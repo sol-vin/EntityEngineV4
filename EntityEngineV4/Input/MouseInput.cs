@@ -14,7 +14,7 @@ namespace EntityEngineV4.Input
                 _button = value;
             }
         }
-        public MouseInput(Entity entity, string name, MouseButton button) : base(entity, name)
+        public MouseInput(Node node, string name, MouseButton button) : base(node, name)
         {
             _button = button;
         }

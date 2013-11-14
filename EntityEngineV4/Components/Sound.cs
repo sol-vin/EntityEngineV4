@@ -50,12 +50,12 @@ namespace EntityEngineV4.Components
 
         public bool IsPaused { get; private set; }
 
-        public Sound(Entity e, string name)
+        public Sound(Node e, string name)
             : base(e, name)
         {
         }
 
-        public Sound(Entity e, string name, SoundEffect _sound)
+        public Sound(Node e, string name, SoundEffect _sound)
             : base(e, name)
         {
             SoundEffect = _sound.CreateInstance();

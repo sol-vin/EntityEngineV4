@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace EntityEngineV4.Engine.Debugging
 {
     /// <summary>
-    /// Entity to display debugging info
+    /// Node to display debugging info
     /// </summary>
     public class DebugInfo : Label 
     {
@@ -27,6 +27,7 @@ namespace EntityEngineV4.Engine.Debugging
             Text += "CPU: " + Math.Round(EntityGame.CpuUsage, 1) + @"%" + Environment.NewLine;
             Text += "FPS: " + EntityGame.FrameRate + Environment.NewLine;
             Text += "Active: " + GetState().ActiveNodes + Environment.NewLine;
+            Text += "Requests: " + GetState().RequestsProcessed + Environment.NewLine;
             //Change this so the X value is static, create an enum that will decide
             //where to put the debug info
             Body.Position = new Vector2(EntityGame.Viewport.Width - 100,
