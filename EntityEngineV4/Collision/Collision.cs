@@ -102,7 +102,7 @@ namespace EntityEngineV4.Collision
         public Collision(Node parent, string name)
             : base(parent, name)
         {
-            _collisionHandler = GetState<State>().GetService<CollisionHandler>();
+            _collisionHandler = GetRoot<State>().GetService<CollisionHandler>();
 
             EntityGame.ActiveState.PreUpdateEvent += _collidedWith.Clear;
 

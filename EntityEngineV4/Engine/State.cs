@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using EntityEngineV4.Components;
@@ -17,7 +18,8 @@ namespace EntityEngineV4.Engine
         }
 
         /// <summary>
-        /// Object pool for nodes with Node.IsObject true, this will provide faster Update and Draw times on objects.
+        /// Object pool for nodes with Node.IsObject true, this will provide faster Update and Draw times on objects,
+        /// bypassing the scene tree's slow iteration time.
         /// </summary>
         private HashSet<Node> _objects = new HashSet<Node>();
  
@@ -41,10 +43,40 @@ namespace EntityEngineV4.Engine
 
         public InitializeAction InitializeActionOnShow = InitializeAction.OnceInLife;
 
+        public int ActiveObjects
+        {
+            get
+            {
+                return _objects.Count(o => o.Active && !o.Recycled);
+            }
+        }
+
         public State(string name) : base(null, name)
         {
             Active = true;
             Visible = true;
+        }
+
+        public override void AddChild(Node node)
+        {
+            //Check if it is a service first
+            Service s = node as Service;
+            if (s != null) //If it is a service, add it to Services and not as a child
+            {
+                if (UpdatingServices)
+                {
+                    Requests.Push(new ActionRequest(null, node, NodeAction.AddService));
+                }
+                else
+                {
+                    Services.Add(s);
+                }
+                if (ServiceAdded != null) ServiceAdded(s); 
+            }
+            else
+            {
+                base.AddChild(node); //Add normally
+            }
         }
 
         public override bool RemoveChild(Node node)
@@ -64,30 +96,14 @@ namespace EntityEngineV4.Engine
             return base.RemoveChild(node);
         }
 
-        public override void AddChild(Node node)
-        {
-            Service s = node as Service;
-            if (s != null)
-            {
-                if (UpdatingServices)
-                {
-                    Requests.Push(new ActionRequest(null, node, NodeAction.AddService));
-                }
-                else
-                {
-                    Services.Add(s);
-                }
-                if (ServiceAdded != null) ServiceAdded(s);
-            }
-            else
-            {
-                base.AddChild(node);
-            }
-        }
-
         public void AddObject(Node n)
         {
             if(!n.IsObject) throw new Exception("Node tried to AddObject despite having Node.IsObject == false.");
+
+            //Decide whether object is already in list if recycleable
+            //If it is there we need to return to save performance
+            if (n.Recyclable && _objects.Contains(n)) return;
+            
             if(UpdatingObjects)
             {
                 Requests.Push(new ActionRequest(null, n, NodeAction.AddObject));
@@ -112,7 +128,18 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public int ActiveNodes { get { return _objects.Count; } }
+        /// <summary>
+        /// Gets the next recycled object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T GetNextRecycled<T>(Node parent, string name) where T : Node
+        {
+            var n = _objects.FirstOrDefault(o => o.Recycled && o.GetType() == typeof(T));
+            if (n == null) return null;
+            n.Reuse(parent, name);
+            return (T) n;
+        }
 
 
         public T GetService<T>() where T : Service
@@ -181,12 +208,44 @@ namespace EntityEngineV4.Engine
             Requests.Clear();
         }
 
+        public bool UpdatingServices { get; private set; }
+        public bool UpdatingObjects { get; private set; }
+
         public virtual void PreUpdate()
         {
             if (PreUpdateEvent != null) PreUpdateEvent();
         }
 
-        public int RequestsProcessed { get; private set; }
+
+        public override void Update(GameTime gt)
+        {
+            base.Update(gt);
+            if (Destroyed) return;
+            UpdatingServices = true;
+            foreach (var service in Services.Where(s => s.Active))
+            {
+                service.Update(gt);
+                service.UpdateChildren(gt);
+            }
+            UpdatingServices = false;
+
+            UpdateChildren(gt);
+
+            UpdatingObjects = true;
+            //Only update active and non-recycled objects
+            foreach (var obj in _objects.Where(o => o.Active && !o.Recycled && !o.Destroyed))
+            {
+                obj.Update(gt);
+                obj.UpdateChildren(gt);
+            }
+            UpdatingObjects = false;
+        }
+
+        /// <summary>
+        /// Called after the Update has been completed. 
+        /// This method processes requests ffor additions/deletions 
+        /// when the collections are not being accessed by a foreach
+        /// </summary>
         public virtual void PostUpdate()
         {
             if (PostUpdateEvent != null) PostUpdateEvent();
@@ -214,7 +273,7 @@ namespace EntityEngineV4.Engine
                     case NodeAction.RemoveService:
                         AddChild(request.Child);
                         break;
-                    case NodeAction.Destory:
+                    case NodeAction.Destroy:
                         request.Child.Destroy(request.Parent);
                         break;
                 }
@@ -223,38 +282,7 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public bool UpdatingServices { get; private set; }
-        public bool UpdatingObjects { get; private set; }
-
-
-        public override void Update(GameTime gt)
-        {
-            base.Update(gt);
-            if (Destroyed) return;
-
-            PreUpdate();
-
-            UpdatingServices = true;
-            foreach (var service in Services.Where(s => s.Active))
-            {
-                service.Update(gt);
-                service.UpdateChildren(gt);
-            }
-            UpdatingServices = false;
-
-            UpdateChildren(gt);
-
-            UpdatingObjects = true;
-            foreach (var obj in _objects.Where(o => o.Active))
-            {
-                obj.Update(gt);
-                obj.UpdateChildren(gt);
-            }
-            UpdatingObjects = false;
-
-
-            PostUpdate();
-        }
+        public int RequestsProcessed { get; private set; }
 
         public override void Draw(SpriteBatch sb)
         {
@@ -268,7 +296,8 @@ namespace EntityEngineV4.Engine
 
             DrawChildren(sb);
 
-            foreach (var o in _objects.Where(o => o.Visible))
+            //Only draw visible and non-recycled objects
+            foreach (var o in _objects.Where(o => o.Visible && !o.Recycled && !o.Destroyed))
             {
                 o.Draw(sb);
                 o.DrawChildren(sb);
@@ -286,9 +315,9 @@ namespace EntityEngineV4.Engine
 
     public struct ActionRequest
     {
-        public Node Parent;
-        public Node Child;
-        public NodeAction Action;
+        public readonly Node Parent;
+        public readonly Node Child;
+        public readonly NodeAction Action;
 
         public ActionRequest(Node parent, Node child, NodeAction action)
         {
@@ -300,6 +329,6 @@ namespace EntityEngineV4.Engine
 
     public enum NodeAction
     {
-        AddChild, RemoveChild, AddObject, RemoveObject, AddService, RemoveService, Destory
+        AddChild, RemoveChild, AddObject, RemoveObject, AddService, RemoveService, Destroy
     }
 }

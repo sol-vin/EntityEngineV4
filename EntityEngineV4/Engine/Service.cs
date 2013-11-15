@@ -26,7 +26,7 @@ namespace EntityEngineV4.Engine
         {
             //Initialize
             if (!Initialized) Initialize();
-            EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
+           GetRoot<State>().PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
         }
 
         public override void Update(GameTime gt)
@@ -47,6 +47,12 @@ namespace EntityEngineV4.Engine
                 EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate;
 
             EntityGame.Log.Write("Destroyed", this, Alert.Info);
+        }
+
+        public override void SetParent(Node node)
+        {
+            //Make sure the only parent aservice can have is a State
+            base.SetParent(node.IsRoot ? node : node.GetRoot());
         }
     }
 }

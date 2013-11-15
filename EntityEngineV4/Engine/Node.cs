@@ -39,31 +39,62 @@ namespace EntityEngineV4.Engine
         /// Whether or not this node should be in the Update/Draw pool.
         /// </summary>
         public virtual bool IsObject {get { return false; }}
+
+        /// <summary>
+        /// Whether or not this node is recycled
+        /// </summary>
+        public bool Recycled { get; private set; }
+
+        /// <summary>
+        /// Whether or not this node is can be recycled
+        /// </summary>
+        public virtual bool Recyclable {get { return false; }}
+        
+        /// <summary>
+        /// Sets the 
+        /// </summary>
+        public virtual void Recycle()
+        {
+            if(!Recyclable)throw new Exception("Cannot call Recycle on a non-recyclable node!");
+            Recycled = true;
+        }
+
+        public virtual void Reuse(Node parent, string name)
+        {
+            if (!Recyclable) throw new Exception("Cannot call Reuse on a non-recyclable node!");
+            
+            Name = name;
+            SetParent(parent); //Doesn't readd the object because Recycled == true at the time of calling.
+            Recycled = false; //Now we can safely set Recycled because the parent operations have already completed.
+        }
         public bool UpdatingChildren { get; private set; }
 
         public event EventHandler ChildAdded , ChildRemoved; //Called only if this node had AddChild called
 
         public Node(Node parent, string name)
         {
+            Id = EntityGame.GetID();
             Name = name;
             Active = true;
             Visible = true;
-            SetParent(parent);
+            SetParent(parent); //This virtual member call in the constructor is OK because we only use members initialized in this class.
+
+            Recycled = false;
         }
 
         public virtual void AddChild(Node node)
         {
             if(node == null) throw new NullReferenceException("Node can not be null when adding as a child!");
             if (node.IsRoot) throw new Exception("Child node cannot be a root node!");
-            if (node.IsObject)
+            if (node.IsObject && !node.Recycled)
             {
-                GetState().AddObject(node);
+                GetRoot<State>().AddObject(node);
             }
 
             if (UpdatingChildren)
             {
                 //File a request
-                GetState().Requests.Push(new ActionRequest(this, node, NodeAction.AddChild));
+                GetRoot<State>().Requests.Push(new ActionRequest(this, node, NodeAction.AddChild));
             }
             else
                 Add(node);
@@ -76,14 +107,19 @@ namespace EntityEngineV4.Engine
             if (node == null) throw new NullReferenceException("Can not remove a null node!");
             if (ChildRemoved != null) ChildRemoved(node);
 
+            if (node.Parent != this) return false;
+
             if (UpdatingChildren)
             {
                 //File a request
-                GetState().Requests.Push(new ActionRequest(this, node, NodeAction.RemoveChild));
+                GetRoot<State>().Requests.Push(new ActionRequest(this, node, NodeAction.RemoveChild));
                 return false;
             }
             else
+            {
+                node.Parent = null;
                 return Remove(node);
+            }
         }
 
         public bool RemoveChild(int id)
@@ -131,7 +167,7 @@ namespace EntityEngineV4.Engine
             return (T)node;
         }
 
-        public void SetParent(Node node)
+        public virtual void SetParent(Node node)
         {
             if(IsRoot && node != null) throw new Exception("Root cannot have a parent");
             if (IsRoot) return;
@@ -162,19 +198,6 @@ namespace EntityEngineV4.Engine
             return Parent.GetRoot<T>(); //Resursively call up the chain until we find the root
         }
 
-        public State GetState()
-        {
-            if (IsRoot) return this as State; //We found the root, return it.
-            if(Parent == null) throw new Exception(String.Format("{0} is not root but, has a null parent.", Name));
-            return Parent.GetState(); //Resursively call up the chain until we find the root
-        }
-
-        public T GetState<T>() where T : State
-        {
-            if (IsRoot) return (T)this; //We found the root, return it.
-            return (T)Parent.GetState(); //Resursively call up the chain until we find the root
-        }
-
         public virtual void Initialize()
         {
             Initialized = true;
@@ -187,6 +210,7 @@ namespace EntityEngineV4.Engine
 
         public virtual void Update(GameTime gt)
         {
+            if (Destroyed) return;
             if (!Initialized) Initialize();
         }
 
@@ -198,7 +222,7 @@ namespace EntityEngineV4.Engine
         {
             if (Count == 0) return;
             UpdatingChildren = true;
-            foreach (var child in this.Where(c => c.Active && !c.IsObject))
+            foreach (var child in this.Where(c => c.Active && !c.IsObject && !c.Destroyed))
             {
                 child.Update(gt);
                 child.UpdateChildren(gt);
@@ -208,7 +232,7 @@ namespace EntityEngineV4.Engine
 
         public void DrawChildren(SpriteBatch sb)
         {
-            foreach (var child in this.Where(c => c.Visible && !c.IsObject))
+            foreach (var child in this.Where(c => c.Visible && !c.IsObject && !c.Destroyed))
             {
                 child.Draw(sb);
                 child.DrawChildren(sb);
@@ -217,33 +241,70 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent sender = null)
         {
-            if (UpdatingChildren)
+            if(Destroyed) return; //Dont let destroyed nodes be destroyed again.
+            //Prevent recycled nodes from being destroyed.
+            if (!Recycled)
             {
-                GetState().Requests.Push(new ActionRequest(null, this, NodeAction.Destory));
-                return;
+
+                if (UpdatingChildren)
+                {
+                    GetRoot<State>().Requests.Push(new ActionRequest(null, this, NodeAction.Destroy));
+                    return;
+                }
+
+                foreach (var child in this.ToArray())
+                {
+                    child.Destroy(this);
+                }
+
+                if (IsObject)
+                    GetRoot<State>().RemoveObject(this);
+                if (DestroyEvent != null)
+                    DestroyEvent(this);
+
+                //Null out events
+                ChildAdded = null;
+                ChildRemoved = null;
+
+                Destroyed = true;
+                EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
             }
 
-            foreach (var child in this.ToArray())
-            {
-                child.Destroy(this);
-            }
-
+            //Always remove from parent to prevent memory leaks
             if (!IsRoot)
-                Parent.RemoveChild(this);
-
-            if (IsObject)
-                GetState().RemoveObject(this);
-            if (DestroyEvent != null)
-                DestroyEvent(this);
-
-            Destroyed = true;
-            EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
+            {
+                if (Parent.UpdatingChildren)
+                {
+                    GetRoot<State>().Requests.Push(new ActionRequest(Parent, this, NodeAction.RemoveChild));
+                }
+                else
+                {
+                    Parent.RemoveChild(this);
+                }
+            }
         }
 
         //Object methods
         public override int GetHashCode()
         {
             return Id; //Id is the same as hashcode,this will help to minimize hashset collisions, as well as prevent dupes
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            return obj.GetHashCode() == this.GetHashCode();
+        }
+
+        public static bool operator ==(Node a, Node b)
+        {
+            if ((object)a == null && (object)b == null) return true;
+            if ((object)a == null ^ (object)b == null) return false;
+            return a.Id == b.Id;
+        }
+        public static bool operator !=(Node a, Node b)
+        {
+            return !(a == b);
         }
     }
 }

@@ -26,8 +26,8 @@ namespace EntityEngineV4.Engine.Debugging
             Text = "RAM: " + Math.Floor(EntityGame.RamUsage / 1024 / 1024) + Environment.NewLine;
             Text += "CPU: " + Math.Round(EntityGame.CpuUsage, 1) + @"%" + Environment.NewLine;
             Text += "FPS: " + EntityGame.FrameRate + Environment.NewLine;
-            Text += "Active: " + GetState().ActiveNodes + Environment.NewLine;
-            Text += "Requests: " + GetState().RequestsProcessed + Environment.NewLine;
+            Text += "Active: " + GetRoot<State>().ActiveObjects + Environment.NewLine;
+            Text += "Requests: " + GetRoot<State>().RequestsProcessed + Environment.NewLine;
             //Change this so the X value is static, create an enum that will decide
             //where to put the debug info
             Body.Position = new Vector2(EntityGame.Viewport.Width - 100,

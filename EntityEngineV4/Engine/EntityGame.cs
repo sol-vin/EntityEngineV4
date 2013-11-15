@@ -143,7 +143,10 @@ namespace EntityEngineV4.Engine
         {
             GameTime = gt;
             Camera.Update(gt);
+
+            ActiveState.PreUpdate();
             ActiveState.Update(gt);
+            ActiveState.PostUpdate();
 
             _cpuUsages.Add(_cpuCounter.NextValue());
 
@@ -178,7 +181,6 @@ namespace EntityEngineV4.Engine
             if(_debugInfo != null)
             {
                 _debugInfo.Visible = ShowDebugInfo;
-                _debugInfo.Update(gt);
             }
         }
 
@@ -196,9 +198,6 @@ namespace EntityEngineV4.Engine
 
             SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp,
                               DepthStencilState.None, RasterizerState.CullNone);
-
-            if (_debugInfo != null && _debugInfo.Visible)
-                _debugInfo.Draw(SpriteBatch);
             SpriteBatch.End();
         }
 

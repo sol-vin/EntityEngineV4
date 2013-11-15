@@ -98,7 +98,7 @@ namespace EntityEngineV4.GUI
             //Add our service if we have a parent, if not, we will let them update and draw
             if (parent != null && parent.GetType() != typeof (ControlHandler))
             {
-                ControlHandler = GetState<State>().GetService<ControlHandler>();
+                ControlHandler = GetRoot<State>().GetService<ControlHandler>();
                 if (ControlHandler == null)
                 {
                     EntityGame.Log.Write("ControlHandler was not found! Cannot attach to Service", this, Alert.Error);
