@@ -102,7 +102,7 @@ namespace EntityEngineV4.Engine
 
             //Decide whether object is already in list if recycleable
             //If it is there we need to return to save performance
-            if (n.Recyclable && _objects.Contains(n)) return;
+            if (n.Recycled && _objects.Contains(n)) return;
             
             if(UpdatingObjects)
             {
@@ -220,7 +220,8 @@ namespace EntityEngineV4.Engine
         public override void Update(GameTime gt)
         {
             base.Update(gt);
-            if (Destroyed) return;
+
+
             UpdatingServices = true;
             foreach (var service in Services.Where(s => s.Active))
             {
@@ -307,7 +308,7 @@ namespace EntityEngineV4.Engine
         public override void Destroy(IComponent sender = null)
         {
             base.Destroy(sender);
-            Reset();
+            PostUpdateEvent += Reset;
 
             EntityGame.Log.Write("Destoyed", this, Alert.Info);
         }

@@ -13,25 +13,21 @@ namespace EntityEngineV4.Engine
 
         public Component(Node parent, string name) : base(parent, name)
         {
-            //Subscribe to the pre update ensuring it will initialize the component
-            if (EntityGame.ActiveState != null)
-                EntityGame.ActiveState.PreUpdateEvent += SubscribePreUpdate;
+            GetRoot<State>().PreUpdateEvent += SubscribePreUpdate;
 
             CreateDependencyList();
         }
 
         public override void Destroy(IComponent sender = null)
         {
-            //Unsubscribe to the pre update ensuring it will not initialize the component
-            if(EntityGame.ActiveState != null)
-                EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate;
+            GetRoot<State>().PreUpdateEvent -= SubscribePreUpdate;
         }
 
         private void SubscribePreUpdate()
         {
             //Initialize
             if(!Initialized) Initialize();
-            EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
+            GetRoot<State>().PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
         }
 
         //Dependencies

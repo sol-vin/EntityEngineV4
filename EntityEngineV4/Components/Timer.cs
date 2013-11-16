@@ -172,5 +172,16 @@ namespace EntityEngineV4.Components
             TickTime = 0;
             _lastseconds = EntityGame.GameTime.TotalGameTime.TotalMilliseconds;
         }
+
+        public override void Reuse(Node parent, string name)
+        {
+            base.Reuse(parent, name);
+
+            TickEvent = null;
+            LastEvent = null;
+            TickTime = 0;
+            _lastseconds = 0;
+            Alive = false;
+        }
     }
 }

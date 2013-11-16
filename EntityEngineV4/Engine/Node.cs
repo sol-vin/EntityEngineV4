@@ -55,16 +55,41 @@ namespace EntityEngineV4.Engine
         /// </summary>
         public virtual void Recycle()
         {
-            if(!Recyclable)throw new Exception("Cannot call Recycle on a non-recyclable node!");
+            if(IsRoot) throw new Exception("Cannot call Recycle on root node!");
+            //if(!Recyclable)throw new Exception("Cannot call Recycle on a non-recyclable node!");
+            //if (!IsObject) throw new Exception("Cannot call Recycle on non-objects!");
+
+            foreach (var child in this.ToArray().Where(c => !c.IsObject))
+            {
+                child.Recycle();
+            }
+
             Recycled = true;
+        }
+
+        public void Reuse()
+        {
+            Reuse(Parent, Name);
+        }
+
+        public void Reuse(Node parent)
+        {
+            Reuse(parent,Name);
         }
 
         public virtual void Reuse(Node parent, string name)
         {
-            if (!Recyclable) throw new Exception("Cannot call Reuse on a non-recyclable node!");
+            //if (!Recyclable) throw new Exception("Cannot call Reuse on a non-recyclable node!");
             
             Name = name;
-            SetParent(parent); //Doesn't readd the object because Recycled == true at the time of calling.
+            if(parent != Parent)
+                SetParent(parent); //Doesn't re-add the object because Recycled == true at the time of calling.
+            //Reuse/reset all child nodes
+            foreach (var child in this.ToArray().Where(c => !c.IsObject))
+            {
+                child.Reuse(this);
+            }
+
             Recycled = false; //Now we can safely set Recycled because the parent operations have already completed.
         }
         public bool UpdatingChildren { get; private set; }
@@ -210,7 +235,6 @@ namespace EntityEngineV4.Engine
 
         public virtual void Update(GameTime gt)
         {
-            if (Destroyed) return;
             if (!Initialized) Initialize();
         }
 

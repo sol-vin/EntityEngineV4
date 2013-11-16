@@ -136,6 +136,20 @@ namespace EntityEngineV4.Components
             _angularForce += force;
         }
 
+        public override void Reuse(Node parent, string name)
+        {
+            base.Reuse(parent, name);
+            Velocity = Vector2.Zero;
+            AngularVelocity = 0;
+            Drag = 1;
+            AngularDrag = 1;
+            AngularForce = 0;
+            Force = Vector2.Zero;
+            Acceleration = Vector2.Zero;
+            Mass = 1;
+            Restitution = 0;
+        }
+
         //Dependencies
         public const int DEPENDENCY_BODY = 0;
         public override void CreateDependencyList()

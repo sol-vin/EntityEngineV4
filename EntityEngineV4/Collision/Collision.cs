@@ -104,7 +104,7 @@ namespace EntityEngineV4.Collision
         {
             _collisionHandler = GetRoot<State>().GetService<CollisionHandler>();
 
-            EntityGame.ActiveState.PreUpdateEvent += _collidedWith.Clear;
+            GetRoot<State>().PreUpdateEvent += _collidedWith.Clear;
 
             GroupMask = new Bitmask();
             GroupMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
@@ -170,6 +170,19 @@ namespace EntityEngineV4.Collision
             _collidedWith.Add(c);
             if (CollideEvent != null)
                 CollideEvent(c);
+        }
+
+        public override void Recycle()
+        {
+            base.Recycle();
+
+            _collisionHandler.RemoveCollision(this);
+        }
+
+        public override void Reuse(Node parent, string name)
+        {
+            base.Reuse(parent, name);
+            _collisionHandler.AddCollision(this);
         }
 
         //Public dependencies

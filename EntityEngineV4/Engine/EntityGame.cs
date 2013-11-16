@@ -70,7 +70,9 @@ namespace EntityEngineV4.Engine
             Assets.LoadConent(game);
 
             //Inject debug info into active state
+            StateChanged += state => LastID = 1;
             StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
+            StateChanged += state => Camera = new Camera(state, "EntityEngineDefaultCamera");
 
             Log = new Log();
 
@@ -91,8 +93,10 @@ namespace EntityEngineV4.Engine
             Assets.LoadConent(game);
 
             //Inject debug info into active state
+            StateChanged += state => LastID = 1;
             StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
             StateChanged += state => Camera = new Camera(state, "EntityEngineDefaultCamera");
+            
 
             Log = new Log();
             Process p = Process.GetCurrentProcess();
@@ -117,14 +121,14 @@ namespace EntityEngineV4.Engine
         {
             Self = new EntityGame(game, g, spriteBatch, viewport);
             Self.Name = "EntityGame";
-            Self.Id = GetID();
+            Self.Id = 0;
         }
 
         public static void MakeGame(Game game, SpriteBatch spriteBatch)
         {
             Self = new EntityGame(game, spriteBatch);
             Self.Name = "EntityGame";
-            Self.Id = GetID();
+            Self.Id = 0;
         }
 
         public void Destroy(IComponent sender = null)
@@ -144,9 +148,12 @@ namespace EntityEngineV4.Engine
             GameTime = gt;
             Camera.Update(gt);
 
-            ActiveState.PreUpdate();
-            ActiveState.Update(gt);
-            ActiveState.PostUpdate();
+            if(!ActiveState.Destroyed)
+            {
+                ActiveState.PreUpdate();
+                ActiveState.Update(gt);
+                ActiveState.PostUpdate();
+            }
 
             _cpuUsages.Add(_cpuCounter.NextValue());
 
