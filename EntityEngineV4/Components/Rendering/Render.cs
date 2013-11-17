@@ -1,3 +1,4 @@
+using System.Xml.Serialization.Advanced;
 using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
@@ -48,15 +49,25 @@ namespace EntityEngineV4.Components.Rendering
             if (Debug)
             {
                 //Draw a bounding rect around it's drawrect
-                DrawingTools.Rectangle r = new DrawingTools.Rectangle(DrawRect.X, DrawRect.Y, DrawRect.Width, DrawRect.Height);
+                var r = new DrawingTools.Rectangle(DrawRect.X, DrawRect.Y, DrawRect.Width, DrawRect.Height);
                 r.Color = Color.Red;
                 r.Thickness = 1;
                 r.Draw(sb);
 
-                DrawingTools.Point origin = new DrawingTools.Point((int)(Origin.X + DrawRect.X), (int)(Origin.Y + DrawRect.Y));
+                var origin = new DrawingTools.Point((int)(Origin.X + DrawRect.X), (int)(Origin.Y + DrawRect.Y));
                 origin.Color = Color.Orange;
                 origin.Draw(sb);
             }
+        }
+
+        public override void Reuse(Node parent, string name)
+        {
+            base.Reuse(parent, name);
+            Alpha = 1f;
+            Color = Color.White;
+            Flip = SpriteEffects.None;
+            Scale = Vector2.One;
+            Origin = Vector2.Zero;
         }
     }
 }

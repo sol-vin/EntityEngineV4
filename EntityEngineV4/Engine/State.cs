@@ -141,6 +141,22 @@ namespace EntityEngineV4.Engine
             return (T) n;
         }
 
+        public void CleanRecycled()
+        {
+            foreach (var o in _objects.ToArray().Where(o => o.Recycled))
+            {
+                o.Destroy();
+            }
+        }
+
+        public void CleanRecycled<T>()
+        {
+            foreach (var o in _objects.ToArray().Where(o => o.Recycled && o.GetType() == typeof(T)))
+            {
+                o.Destroy();
+            }
+        }
+
 
         public T GetService<T>() where T : Service
         {

@@ -12,21 +12,21 @@ namespace EntityEngineV4.PowerTools
 
         public int TimeToLive
         {
-            get { return TimeToLiveTimer.Milliseconds; }
-            set { TimeToLiveTimer.Milliseconds = value; }
+            get { return DeathTimer.Milliseconds; }
+            set { DeathTimer.Milliseconds = value; }
         }
 
-        protected Timer TimeToLiveTimer;
+        protected Timer DeathTimer;
 
         public Spawn(Node parent, int ttl)
             : base(parent, parent.Name + ".Spawn")
         {
             Name = Name + Id;
 
-            TimeToLiveTimer = new Timer(this, "Timer");
+            DeathTimer = new Timer(this, "Timer");
             TimeToLive = ttl;
-            TimeToLiveTimer.Start();
-            TimeToLiveTimer.LastEvent += () => Destroy();
+            DeathTimer.Start();
+            //TimeToLiveTimer.LastEvent += () => Destroy();
         }
 
         public override void Update(GameTime gt)
@@ -59,10 +59,10 @@ namespace EntityEngineV4.PowerTools
         public override void Update(GameTime gt)
         {
             base.Update(gt);
-            if ((int)TimeToLiveTimer.TickTime > FadeAge)
+            if ((int)DeathTimer.TickTime > FadeAge)
             {
                 int totalsteps = TimeToLive - FadeAge;
-                int currentstep = (int)TimeToLiveTimer.TickTime - FadeAge;
+                int currentstep = (int)DeathTimer.TickTime - FadeAge;
                 if (currentstep > totalsteps) currentstep = totalsteps;
                 float step = currentstep / (totalsteps * 1f);
 

@@ -4,6 +4,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Security.AccessControl;
 using EntityEngineV4.Collision.Shapes;
+using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
@@ -272,7 +273,7 @@ namespace EntityEngineV4.Collision
                             faceNormal = Vector2.UnitX;
                         manifold.PenetrationDepth = xExtent;
 
-                        manifold.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * faceNormal.X;
+                        manifold.Normal = Physics.GetNormal(a.Position, b.Position) * faceNormal.X;
                         manifold.AreColliding = true;
 
                         //TODO: Finish collision code
@@ -307,7 +308,7 @@ namespace EntityEngineV4.Collision
                         else
                             faceNormal = Vector2.UnitY;
 
-                        manifold.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * faceNormal.Y;
+                        manifold.Normal = Physics.GetNormal(a.Position, b.Position) * faceNormal.Y;
                         manifold.PenetrationDepth = yExtent;
                         manifold.AreColliding = true;
 
@@ -352,6 +353,7 @@ namespace EntityEngineV4.Collision
             }
 
             float d = manifold.Normal.Length();
+            manifold.Normal.Normalize();
             if (Math.Abs(d) > float.Epsilon)
             {
                 manifold.PenetrationDepth = a.Radius + b.Radius - d;

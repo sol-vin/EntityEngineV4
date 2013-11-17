@@ -165,7 +165,6 @@ namespace EntityEngineV4.Engine
                 _frameCounterTimer -= TimeSpan.FromSeconds(1);
                 FrameRate = _frameCounter;
                 _frameCounter = 0;
-                
             }
             
 
