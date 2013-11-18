@@ -9,6 +9,7 @@ namespace EntityEngineV4.Components
     public class Body : Component
     {
         public float Angle;
+        public Vector2 Origin = Vector2.Zero;
 
         public Vector2 LastPosition { get; private set; }
 

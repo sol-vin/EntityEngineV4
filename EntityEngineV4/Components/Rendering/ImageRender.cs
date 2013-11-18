@@ -14,8 +14,8 @@ namespace EntityEngineV4.Components.Rendering
             {
                 Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
-                    (int)(position.X + Origin.X * Scale.X),
-                    (int)(position.Y + Origin.Y * Scale.Y),
+                    (int)(position.X + GetDependency<Body>(DEPENDENCY_BODY).Origin.X * Scale.X),
+                    (int)(position.Y + GetDependency<Body>(DEPENDENCY_BODY).Origin.Y * Scale.Y),
                     (int)(Bounds.X),
                     (int)(Bounds.Y));
             }
@@ -50,11 +50,11 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            if (DrawRect.Top < EntityGame.Camera.ScreenSpace.Height ||
-                DrawRect.Bottom > EntityGame.Camera.ScreenSpace.X ||
-                DrawRect.Right > EntityGame.Camera.ScreenSpace.Y ||
-                DrawRect.Left < EntityGame.Camera.ScreenSpace.Width)
-                sb.Draw(Texture, DrawRect, null, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle, Origin, Flip, Layer);
+            if (DrawRect.Top < EntityGame.ActiveCamera.ScreenSpace.Height ||
+                DrawRect.Bottom > EntityGame.ActiveCamera.ScreenSpace.X ||
+                DrawRect.Right > EntityGame.ActiveCamera.ScreenSpace.Y ||
+                DrawRect.Left < EntityGame.ActiveCamera.ScreenSpace.Width)
+                sb.Draw(Texture, DrawRect, null, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle, GetDependency<Body>(DEPENDENCY_BODY).Origin, Flip, Layer);
         }
 
         public void LoadTexture(string location)
@@ -69,10 +69,5 @@ namespace EntityEngineV4.Components.Rendering
 
         //Dependencies
         public const int DEPENDENCY_BODY = 0;
-        public override void CreateDependencyList()
-        {
-            base.CreateDependencyList();
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
-        }
     }
 }

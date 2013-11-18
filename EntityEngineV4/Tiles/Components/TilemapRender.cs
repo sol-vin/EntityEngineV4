@@ -23,9 +23,6 @@ namespace EntityEngineV4.Tiles.Components
             _tiles = new Tile[size.X, size.Y];
             SetAllTiles(Tile.EMPTY);
             TileSize = tileSize;
-
-            //Dependencies
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
         public TilemapRender(Node parent, string name, Texture2D texture, Tile[,] tiles, Point tileSize)

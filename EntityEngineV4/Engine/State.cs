@@ -128,6 +128,30 @@ namespace EntityEngineV4.Engine
             }
         }
 
+        public Node GetObject(int id)
+        {
+            return _objects.FirstOrDefault(o => o.Id == id);
+        }
+
+        public Node GetObject(string name)
+        {
+            return _objects.FirstOrDefault(o => o.Name == name);
+        }
+
+        public T GetObject<T>() where T : Node
+        {
+            return (T)_objects.FirstOrDefault(o => o.GetType() == typeof(T));
+        }
+        public T GetObject<T>(int id) where T : Node
+        {
+            return (T)_objects.FirstOrDefault(o => o.Id == id && o.GetType() == typeof(T));
+        }
+
+        public T GetObject<T>(string name) where T : Node
+        {
+            return (T)_objects.FirstOrDefault(o => o.Name == name && o.GetType() == typeof(T));
+        }
+
         /// <summary>
         /// Gets the next recycled object
         /// </summary>
@@ -215,10 +239,10 @@ namespace EntityEngineV4.Engine
         public override void Reset()
         {
             base.Reset();
-            foreach (var child in this.ToArray())
-            {
-                child.Destroy(this);
-            }
+            //foreach (var child in this.ToArray())
+            //{
+            //    child.Destroy(this);
+            //}
             Services.Clear();
             _objects.Clear();
             Requests.Clear();

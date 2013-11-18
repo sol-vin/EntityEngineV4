@@ -62,6 +62,7 @@ namespace EntityEngineV4.Collision
                 if (CanObjectsResolve(manifold.A, manifold.B) || CanObjectsResolve(manifold.B, manifold.A))
                 {
                     ResolveCollision(manifold);
+                    PositionalCorrection(manifold);
                 }
             }
         }

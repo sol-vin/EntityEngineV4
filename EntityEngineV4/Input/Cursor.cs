@@ -187,15 +187,15 @@ namespace EntityEngineV4.Input
                         //Position += EntityGame.Camera.Delta;
 
                         //Keep it from leaving the bounds of the window.
-                        if (Body.Position.X < EntityGame.Camera.ScreenSpace.Left)
-                            Body.Position.X = EntityGame.Camera.ScreenSpace.Left;
-                        else if (Body.BoundingRect.Right > EntityGame.Camera.ScreenSpace.Right)
-                            Body.Position.X = EntityGame.Camera.ScreenSpace.Right - Body.Bounds.X;
+                        if (Body.Position.X < EntityGame.ActiveCamera.ScreenSpace.Left)
+                            Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Left;
+                        else if (Body.BoundingRect.Right > EntityGame.ActiveCamera.ScreenSpace.Right)
+                            Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Right - Body.Bounds.X;
 
-                        if (Body.Position.Y < EntityGame.Camera.ScreenSpace.Top)
-                            Body.Position.Y = EntityGame.Camera.ScreenSpace.Top;
-                        else if (Body.BoundingRect.Bottom > EntityGame.Camera.ScreenSpace.Bottom)
-                            Body.Position.Y = EntityGame.Camera.ScreenSpace.Bottom - Body.Bounds.Y;
+                        if (Body.Position.Y < EntityGame.ActiveCamera.ScreenSpace.Top)
+                            Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Top;
+                        else if (Body.BoundingRect.Bottom > EntityGame.ActiveCamera.ScreenSpace.Bottom)
+                            Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Bottom - Body.Bounds.Y;
                     }
                     break;
                 case MovementInput.Buttons:
@@ -209,18 +209,18 @@ namespace EntityEngineV4.Input
                             );
 
                         //Move it with the camera.
-                        Position += EntityGame.Camera.Delta;
+                        Position += EntityGame.ActiveCamera.Delta;
 
                         //Keep it from leaving the bounds of the window.
-                        if (Body.Position.X < EntityGame.Camera.ScreenSpace.Left)
-                            Body.Position.X = EntityGame.Camera.ScreenSpace.Left;
-                        else if (Body.BoundingRect.Right > EntityGame.Camera.ScreenSpace.Right)
-                            Body.Position.X = EntityGame.Camera.ScreenSpace.Right - Body.Bounds.X;
+                        if (Body.Position.X < EntityGame.ActiveCamera.ScreenSpace.Left)
+                            Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Left;
+                        else if (Body.BoundingRect.Right > EntityGame.ActiveCamera.ScreenSpace.Right)
+                            Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Right - Body.Bounds.X;
 
-                        if (Body.Position.Y < EntityGame.Camera.ScreenSpace.Top)
-                            Body.Position.Y = EntityGame.Camera.ScreenSpace.Top;
-                        else if (Body.BoundingRect.Bottom > EntityGame.Camera.ScreenSpace.Bottom)
-                            Body.Position.Y = EntityGame.Camera.ScreenSpace.Bottom - Body.Bounds.Y;
+                        if (Body.Position.Y < EntityGame.ActiveCamera.ScreenSpace.Top)
+                            Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Top;
+                        else if (Body.BoundingRect.Bottom > EntityGame.ActiveCamera.ScreenSpace.Bottom)
+                            Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Bottom - Body.Bounds.Y;
                     }
                     break;
             }
@@ -286,16 +286,16 @@ namespace EntityEngineV4.Input
                 Position = new Vector2(Position.X - MouseService.Delta.X, Position.Y - MouseService.Delta.Y);
 
                 //Move it with the camera.
-                Position += EntityGame.Camera.Delta;
+                Position += EntityGame.ActiveCamera.Delta;
 
                 //Keep it from leaving the bounds of the window.
-                if (Body.Position.X < EntityGame.Camera.ScreenSpace.Left) Body.Position.X = EntityGame.Camera.ScreenSpace.Left;
-                else if (Body.BoundingRect.Right > EntityGame.Camera.ScreenSpace.Right)
-                    Body.Position.X = EntityGame.Camera.ScreenSpace.Right - Body.Bounds.X;
+                if (Body.Position.X < EntityGame.ActiveCamera.ScreenSpace.Left) Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Left;
+                else if (Body.BoundingRect.Right > EntityGame.ActiveCamera.ScreenSpace.Right)
+                    Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Right - Body.Bounds.X;
 
-                if (Body.Position.Y < EntityGame.Camera.ScreenSpace.Top) Body.Position.Y = EntityGame.Camera.ScreenSpace.Top;
-                else if (Body.BoundingRect.Bottom > EntityGame.Camera.ScreenSpace.Bottom)
-                    Body.Position.Y = EntityGame.Camera.ScreenSpace.Bottom - Body.Bounds.Y;
+                if (Body.Position.Y < EntityGame.ActiveCamera.ScreenSpace.Top) Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Top;
+                else if (Body.BoundingRect.Bottom > EntityGame.ActiveCamera.ScreenSpace.Bottom)
+                    Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Bottom - Body.Bounds.Y;
             }
 
             base.Update(gt);

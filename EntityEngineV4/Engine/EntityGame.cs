@@ -11,9 +11,19 @@ namespace EntityEngineV4.Engine
 {
     public class EntityGame : IComponent
     {
-        public static Camera Camera;
+        /// <summary>
+        /// The active camera
+        /// </summary>
+        public static Camera ActiveCamera;
+
+        /// <summary>
+        /// The active state
+        /// </summary>
         public static State ActiveState;
 
+        /// <summary>
+        /// If the debug information should be injected into the active state
+        /// </summary>
         public static bool ShowDebugInfo;
 
         private TimeSpan _frameCounterTimer = TimeSpan.Zero;
@@ -36,15 +46,23 @@ namespace EntityEngineV4.Engine
 
         public static bool Paused { get; protected set; }
 
+        /// <summary>
+        /// XNA game reference
+        /// </summary>
         public static Game Game { get; private set; }
 
         public static GameTime GameTime { get; private set; }
+        /// <summary>
+        /// Used for logging operations
+        /// </summary>
         public static Log Log { get; private set; }
 
         public static SpriteBatch SpriteBatch { get; private set; }
         public static Rectangle Viewport { get; set; }
 
-
+        /// <summary>
+        /// LastID set through GetID
+        /// </summary>
         public static int LastID { get; private set; }
 
         public event EventHandler DestroyEvent;
@@ -59,6 +77,10 @@ namespace EntityEngineV4.Engine
         public bool Destroyed { get; private set; }
         public float Order { get; set; }
         public float Layer { get; set; }
+
+        /// <summary>
+        /// Singleton instance
+        /// </summary>
         public static EntityGame Self { get; private set; }
 
         private EntityGame(Game game, SpriteBatch spriteBatch)
@@ -72,7 +94,7 @@ namespace EntityEngineV4.Engine
             //Inject debug info into active state
             StateChanged += state => LastID = 1;
             StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
-            StateChanged += state => Camera = new Camera(state, "EntityEngineDefaultCamera");
+            StateChanged += state => ActiveCamera = new Camera(state, "EntityEngineDefaultCamera");
 
             Log = new Log();
 
@@ -95,7 +117,7 @@ namespace EntityEngineV4.Engine
             //Inject debug info into active state
             StateChanged += state => LastID = 1;
             StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
-            StateChanged += state => Camera = new Camera(state, "EntityEngineDefaultCamera");
+            StateChanged += state => ActiveCamera = new Camera(state, "EntityEngineDefaultCamera");
             
 
             Log = new Log();
@@ -116,7 +138,13 @@ namespace EntityEngineV4.Engine
             Initialized = false;
         }
 
-
+        /// <summary>
+        /// Used to initalize EntityGame singleton
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="g"></param>
+        /// <param name="spriteBatch"></param>
+        /// <param name="viewport"></param>
         public static void MakeGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)
         {
             Self = new EntityGame(game, g, spriteBatch, viewport);
@@ -124,6 +152,11 @@ namespace EntityEngineV4.Engine
             Self.Id = 0;
         }
 
+        /// <summary>
+        /// Used to initialize EntityGame singleton
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="spriteBatch"></param>
         public static void MakeGame(Game game, SpriteBatch spriteBatch)
         {
             Self = new EntityGame(game, spriteBatch);
@@ -135,7 +168,7 @@ namespace EntityEngineV4.Engine
         {
             Game = null;
             GameTime = null;
-            Camera = null;
+            ActiveCamera = null;
             Log.Dispose();
 
             if (DestroyEvent != null)
@@ -146,7 +179,7 @@ namespace EntityEngineV4.Engine
         public virtual void Update(GameTime gt)
         {
             GameTime = gt;
-            Camera.Update(gt);
+            ActiveCamera.Update(gt);
 
             if(!ActiveState.Destroyed)
             {
@@ -196,8 +229,8 @@ namespace EntityEngineV4.Engine
 
             Game.GraphicsDevice.Clear(BackgroundColor);
 
-            StartDrawing(Camera);
-            Camera.Draw(SpriteBatch);
+            StartDrawing(ActiveCamera);
+            ActiveCamera.Draw(SpriteBatch);
             ActiveState.Draw(SpriteBatch);
 
             StopDrawing();
@@ -232,6 +265,11 @@ namespace EntityEngineV4.Engine
             Log.Write("Exited", Self, Alert.Info);
         }
 
+        /// <summary>
+        /// Makes a game window of a specified size.
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="r"></param>
         public static void MakeWindow(GraphicsDeviceManager g, Rectangle r)
         {
             if ((r.Width > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width) ||
@@ -244,11 +282,19 @@ namespace EntityEngineV4.Engine
             Log.Write("Created window with params " + r.ToString(), Alert.Info);
         }
 
+        /// <summary>
+        /// Gets an ID, usually called by Node but, anything can use this to get a state unique ID
+        /// </summary>
+        /// <returns></returns>
         public static int GetID()
         {
             return LastID++;
         }
 
+        /// <summary>
+        /// Switches the states
+        /// </summary>
+        /// <param name="state"></param>
         public static void SwitchState(State state)
         {
             ActiveState = state;

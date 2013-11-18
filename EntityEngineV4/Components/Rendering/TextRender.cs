@@ -40,8 +40,8 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            if (EntityGame.Camera.ScreenSpace.Intersects(DrawRect))
-                sb.DrawString(Font, Text, GetDependency<Body>(DEPENDENCY_BODY).Position + Origin, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle, Origin, Scale, Flip, Layer);
+            if (EntityGame.ActiveCamera.ScreenSpace.Intersects(DrawRect))
+                sb.DrawString(Font, Text, GetDependency<Body>(DEPENDENCY_BODY).Position + GetDependency<Body>(DEPENDENCY_BODY).Origin, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle, GetDependency<Body>(DEPENDENCY_BODY).Origin, Scale, Flip, Layer);
         }
 
         public void LoadFont(string location)
@@ -51,10 +51,5 @@ namespace EntityEngineV4.Components.Rendering
 
         //dependencies
         public const int DEPENDENCY_BODY = 0;
-        public override void CreateDependencyList()
-        {
-            base.CreateDependencyList();
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
-        }
     }
 }

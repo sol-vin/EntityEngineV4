@@ -48,8 +48,8 @@ namespace EntityEngineV4.Components.Rendering
             {
                 Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
-                    (int)(position.X + Origin.X * Scale.X),
-                    (int)(position.Y + Origin.Y * Scale.Y),
+                    (int)(position.X + GetDependency<Body>(DEPENDENCY_BODY).Origin.X * Scale.X),
+                    (int)(position.Y + GetDependency<Body>(DEPENDENCY_BODY).Origin.Y * Scale.Y),
                     (int)(TileSize.X * Scale.X),
                     (int)(TileSize.Y * Scale.Y));
             }
@@ -61,7 +61,7 @@ namespace EntityEngineV4.Components.Rendering
             TileSize = tileSize;
             FramesPerSecond = framesPerSecond;
 
-            Origin = new Vector2(TileSize.X / 2.0f, TileSize.Y / 2.0f);
+            GetDependency<Body>(DEPENDENCY_BODY).Origin = new Vector2(TileSize.X / 2.0f, TileSize.Y / 2.0f);
 
             FrameTimer = new Timer(e, Name + ".FrameTimer") { Milliseconds = MillisecondsPerFrame };
             FrameTimer.LastEvent += AdvanceNextFrame;
@@ -87,7 +87,7 @@ namespace EntityEngineV4.Components.Rendering
         public override void Draw(SpriteBatch sb)
         {
             sb.Draw(Texture, DrawRect, CurrentFrameRect, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle,
-                    Origin, Flip, Layer);
+                    GetDependency<Body>(DEPENDENCY_BODY).Origin, Flip, Layer);
         }
 
         public void AdvanceNextFrame()

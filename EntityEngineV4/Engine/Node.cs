@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 //using System.Threading;
 using EntityEngineV4.Engine.Debugging;
@@ -77,6 +78,11 @@ namespace EntityEngineV4.Engine
             Reuse(parent,Name);
         }
 
+        /// <summary>
+        /// Called when a node is recycled to put it back into use
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="name"></param>
         public virtual void Reuse(Node parent, string name)
         {
             //if (!Recyclable) throw new Exception("Cannot call Reuse on a non-recyclable node!");
@@ -92,8 +98,15 @@ namespace EntityEngineV4.Engine
 
             Recycled = false; //Now we can safely set Recycled because the parent operations have already completed.
         }
+
+        /// <summary>
+        /// If the children of this node are being updated. Used to prevent collection modification during a foreach
+        /// </summary>
         public bool UpdatingChildren { get; private set; }
 
+        /// <summary>
+        /// Called when AddChild and RemoveChild are called respectively.
+        /// </summary>
         public event EventHandler ChildAdded , ChildRemoved; //Called only if this node had AddChild called
 
         public Node(Node parent, string name)
@@ -107,6 +120,10 @@ namespace EntityEngineV4.Engine
             Recycled = false;
         }
 
+        /// <summary>
+        /// Adds a child node to this node.
+        /// </summary>
+        /// <param name="node"></param>
         public virtual void AddChild(Node node)
         {
             if(node == null) throw new NullReferenceException("Node can not be null when adding as a child!");
@@ -127,6 +144,11 @@ namespace EntityEngineV4.Engine
             if (ChildAdded != null) ChildAdded(node);
         }
 
+        /// <summary>
+        /// Removes a child node from this node.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         public virtual bool RemoveChild(Node node)
         {
             if (node == null) throw new NullReferenceException("Can not remove a null node!");
@@ -146,17 +168,30 @@ namespace EntityEngineV4.Engine
                 return Remove(node);
             }
         }
-
+        /// <summary>
+        /// Removes a child node by it's id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool RemoveChild(int id)
         {
             return RemoveChild(GetChild(id));
         }
-
+        /// <summary>
+        /// Removes achild node by it's name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool RemoveChild(string name)
         {
             return RemoveChild(GetChild(name)); //Counts the number of removed nodes, should only be 1
         }
 
+        /// <summary>
+        /// Gets a child by it's unique id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Node GetChild(int id)
         {
             Node node = this.FirstOrDefault(c => c.Id == id);
@@ -164,6 +199,11 @@ namespace EntityEngineV4.Engine
             return node;
         }
 
+        /// <summary>
+        /// Gets a child by it's name. If multiple nodes with the same name exist, it returns the first one it finds.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public Node GetChild(string name)
         {
             Node node = this.FirstOrDefault(c => c.Name == name);
@@ -231,6 +271,8 @@ namespace EntityEngineV4.Engine
         public virtual void Reset()
         {
             Initialized = false;
+
+            Clear();
         }
 
         public virtual void Update(GameTime gt)
@@ -276,10 +318,7 @@ namespace EntityEngineV4.Engine
                     return;
                 }
 
-                foreach (var child in this.ToArray())
-                {
-                    child.Destroy(this);
-                }
+                DestroyChildren();
 
                 if (IsObject)
                     GetRoot<State>().RemoveObject(this);
@@ -305,6 +344,14 @@ namespace EntityEngineV4.Engine
                 {
                     Parent.RemoveChild(this);
                 }
+            }
+        }
+
+        public void DestroyChildren()
+        {
+            foreach (var child in this.ToArray())
+            {
+                child.Destroy(this);
             }
         }
 

@@ -29,12 +29,6 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
             //Dependencies
             public const int DEPENDENCY_BODY = 0;
-
-            public override void CreateDependencyList()
-            {
-                base.CreateDependencyList();
-                AddLinkType(DEPENDENCY_BODY, typeof(Body));
-            }
         }
 
         public class Point : Primitive
@@ -73,13 +67,6 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, new Vector2(DrawRect.Width / 2f, DrawRect.Height / 2f), Flip, Layer);
             }
 
-            //Dependencies
-            public const int DEPENDENCY_POINT = 0;
-
-            public override void CreateDependencyList()
-            {
-                AddLinkType(DEPENDENCY_POINT, typeof(VectorComponent));
-            }
         }
 
         public class Line : Primitive
@@ -95,28 +82,18 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
             public override void Draw(SpriteBatch sb)
             {
-                if (DrawRect.Top < EntityGame.Camera.ScreenSpace.Height ||
-                    DrawRect.Bottom > EntityGame.Camera.ScreenSpace.X ||
-                    DrawRect.Right > EntityGame.Camera.ScreenSpace.Y ||
-                    DrawRect.Left < EntityGame.Camera.ScreenSpace.Width)
+                if (DrawRect.Top < EntityGame.ActiveCamera.ScreenSpace.Height ||
+                    DrawRect.Bottom > EntityGame.ActiveCamera.ScreenSpace.X ||
+                    DrawRect.Right > EntityGame.ActiveCamera.ScreenSpace.Y ||
+                    DrawRect.Left < EntityGame.ActiveCamera.ScreenSpace.Width)
                 {
-                    float angle = (float)Math.Atan2(Point2.Y - Point1.Y, Point2.X - Point1.X);
+                    float angle = (float) Math.Atan2(Point2.Y - Point1.Y, Point2.X - Point1.X);
                     float length = Vector2.Distance(Point1, Point2);
 
                     sb.Draw(Assets.Pixel, Point1, null, Color,
-                            angle, Vector2.Zero, new Vector2(length, Thickness),
-                            SpriteEffects.None, Layer);
+                        angle, Vector2.Zero, new Vector2(length, Thickness),
+                        SpriteEffects.None, Layer);
                 }
-            }
-
-            //Dependencies
-            public const int DEPENDENCY_POINT1 = 0;
-            public const int DEPENDENCY_POINT2 = 1;
-
-            public override void CreateDependencyList()
-            {
-                AddLinkType(DEPENDENCY_POINT1, typeof(VectorComponent));
-                AddLinkType(DEPENDENCY_POINT2, typeof(VectorComponent));
             }
         }
 
@@ -170,7 +147,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
             {
                 get
                 {
-                    return new Microsoft.Xna.Framework.Rectangle((int)(X + Origin.X), (int)(Y + Origin.Y),
+                    return new Microsoft.Xna.Framework.Rectangle((int)(X + GetDependency<Body>(DEPENDENCY_BODY).Origin.X), (int)(Y + GetDependency<Body>(DEPENDENCY_BODY).Origin.Y),
                                                                  (int)(Bounds.X),
                                                                  (int)(Bounds.Y));
                 }
@@ -187,14 +164,13 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 Height = height;
                 Fill = fill;
 
-                Origin = new Vector2(0, 0);
+                GetDependency<Body>(DEPENDENCY_BODY).Origin = new Vector2(0, 0);
             }
 
             public Rectangle(Node parent, string name, bool fill)
                 : base(parent, name)
             {
                 Fill = fill;
-                Origin = new Vector2(0, 0);
             }
 
 
@@ -205,36 +181,36 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 {
                     if (!Fill)
                     {
-                        float minx = X + (Thickness / 2) + Origin.X;
-                        float miny = Y + (Thickness / 2) + Origin.Y;
+                        float minx = X + (Thickness / 2) + GetDependency<Body>(DEPENDENCY_BODY).Origin.X;
+                        float miny = Y + (Thickness / 2) + GetDependency<Body>(DEPENDENCY_BODY).Origin.Y;
                         //TODO: Fix thickness issue
                         //Draw our top line
                         sb.Draw(Assets.Pixel,
-                                new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X, Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
+                                new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(GetDependency<Body>(DEPENDENCY_BODY).Origin.X, GetDependency<Body>(DEPENDENCY_BODY).Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
 
                         //Left line
                         sb.Draw(Assets.Pixel,
-                                new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X * Bounds.X, Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
+                                new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(GetDependency<Body>(DEPENDENCY_BODY).Origin.X * Bounds.X, GetDependency<Body>(DEPENDENCY_BODY).Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
 
                         //Essentially these are the same as the top and bottom just rotated 180 degrees
                         //I have to do it this way instead of setting the origin to a negative value because XNA
                         //seems to ignore origins when they are negative
                         //Right Line
                         sb.Draw(Assets.Pixel,
-                                new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X * Bounds.X, Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
+                                new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(GetDependency<Body>(DEPENDENCY_BODY).Origin.X * Bounds.X, GetDependency<Body>(DEPENDENCY_BODY).Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
 
                         //Bottom Line
                         sb.Draw(Assets.Pixel,
-                                new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X, Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
+                                new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(GetDependency<Body>(DEPENDENCY_BODY).Origin.X, GetDependency<Body>(DEPENDENCY_BODY).Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
                     }
                     else
                     {
-                        sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, Origin, Flip, Layer);
+                        sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, GetDependency<Body>(DEPENDENCY_BODY).Origin, Flip, Layer);
                     }
                 }
                 else
                 {
-                    sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, Origin, Flip, Layer);
+                    sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, GetDependency<Body>(DEPENDENCY_BODY).Origin, Flip, Layer);
                 }
             }
 
@@ -243,31 +219,31 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 base.Draw(sb);
                 if (!Fill)
                 {
-                    float minx = X + (Thickness / 2) + Origin.X;
-                    float miny = Y + (Thickness / 2) + Origin.Y;
+                    float minx = X + (Thickness / 2) + GetDependency<Body>(DEPENDENCY_BODY).Origin.X;
+                    float miny = Y + (Thickness / 2) + GetDependency<Body>(DEPENDENCY_BODY).Origin.Y;
                     //TODO: Fix thickness issue
                     //Draw our top line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X, Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
+                            new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(GetDependency<Body>(DEPENDENCY_BODY).Origin.X, GetDependency<Body>(DEPENDENCY_BODY).Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
 
                     //Left line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(Origin.X * Bounds.X, Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
+                            new Vector2(minx, miny), null, Color * Alpha, Angle, new Vector2(GetDependency<Body>(DEPENDENCY_BODY).Origin.X * Bounds.X, GetDependency<Body>(DEPENDENCY_BODY).Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
 
                     //Essentially these are the same as the top and bottom just rotated 180 degrees
                     //I have to do it this way instead of setting the origin to a negative value because XNA
                     //seems to ignore origins when they are negative
                     //Right Line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X * Bounds.X, Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
+                            new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(GetDependency<Body>(DEPENDENCY_BODY).Origin.X * Bounds.X, GetDependency<Body>(DEPENDENCY_BODY).Origin.Y) / Scale, new Vector2(Thickness * Scale.X, Bounds.Y), Flip, Layer);
 
                     //Bottom Line
                     sb.Draw(Assets.Pixel,
-                            new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(Origin.X, Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
+                            new Vector2(minx + 1, miny + 1), null, Color * Alpha, Angle + MathHelper.Pi, new Vector2(GetDependency<Body>(DEPENDENCY_BODY).Origin.X, GetDependency<Body>(DEPENDENCY_BODY).Origin.Y * Bounds.Y) / Scale, new Vector2(Bounds.X, Thickness * Scale.Y), Flip, Layer);
                 }
                 else
                 {
-                    sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, Origin, Flip, Layer);
+                    sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, GetDependency<Body>(DEPENDENCY_BODY).Origin, Flip, Layer);
                 }
             }
 

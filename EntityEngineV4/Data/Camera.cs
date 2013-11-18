@@ -45,7 +45,7 @@ namespace EntityEngineV4.Data
 
         public bool IsActive
         {
-            get { return EntityGame.Camera.Equals(this); }
+            get { return EntityGame.ActiveCamera.Equals(this); }
         }
 
         public Rectangle ScreenSpace
@@ -87,7 +87,7 @@ namespace EntityEngineV4.Data
 
         public void View()
         {
-            EntityGame.Camera = this;
+            EntityGame.ActiveCamera = this;
         }
 
         public bool Intersects(Rectangle rect)
