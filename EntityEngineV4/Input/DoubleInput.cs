@@ -9,11 +9,11 @@ namespace EntityEngineV4.Input
         public KeyboardInput Key;
         public GamepadInput Button;
 
-        public DoubleInput(Entity parent, string name, Keys key, Buttons button, PlayerIndex pi)
+        public DoubleInput(Node parent, string name, Keys key, Buttons button, PlayerIndex pi)
             : base(parent, name)
         {
-            Key = new KeyboardInput(parent, name + "key", key);
-            Button = new GamepadInput(parent, name + "gamepad", button, pi);
+            Key = new KeyboardInput(this, name + "key", key);
+            Button = new GamepadInput(this, name + "gamepad", button, pi);
         }
 
         public override bool Pressed()

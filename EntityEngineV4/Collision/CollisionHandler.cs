@@ -4,6 +4,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Security.AccessControl;
 using EntityEngineV4.Collision.Shapes;
+using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
@@ -40,17 +41,12 @@ namespace EntityEngineV4.Collision
         /// </summary>
         private HashSet<Manifold> _manifolds;
 
-        public CollisionHandler(EntityState stateref)
+        public CollisionHandler(State stateref)
             : base(stateref, "CollisionHandler")
         {
             _collideables = new List<Collision>();
             _pairs = new HashSet<Pair>();
             _manifolds = new HashSet<Manifold>();
-        }
-
-        public override void Initialize()
-        {
-            
         }
 
         public override void Update(GameTime gt)
@@ -66,6 +62,7 @@ namespace EntityEngineV4.Collision
                 if (CanObjectsResolve(manifold.A, manifold.B) || CanObjectsResolve(manifold.B, manifold.A))
                 {
                     ResolveCollision(manifold);
+                    PositionalCorrection(manifold);
                 }
             }
         }
@@ -97,9 +94,9 @@ namespace EntityEngineV4.Collision
             _pairs.RemoveWhere(pair => pair.A.Equals(c) || pair.B.Equals(c));
         }
 
-        public HashSet<Collision> GetColliding()
+        public IEnumerable<Collision> GetColliding()
         {
-            HashSet<Collision> output = new HashSet<Collision>();
+            var output = new HashSet<Collision>();
 
             foreach (var manifold in  _manifolds)
             {
@@ -277,7 +274,7 @@ namespace EntityEngineV4.Collision
                             faceNormal = Vector2.UnitX;
                         manifold.PenetrationDepth = xExtent;
 
-                        manifold.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * faceNormal.X;
+                        manifold.Normal = Physics.GetNormal(a.Position, b.Position) * faceNormal.X;
                         manifold.AreColliding = true;
 
                         //TODO: Finish collision code
@@ -312,7 +309,7 @@ namespace EntityEngineV4.Collision
                         else
                             faceNormal = Vector2.UnitY;
 
-                        manifold.Normal = MathTools.Physics.GetNormal(a.Position, b.Position) * faceNormal.Y;
+                        manifold.Normal = Physics.GetNormal(a.Position, b.Position) * faceNormal.Y;
                         manifold.PenetrationDepth = yExtent;
                         manifold.AreColliding = true;
 
@@ -357,6 +354,7 @@ namespace EntityEngineV4.Collision
             }
 
             float d = manifold.Normal.Length();
+            manifold.Normal.Normalize();
             if (Math.Abs(d) > float.Epsilon)
             {
                 manifold.PenetrationDepth = a.Radius + b.Radius - d;
@@ -383,8 +381,8 @@ namespace EntityEngineV4.Collision
         public static Manifold CheckCollision(Collision a, Collision b)
         {
             Shape aShape, bShape;
-            aShape = a.GetLink<Shape>(Collision.DEPENDENCY_SHAPE);
-            bShape = b.GetLink<Shape>(Collision.DEPENDENCY_SHAPE);
+            aShape = a.GetDependency<Shape>(Collision.DEPENDENCY_SHAPE);
+            bShape = b.GetDependency<Shape>(Collision.DEPENDENCY_SHAPE);
 
             Manifold manifold = new Manifold(a,b);
 

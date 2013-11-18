@@ -16,19 +16,16 @@ namespace EntityEngineV4.Tiles.Components
         public Point TileSize;
         public Vector2 Scale = Vector2.One;
 
-        public TilemapRender(Entity parent, string name, Texture2D texture, Point size, Point tileSize)
+        public TilemapRender(Node parent, string name, Texture2D texture, Point size, Point tileSize)
             : base(parent, name)
         {
             Texture = texture;
             _tiles = new Tile[size.X, size.Y];
             SetAllTiles(Tile.EMPTY);
             TileSize = tileSize;
-
-            //Dependencies
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
 
-        public TilemapRender(Entity parent, string name, Texture2D texture, Tile[,] tiles, Point tileSize)
+        public TilemapRender(Node parent, string name, Texture2D texture, Tile[,] tiles, Point tileSize)
             : base(parent, name)
         {
             Texture = texture;
@@ -96,8 +93,8 @@ namespace EntityEngineV4.Tiles.Components
         {
             return new Rectangle
                 {
-                    X = (int)(x * TileSize.X * Scale.X) + (int)GetLink<Body>(DEPENDENCY_BODY).Position.X,
-                    Y = (int)(y * TileSize.Y * Scale.Y) + (int)GetLink<Body>(DEPENDENCY_BODY).Position.Y,
+                    X = (int)(x * TileSize.X * Scale.X) + (int)GetDependency<Body>(DEPENDENCY_BODY).Position.X,
+                    Y = (int)(y * TileSize.Y * Scale.Y) + (int)GetDependency<Body>(DEPENDENCY_BODY).Position.Y,
                     Width = (int)(TileSize.X * Scale.X),
                     Height = (int)(TileSize.Y * Scale.Y)
                 };
@@ -140,18 +137,18 @@ namespace EntityEngineV4.Tiles.Components
             get
             {
                 return new Rectangle(
-                    (int)GetLink<Body>(DEPENDENCY_BODY).X, 
-                    (int)GetLink<Body>(DEPENDENCY_BODY).Y, 
-                    (int)(GetLink<Body>(DEPENDENCY_BODY).Width * Scale.X), 
-                    (int)(GetLink<Body>(DEPENDENCY_BODY).Height * Scale.Y));
+                    (int)GetDependency<Body>(DEPENDENCY_BODY).X, 
+                    (int)GetDependency<Body>(DEPENDENCY_BODY).Y, 
+                    (int)(GetDependency<Body>(DEPENDENCY_BODY).Width * Scale.X), 
+                    (int)(GetDependency<Body>(DEPENDENCY_BODY).Height * Scale.Y));
             }
         }
 
         public override void Update(GameTime gt)
         {
             base.Update(gt);
-            GetLink<Body>(DEPENDENCY_BODY).Width = TileSize.X * (_tiles.GetUpperBound(0) + 1);
-            GetLink<Body>(DEPENDENCY_BODY).Height = TileSize.Y * (_tiles.GetUpperBound(1) + 1);
+            GetDependency<Body>(DEPENDENCY_BODY).Width = TileSize.X * (_tiles.GetUpperBound(0) + 1);
+            GetDependency<Body>(DEPENDENCY_BODY).Height = TileSize.Y * (_tiles.GetUpperBound(1) + 1);
 
         }
 

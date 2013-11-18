@@ -23,11 +23,11 @@ namespace EntityEngineV4.GUI
         //Components
         public TextRender Render;
 
-        public Label(IComponent parent, string name)
+        public Label(Node parent, string name)
             : base(parent, name)
         {
             Render = new TextRender(this, "Render", Assets.Font, name);
-            Render.Link(TextRender.DEPENDENCY_BODY, Body);
+            Render.LinkDependency(TextRender.DEPENDENCY_BODY, Body);
             Render.Text = name;
             Render.Layer = 1f;
 

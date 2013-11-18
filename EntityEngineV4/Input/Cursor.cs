@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
@@ -10,8 +11,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace EntityEngineV4.Input
 {
-    public abstract class Cursor : Entity
+    public abstract class Cursor : Node
     {
+        public override bool IsObject
+        {
+            get { return true; }
+        }
+
         //Hidden because we don't want people messing with it all willy nilly
         protected Body Body;
 
@@ -30,7 +36,10 @@ namespace EntityEngineV4.Input
 
         public event CursorEventHandler GotFocus , LostFocus;
 
-        public bool HasFocus { get; protected set; }
+        public bool HasFocus
+        {
+            get; protected set;
+        }
 
         public abstract bool Down();
         public abstract bool Pressed();
@@ -38,7 +47,7 @@ namespace EntityEngineV4.Input
         public abstract bool Up();
 
 
-        public Cursor(IComponent parent, string name)
+        public Cursor(Node parent, string name)
             : base(parent, name)
         {
             Active = true;
@@ -49,7 +58,7 @@ namespace EntityEngineV4.Input
 
             //Default rendering is a single white pixel.
             Render = new ImageRender(this, "ImageRender", Assets.Pixel);
-            Render.Link(ImageRender.DEPENDENCY_BODY, Body);
+            Render.LinkDependency(ImageRender.DEPENDENCY_BODY, Body);
             Render.Layer = 1f;
             Render.Scale = Vector2.One * 3f;
             Render.Color = Color.Black;
@@ -62,14 +71,19 @@ namespace EntityEngineV4.Input
             base.Draw(sb);
         }
 
-        public void OnGetFocus(Cursor c = null)
+        public void GetFocus(Cursor c)
         {
             if (GotFocus != null) GotFocus(this);
 
             //Get the Cursor's position and set it to our own for seamless changing.
             if(MouseService.Cursor != null)
+            {
                 Position = MouseService.Cursor.Position;
+                MouseService.Cursor.LoseFocus();
+            }
+
             MouseService.Cursor = this;
+
             HasFocus = true;
 
             Visible = true;
@@ -77,17 +91,19 @@ namespace EntityEngineV4.Input
             EntityGame.Log.Write("Got focus!", this, Alert.Info);
         }
 
-        public void OnLostFocus(Cursor newCursor)
+        public void LoseFocus()
         {
-            if (LostFocus != null) LostFocus(newCursor);
+            if (LostFocus != null) LostFocus(this);
             HasFocus = false;
 
             Visible = false;
+
+            EntityGame.Log.Write("Lost focus!", this, Alert.Info);
         }
 
-        public override void Destroy(IComponent i = null)
+        public override void Destroy(IComponent sender = null)
         {
-            base.Destroy(i);
+            base.Destroy(sender);
 
             GotFocus = null;
             LostFocus = null;
@@ -126,21 +142,16 @@ namespace EntityEngineV4.Input
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="name"></param>
-        public ControllerCursor(IComponent parent, string name)
+        public ControllerCursor(MouseService parent, string name)
             : base(parent, name)
         {
+            Input = MovementInput.Analog;
             MakeDefault();
         }
-        public ControllerCursor(IComponent parent, string name, MovementInput input)
+        public ControllerCursor(Node parent, string name, MovementInput input)
             : base(parent, name)
         {
-            switch(input)
-            {
-                case MovementInput.Analog:
-                    break;
-                case MovementInput.Buttons:
-                    break;
-            }
+            Input = input;
 
             MakeDefault();
         }
@@ -165,30 +176,31 @@ namespace EntityEngineV4.Input
             {
                 case MovementInput.Analog:
                     if (!HasFocus && (AnalogStickMoved() || SelectKey.Down()))
-                        OnGetFocus(this);
+                        GetFocus(this);
                     if (HasFocus)
                     {
+                        //TODO: Use normalized positition for this.
                         Position = new Vector2(Position.X + AnalogStick.Position.X*MovementSpeed.X,
                                                Position.Y - AnalogStick.Position.Y*MovementSpeed.Y);
 
                         //Move it with the camera.
-                        Position += EntityGame.Camera.Delta;
+                        //Position += EntityGame.Camera.Delta;
 
                         //Keep it from leaving the bounds of the window.
-                        if (Body.Position.X < EntityGame.Camera.ScreenSpace.Left)
-                            Body.Position.X = EntityGame.Camera.ScreenSpace.Left;
-                        else if (Body.BoundingRect.Right > EntityGame.Camera.ScreenSpace.Right)
-                            Body.Position.X = EntityGame.Camera.ScreenSpace.Right - Body.Bounds.X;
+                        if (Body.Position.X < EntityGame.ActiveCamera.ScreenSpace.Left)
+                            Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Left;
+                        else if (Body.BoundingRect.Right > EntityGame.ActiveCamera.ScreenSpace.Right)
+                            Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Right - Body.Bounds.X;
 
-                        if (Body.Position.Y < EntityGame.Camera.ScreenSpace.Top)
-                            Body.Position.Y = EntityGame.Camera.ScreenSpace.Top;
-                        else if (Body.BoundingRect.Bottom > EntityGame.Camera.ScreenSpace.Bottom)
-                            Body.Position.Y = EntityGame.Camera.ScreenSpace.Bottom - Body.Bounds.Y;
+                        if (Body.Position.Y < EntityGame.ActiveCamera.ScreenSpace.Top)
+                            Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Top;
+                        else if (Body.BoundingRect.Bottom > EntityGame.ActiveCamera.ScreenSpace.Bottom)
+                            Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Bottom - Body.Bounds.Y;
                     }
                     break;
                 case MovementInput.Buttons:
                     if (!HasFocus && ButtonPressed() || SelectKey.Down())
-                        OnGetFocus(this);
+                        GetFocus(this);
                     if (HasFocus)
                     {
                         Position = new Vector2(
@@ -197,18 +209,18 @@ namespace EntityEngineV4.Input
                             );
 
                         //Move it with the camera.
-                        Position += EntityGame.Camera.Delta;
+                        Position += EntityGame.ActiveCamera.Delta;
 
                         //Keep it from leaving the bounds of the window.
-                        if (Body.Position.X < EntityGame.Camera.ScreenSpace.Left)
-                            Body.Position.X = EntityGame.Camera.ScreenSpace.Left;
-                        else if (Body.BoundingRect.Right > EntityGame.Camera.ScreenSpace.Right)
-                            Body.Position.X = EntityGame.Camera.ScreenSpace.Right - Body.Bounds.X;
+                        if (Body.Position.X < EntityGame.ActiveCamera.ScreenSpace.Left)
+                            Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Left;
+                        else if (Body.BoundingRect.Right > EntityGame.ActiveCamera.ScreenSpace.Right)
+                            Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Right - Body.Bounds.X;
 
-                        if (Body.Position.Y < EntityGame.Camera.ScreenSpace.Top)
-                            Body.Position.Y = EntityGame.Camera.ScreenSpace.Top;
-                        else if (Body.BoundingRect.Bottom > EntityGame.Camera.ScreenSpace.Bottom)
-                            Body.Position.Y = EntityGame.Camera.ScreenSpace.Bottom - Body.Bounds.Y;
+                        if (Body.Position.Y < EntityGame.ActiveCamera.ScreenSpace.Top)
+                            Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Top;
+                        else if (Body.BoundingRect.Bottom > EntityGame.ActiveCamera.ScreenSpace.Bottom)
+                            Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Bottom - Body.Bounds.Y;
                     }
                     break;
             }
@@ -260,7 +272,7 @@ namespace EntityEngineV4.Input
 
     public class MouseCursor : Cursor
     {
-        public MouseCursor(IComponent parent, string name) : base(parent, name)
+        public MouseCursor(Node parent, string name) : base(parent, name)
         {
 
         }
@@ -268,22 +280,22 @@ namespace EntityEngineV4.Input
         public override void Update(GameTime gt)
         {
             if(!HasFocus && (MouseService.Delta != Point.Zero || MouseService.IsMouseButtonDown(MouseButton.LeftButton)))
-                OnGetFocus(this);
+                GetFocus(this);
             if(HasFocus)
             {
                 Position = new Vector2(Position.X - MouseService.Delta.X, Position.Y - MouseService.Delta.Y);
 
                 //Move it with the camera.
-                Position += EntityGame.Camera.Delta;
+                Position += EntityGame.ActiveCamera.Delta;
 
                 //Keep it from leaving the bounds of the window.
-                if (Body.Position.X < EntityGame.Camera.ScreenSpace.Left) Body.Position.X = EntityGame.Camera.ScreenSpace.Left;
-                else if (Body.BoundingRect.Right > EntityGame.Camera.ScreenSpace.Right)
-                    Body.Position.X = EntityGame.Camera.ScreenSpace.Right - Body.Bounds.X;
+                if (Body.Position.X < EntityGame.ActiveCamera.ScreenSpace.Left) Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Left;
+                else if (Body.BoundingRect.Right > EntityGame.ActiveCamera.ScreenSpace.Right)
+                    Body.Position.X = EntityGame.ActiveCamera.ScreenSpace.Right - Body.Bounds.X;
 
-                if (Body.Position.Y < EntityGame.Camera.ScreenSpace.Top) Body.Position.Y = EntityGame.Camera.ScreenSpace.Top;
-                else if (Body.BoundingRect.Bottom > EntityGame.Camera.ScreenSpace.Bottom)
-                    Body.Position.Y = EntityGame.Camera.ScreenSpace.Bottom - Body.Bounds.Y;
+                if (Body.Position.Y < EntityGame.ActiveCamera.ScreenSpace.Top) Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Top;
+                else if (Body.BoundingRect.Bottom > EntityGame.ActiveCamera.ScreenSpace.Bottom)
+                    Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Bottom - Body.Bounds.Y;
             }
 
             base.Update(gt);

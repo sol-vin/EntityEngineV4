@@ -16,7 +16,7 @@ namespace EntityEngineV4.GUI
             set { _bodyImage.Color = value; }
         }
 
-        public Button(IComponent parent, string name, Vector2 position, Vector2 bounds, RGBColor color) : base(parent, name)
+        public Button(Node parent, string name, Vector2 position, Vector2 bounds, RGBColor color) : base(parent, name)
         {
             Body.Position = position;
             Body.Bounds = bounds;
@@ -24,7 +24,7 @@ namespace EntityEngineV4.GUI
 
             //Make our rectangles
             _bodyImage = new ShapeTypes.Rectangle(this, "BodyImage", true);
-            _bodyImage.Link(ShapeTypes.Rectangle.DEPENDENCY_BODY, Body);
+            _bodyImage.LinkDependency(ShapeTypes.Rectangle.DEPENDENCY_BODY, Body);
             _bodyImage.Color = color;
         }
 

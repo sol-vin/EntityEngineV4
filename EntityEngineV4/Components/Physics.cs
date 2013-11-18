@@ -50,7 +50,7 @@ namespace EntityEngineV4.Components
                 if (value < 0) throw new Exception("Mass cannot be less than zero!");
                 _mass = value;
 
-                if (Math.Abs(value - 0) < .00001f)
+                if (Math.Abs(value) < float.Epsilon)
                     InvertedMass = 0;
                 else
                     InvertedMass = 1 / _mass;
@@ -68,12 +68,12 @@ namespace EntityEngineV4.Components
         /// <summary>
         /// Bounciness of this object
         /// </summary>
-        public float Restitution = 0f;
+        public float Restitution = 1f;
 
 
         
-        public Physics(IComponent e, string name)
-            : base(e, name)
+        public Physics(Node parent, string name)
+            : base(parent, name)
         {
         }
 
@@ -88,13 +88,13 @@ namespace EntityEngineV4.Components
             AngularVelocity *= AngularDrag;
             _angularForce = 0f;
 
-            GetLink<Body>(DEPENDENCY_BODY).Position += Velocity;
-            GetLink<Body>(DEPENDENCY_BODY).Angle += AngularVelocity;
+            GetDependency<Body>(DEPENDENCY_BODY).Position += Velocity;
+            GetDependency<Body>(DEPENDENCY_BODY).Angle += AngularVelocity;
         }
 
         public void Thrust(float power)
         {
-            var angle = GetLink<Body>(DEPENDENCY_BODY).Angle;
+            var angle = GetDependency<Body>(DEPENDENCY_BODY).Angle;
             Thrust(power, angle);
         }
 
@@ -106,12 +106,12 @@ namespace EntityEngineV4.Components
 
         public void FaceVelocity()
         {
-            GetLink<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(Velocity.X, -Velocity.Y);
+            GetDependency<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(Velocity.X, -Velocity.Y);
         }
 
         public void FaceVelocity(Vector2 velocity)
         {
-            GetLink<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(velocity.X, velocity.Y);
+            GetDependency<Body>(DEPENDENCY_BODY).Angle = (float)Math.Atan2(velocity.X, velocity.Y);
         }
 
         public void AddForce(Vector2 force)
@@ -127,13 +127,27 @@ namespace EntityEngineV4.Components
             p.Drag = Drag;
             p.Velocity = Velocity;
             p.Acceleration = Acceleration;
-            p.Link(DEPENDENCY_BODY, GetLink(DEPENDENCY_BODY));
+            p.LinkDependency(DEPENDENCY_BODY, GetDependency(DEPENDENCY_BODY));
             return p;
         }
 
         public void AddAngularForce(float force)
         {
             _angularForce += force;
+        }
+
+        public override void Reuse(Node parent, string name)
+        {
+            base.Reuse(parent, name);
+            Velocity = Vector2.Zero;
+            AngularVelocity = 0;
+            Drag = 1;
+            AngularDrag = 1;
+            AngularForce = 0;
+            Force = Vector2.Zero;
+            Acceleration = Vector2.Zero;
+            Mass = 1;
+            Restitution = 0;
         }
 
         //Dependencies
@@ -143,5 +157,63 @@ namespace EntityEngineV4.Components
             base.CreateDependencyList();
             AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
+
+        //Static methods
+        public static float DotProduct(Vector2 a, Vector2 b)
+        {
+            return a.X * b.X + a.Y * b.Y;
+        }
+
+        public static Vector2 GetNormal(Vector2 a, Vector2 b)
+        {
+            Vector2 ret = b - a;
+            ret.Normalize();
+            return ret;
+        }
+
+        public static float CrossProduct(Vector2 a, Vector2 b)
+        {
+            return a.X * b.Y - a.Y * b.X;
+        }
+
+        public static Vector2 CrossProduct(Vector2 a, float scalar)
+        {
+            return new Vector2(scalar * a.Y, -scalar * a.X);
+        }
+
+        public static Vector2 CrossProduct(float scalar, Vector2 a)
+        {
+            return new Vector2(-scalar * a.Y, scalar * a.X);
+        }
+
+        public static Vector2 RotatePoint(Vector2 origin, float angle, Vector2 point)
+        {
+            float s = (float)Math.Sin(angle);
+            float c = (float)Math.Cos(angle);
+
+            // translate point back to origin:
+            point.X -= origin.X;
+            point.Y -= origin.Y;
+
+            // rotate point
+            float xnew = point.X * c - point.Y * s;
+            float ynew = point.X * s + point.Y * c;
+
+            // translate point back:
+            point.X = xnew + origin.X;
+            point.Y = ynew + origin.Y;
+            return point;
+        }
+
+        public static float GetAngle(Vector2 vector)
+        {
+            return GetAngle(Vector2.Zero, vector);
+        }
+
+        public static float GetAngle(Vector2 vector1, Vector2 vector2)
+        {
+            return (float)Math.Atan2(vector1.X - vector2.X, vector1.Y - vector2.Y);
+        }
+
     }
 }

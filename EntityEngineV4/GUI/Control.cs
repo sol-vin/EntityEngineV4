@@ -8,9 +8,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.GUI
 {
-    public abstract class Control : Entity
+    public abstract class Control : Node
     {
         public delegate void EventHandler(Control b);
+
+        public override bool IsObject
+        {
+            get { return true; }
+        }
 
         public Body Body;
         public ControlHandler ControlHandler { get; private set; }
@@ -75,9 +80,16 @@ namespace EntityEngineV4.GUI
 
         public float Height { get { return Body.Bounds.Y; } set { Body.Bounds.Y = value; } }
 
-        public bool Attached { get { return ControlHandler.GetControl(TabPosition).Equals(this); } }
+        public bool Attached
+        {
+            get
+            {
+                if (ControlHandler == null) return false;
+                return ControlHandler.GetControl(TabPosition).Equals(this);
+            }
+        }
 
-        protected Control(IComponent parent, string name)
+        protected Control(Node parent, string name)
             : base(parent, name)
         {
             Visible = true;
@@ -86,7 +98,7 @@ namespace EntityEngineV4.GUI
             //Add our service if we have a parent, if not, we will let them update and draw
             if (parent != null && parent.GetType() != typeof (ControlHandler))
             {
-                ControlHandler = parent.GetService<ControlHandler>();
+                ControlHandler = GetRoot<State>().GetService<ControlHandler>();
                 if (ControlHandler == null)
                 {
                     EntityGame.Log.Write("ControlHandler was not found! Cannot attach to Service", this, Alert.Error);

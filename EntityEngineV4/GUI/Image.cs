@@ -11,7 +11,7 @@ namespace EntityEngineV4.GUI
             : base(parent, name)
         {
             ImageRender = new ImageRender(this, "ImageRender", texture);
-            ImageRender.Link(ImageRender.DEPENDENCY_BODY, Body);
+            ImageRender.LinkDependency(ImageRender.DEPENDENCY_BODY, Body);
             Selectable = false;
         }
     }

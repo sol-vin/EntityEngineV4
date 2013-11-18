@@ -12,8 +12,8 @@ namespace EntityEngineV4.Input
 
         public event EventHandler PressedEvent , ReleasedEvent , DownEvent , UpEvent;
 
-        public Input(Entity entity, string name)
-            : base(entity, name)
+        public Input(Node node, string name)
+            : base(node, name)
         {
         }
 

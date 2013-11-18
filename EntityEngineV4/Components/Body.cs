@@ -9,6 +9,7 @@ namespace EntityEngineV4.Components
     public class Body : Component
     {
         public float Angle;
+        public Vector2 Origin = Vector2.Zero;
 
         public Vector2 LastPosition { get; private set; }
 
@@ -64,14 +65,14 @@ namespace EntityEngineV4.Components
 
         public Color DebugColor = Color.Yellow;
 
-        public Body(IComponent e, string name)
+        public Body(Node e, string name)
             : base(e, name)
         {
             if (EntityGame.ActiveState != null)
                 EntityGame.ActiveState.PreUpdateEvent += UpdateLast;
         }
 
-        public Body(IComponent e, string name, Vector2 position)
+        public Body(Node e, string name, Vector2 position)
             : base(e, name)
         {
             Position = position;
@@ -115,9 +116,9 @@ namespace EntityEngineV4.Components
             }
         }
 
-        public override void Destroy(IComponent i = null)
+        public override void Destroy(IComponent sender = null)
         {
-            base.Destroy(i);
+            base.Destroy(sender);
             EntityGame.ActiveState.PreUpdateEvent -= UpdateLast;
 
         }

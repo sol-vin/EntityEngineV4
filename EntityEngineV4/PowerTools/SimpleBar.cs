@@ -56,7 +56,7 @@ namespace EntityEngineV4.PowerTools
 
         public FillType Fill;
 
-        public SimpleBar(IComponent parent, string name, Body body) : base(parent, name)
+        public SimpleBar(Node parent, string name, Body body) : base(parent, name)
         {
             _bgBarBody = body;
             _fgBarBody = new Body(this, "FGBarBody");
@@ -67,10 +67,10 @@ namespace EntityEngineV4.PowerTools
             _fgBarBody.Width = body.Width;
 
             _fgBar = new ShapeTypes.Rectangle(this, "FGBar", true);
-            _fgBar.Link(ShapeTypes.Rectangle.DEPENDENCY_BODY, _fgBarBody);
+            _fgBar.LinkDependency(ShapeTypes.Rectangle.DEPENDENCY_BODY, _fgBarBody);
 
             _bgBar = new ShapeTypes.Rectangle(this, "BGBar", true);
-            _bgBar.Link(ShapeTypes.Rectangle.DEPENDENCY_BODY, _bgBarBody);
+            _bgBar.LinkDependency(ShapeTypes.Rectangle.DEPENDENCY_BODY, _bgBarBody);
 
         }
     }

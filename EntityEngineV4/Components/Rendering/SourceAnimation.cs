@@ -45,7 +45,7 @@ namespace EntityEngineV4.Components.Rendering
         {
             get
             {
-                Vector2 position = GetLink<Body>(DEPENDENCY_BODY).Position;
+                Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
                     (int)(position.X + Origin.X * Scale.X),
                     (int)(position.Y + Origin.Y * Scale.Y),
@@ -64,7 +64,7 @@ namespace EntityEngineV4.Components.Rendering
             get { return _sourcerectangles[CurrentFrame]; }
         }
 
-        public SourceAnimation(Entity e, string name)
+        public SourceAnimation(Node e, string name)
             : base(e, name)
         {
             FrameTimer = new Timer(e, Name + ".FrameTimer");
@@ -73,7 +73,7 @@ namespace EntityEngineV4.Components.Rendering
             _sourcerectangles = new Rectangle[1];
         }
 
-        public SourceAnimation(Entity e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond)
+        public SourceAnimation(Node e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond)
             : base(e, name, texture)
         {
             FramesPerSecond = framesPerSecond;
@@ -98,7 +98,7 @@ namespace EntityEngineV4.Components.Rendering
         public override void Draw(SpriteBatch sb)
         {
             Rectangle sourcerect = _sourcerectangles[CurrentFrame];
-            sb.Draw(Texture, DrawRect, sourcerect, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle,
+            sb.Draw(Texture, DrawRect, sourcerect, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle,
                     Origin, Flip, Layer);
         }
 

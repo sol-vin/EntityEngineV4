@@ -9,7 +9,7 @@ namespace EntityEngineV4.Collision.Shapes
         public abstract Vector2 Position { get; }
         public Vector2 Offset = new Vector2();
 
-        protected Shape(IComponent parent, string name) : base(parent, name)
+        protected Shape(Node parent, string name) : base(parent, name)
         {
         }
         //Dependencies

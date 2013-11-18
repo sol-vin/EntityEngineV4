@@ -7,7 +7,7 @@ namespace EntityEngineV4.GUI
     {
         public Color SelectedColor = Color.Red;
 
-        public LinkLabel(IComponent parent, string name)
+        public LinkLabel(Node parent, string name)
             : base(parent, name)
         {
             Selectable = true;

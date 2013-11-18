@@ -7,30 +7,26 @@ using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.PowerTools
 {
-    public class Spawn : Entity
+    public class Spawn : Node
     {
-        public bool Destroyed = false;
 
         public int TimeToLive
         {
-            get { return TimeToLiveTimer.Milliseconds; }
-            set { TimeToLiveTimer.Milliseconds = value; }
+            get { return DeathTimer.Milliseconds; }
+            set { DeathTimer.Milliseconds = value; }
         }
 
-        public Spawner Spawner;
-        protected Timer TimeToLiveTimer;
+        protected Timer DeathTimer;
 
-        public Spawn(Spawner e, int ttl)
-            : base(e, e.Name + ".Spawn")
+        public Spawn(Node parent, int ttl)
+            : base(parent, parent.Name + ".Spawn")
         {
             Name = Name + Id;
 
-            Spawner = e;
-
-            TimeToLiveTimer = new Timer(this, "Timer");
+            DeathTimer = new Timer(this, "Timer");
             TimeToLive = ttl;
-            TimeToLiveTimer.Start();
-            TimeToLiveTimer.LastEvent += () => Destroy();
+            DeathTimer.Start();
+            //TimeToLiveTimer.LastEvent += () => Destroy();
         }
 
         public override void Update(GameTime gt)
@@ -38,10 +34,9 @@ namespace EntityEngineV4.PowerTools
             base.Update(gt);
         }
 
-        public override void Destroy(IComponent i = null)
+        public override void Destroy(IComponent sender = null)
         {
-            base.Destroy(i);
-            Destroyed = true;
+            base.Destroy(sender);
         }
     }
 
@@ -50,13 +45,13 @@ namespace EntityEngineV4.PowerTools
         public int FadeAge;
         public Render Render;
 
-        public FadeSpawn(Spawner e, int ttl)
-            : base(e, ttl)
+        public FadeSpawn(Node parent, int ttl)
+            : base(parent, ttl)
         {
         }
 
-        public FadeSpawn(Spawner e, int fadeage, int ttl)
-            : base(e, ttl)
+        public FadeSpawn(Node parent, int fadeage, int ttl)
+            : base(parent, ttl)
         {
             FadeAge = fadeage;
         }
@@ -64,10 +59,10 @@ namespace EntityEngineV4.PowerTools
         public override void Update(GameTime gt)
         {
             base.Update(gt);
-            if ((int)TimeToLiveTimer.TickTime > FadeAge)
+            if ((int)DeathTimer.TickTime > FadeAge)
             {
                 int totalsteps = TimeToLive - FadeAge;
-                int currentstep = (int)TimeToLiveTimer.TickTime - FadeAge;
+                int currentstep = (int)DeathTimer.TickTime - FadeAge;
                 if (currentstep > totalsteps) currentstep = totalsteps;
                 float step = currentstep / (totalsteps * 1f);
 
@@ -81,7 +76,7 @@ namespace EntityEngineV4.PowerTools
         public bool AutoEmit;
         public int AutoEmitAmount = 1;
 
-        public Spawner(IComponent parent, string name)
+        public Spawner(Node parent, string name)
             : base(parent, name)
         {
         }

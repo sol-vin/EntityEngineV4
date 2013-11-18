@@ -1,10 +1,12 @@
-﻿using EntityEngineV4.Components;
+﻿using System;
+using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Data
 {
-    public class Camera : Entity
+    public class Camera : Node
     {
         //TODO: Add rotation to camera
         //TODO: Add collision detection to OBB for camera 
@@ -16,15 +18,18 @@ namespace EntityEngineV4.Data
 
         public Vector2 Delta { get { return Position - LastPosition; } }
 
-        public Vector2 Position = new Vector2();
+        public Vector2 Position = Vector2.Zero;
         public float Zoom = 1f;
 
         public Rectangle DeadZone;
 
         public enum FollowStyle
         {
-            LockOn, Lerp
+            LockOn, Lerp, None
         }
+
+        public FollowStyle FollowType = FollowStyle.None;
+        public Vector2 FollowOffset = Vector2.Zero;
 
         public Body Target { get; private set; }
 
@@ -40,7 +45,7 @@ namespace EntityEngineV4.Data
 
         public bool IsActive
         {
-            get { return EntityGame.Camera.Equals(this); }
+            get { return EntityGame.ActiveCamera.Equals(this); }
         }
 
         public Rectangle ScreenSpace
@@ -58,24 +63,31 @@ namespace EntityEngineV4.Data
             }
         }
 
-        public Camera(IComponent parent, string name)
+        public Camera(Node parent, string name)
             : base(parent, name)
         {
             Position = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);
         }
 
-        public void Update()
+        public override void Update(GameTime gt)
+        {
+            base.Update(gt);
+            if (FollowType != FollowStyle.None && Target != null)
+            {
+                if (FollowType == FollowStyle.LockOn)
+                    Position = Target.Position + FollowOffset;
+            }
+        }
+
+        public override void Draw(SpriteBatch sb)
         {
             LastPosition = Position;
-
-            if (Target != null)
-            {
-            }
+            base.Draw(sb);
         }
 
         public void View()
         {
-            EntityGame.Camera = this;
+            EntityGame.ActiveCamera = this;
         }
 
         public bool Intersects(Rectangle rect)
@@ -87,10 +99,13 @@ namespace EntityEngineV4.Data
         public void FollowPoint(Body b)
         {
             Target = b;
+            FollowType = FollowStyle.LockOn;
         }
 
         public void Flash()
         {
+            //TODO: Implement Flash
+            throw new NotImplementedException();
         }
     }
 }

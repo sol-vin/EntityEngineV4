@@ -8,28 +8,7 @@ namespace EntityEngineV4.Input
 {
     public class MouseService : Service
     {
-        public static Cursor _cursor;
-        public static Cursor Cursor
-        {
-            get { return _cursor; }
-            set
-            {
-                //Get out of a situation where we have the same controlling cursor
-                if (_cursor == null || value == null)
-                {
-                    _cursor = value;
-                    return;
-                }
-
-                if ( _cursor.Id == value.Id) return;
-
-                //Make it lose focus
-                _cursor.OnLostFocus(value);
-
-                //Change the reference
-                _cursor = value;
-            }
-        }
+        public static Cursor Cursor { get; set; }
         private static MouseState _mousestate;
 
         public static MouseState MouseState
@@ -50,7 +29,7 @@ namespace EntityEngineV4.Input
 
         public static Point Delta { get; private set; }
 
-        public MouseService(EntityState stateref, bool useDefaultCursors = false)
+        public MouseService(State stateref, bool useDefaultCursors = false)
             : base(stateref, "MouseService")
         {
             if (!useDefaultCursors)
@@ -65,18 +44,19 @@ namespace EntityEngineV4.Input
         public void AddDefaultCursors()
         {
             MouseCursor mc = new MouseCursor(this, "MouseService.MouseCursor");
-            DestroyEvent += mc.Destroy;
-            mc.OnGetFocus();
-            AddEntity(mc);
-            AddEntity(new ControllerCursor(this, "MouseService.ControllerCursor", ControllerCursor.MovementInput.Buttons));
+            mc.GetFocus(mc);
+            
+            var cc = new ControllerCursor(this, "MouseService.ControllerCursor", ControllerCursor.MovementInput.Buttons);
+            cc.Visible = false;
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
         }
 
         public override void Update(GameTime gt)
         {
+            base.Update(gt);
             Flush();
             _mousestate = Mouse.GetState();
 
@@ -96,6 +76,7 @@ namespace EntityEngineV4.Input
 
         public override void Draw(SpriteBatch sb)
         {
+            base.Draw(sb);
         }
 
         public static Vector2 GetPosition()
@@ -113,9 +94,9 @@ namespace EntityEngineV4.Input
             _lastmousestate = _mousestate;
         }
 
-        public override void Destroy(IComponent i = null)
+        public override void Destroy(IComponent sender = null)
         {
-            base.Destroy(i);
+            base.Destroy(sender);
 
             Flush();
 

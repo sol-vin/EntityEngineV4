@@ -11,17 +11,17 @@ namespace EntityEngineV4.Components
             get { return !(HitPoints <= 0); }
         }
 
-        public event Entity.EventHandler HurtEvent;
+        public event Node.EventHandler HurtEvent;
 
-        public event Entity.EventHandler DiedEvent;
+        public event Node.EventHandler DiedEvent;
 
-        public Health(IComponent e, string name)
-            : base(e, name)
+        public Health(Node parent, string name)
+            : base(parent, name)
         {
         }
 
-        public Health(IComponent e, string name, int hp)
-            : base(e, name)
+        public Health(Node parent, string name, int hp)
+            : base(parent, name)
         {
             HitPoints = hp;
         }
@@ -32,12 +32,12 @@ namespace EntityEngineV4.Components
 
             HitPoints -= points;
             if (HurtEvent != null)
-                HurtEvent(Parent as Entity);
+                HurtEvent(Parent);
 
             if (!Alive)
             {
                 if (DiedEvent != null)
-                    DiedEvent(Parent as Entity);
+                    DiedEvent(Parent);
             }
         }
     }

@@ -1,3 +1,4 @@
+using System.Xml.Serialization.Advanced;
 using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
@@ -13,7 +14,7 @@ namespace EntityEngineV4.Components.Rendering
         public SpriteEffects Flip = SpriteEffects.None;
         public Vector2 Scale = Vector2.One;
 
-        public Vector2 Origin;
+        //public Vector2 Origin;
 
         /// <summary>
         /// Handy rectangle for getting the drawing position
@@ -30,7 +31,7 @@ namespace EntityEngineV4.Components.Rendering
         /// </summary>
         public virtual Vector2 Bounds { get; set; }
 
-        protected Render(IComponent parent, string name)
+        protected Render(Node parent, string name)
             : base(parent, name)
         {
             Layer = 0.5f;
@@ -48,15 +49,32 @@ namespace EntityEngineV4.Components.Rendering
             if (Debug)
             {
                 //Draw a bounding rect around it's drawrect
-                DrawingTools.Rectangle r = new DrawingTools.Rectangle(DrawRect.X, DrawRect.Y, DrawRect.Width, DrawRect.Height);
+                var r = new DrawingTools.Rectangle(DrawRect.X, DrawRect.Y, DrawRect.Width, DrawRect.Height);
                 r.Color = Color.Red;
                 r.Thickness = 1;
                 r.Draw(sb);
 
-                DrawingTools.Point origin = new DrawingTools.Point((int)(Origin.X + DrawRect.X), (int)(Origin.Y + DrawRect.Y));
+                var origin = new DrawingTools.Point((int)(GetDependency<Body>(DEPENDENCY_BODY).Origin.X + DrawRect.X), (int) (GetDependency<Body>(DEPENDENCY_BODY).Origin.Y + DrawRect.Y));
                 origin.Color = Color.Orange;
                 origin.Draw(sb);
             }
+        }
+
+        public override void Reuse(Node parent, string name)
+        {
+            base.Reuse(parent, name);
+            Alpha = 1f;
+            Color = Color.White;
+            Flip = SpriteEffects.None;
+            Scale = Vector2.One;
+        }
+
+        //Dependencies
+        public const int DEPENDENCY_BODY = 0;
+        public override void CreateDependencyList()
+        {
+            base.CreateDependencyList();
+            AddLinkType(DEPENDENCY_BODY, typeof(Body));
         }
     }
 }

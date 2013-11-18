@@ -64,8 +64,8 @@
     <Compile Include="Data\Color.cs" />
     <Compile Include="Engine\Debugging\DebugInfo.cs" />
     <Compile Include="Engine\Debugging\Log.cs" />
-    <Compile Include="Engine\Services\DrawService.cs" />
-    <Compile Include="Engine\Services\UpdateService.cs" />
+    <Compile Include="Engine\Node.cs" />
+    <Compile Include="Engine\Services\AssetCollector.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\TextButton.cs" />
     <Compile Include="Input\MouseInput.cs" />
@@ -77,8 +77,7 @@
     <Compile Include="Components\Spawner.cs" />
     <Compile Include="Engine\IComponent.cs" />
     <Compile Include="Engine\Component.cs" />
-    <Compile Include="Engine\Entity.cs" />
-    <Compile Include="Engine\EntityState.cs" />
+    <Compile Include="Engine\State.cs" />
     <Compile Include="Engine\EntityGame.cs" />
     <Compile Include="Engine\Service.cs" />
     <Compile Include="GUI\Control.cs" />
@@ -109,5 +108,7 @@
     <Compile Include="Tiles\Components\TilemapRender.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
 </Project>

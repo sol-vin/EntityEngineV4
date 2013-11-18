@@ -107,27 +107,26 @@ namespace EntityEngineV4.Engine.Debugging
             _file.Flush();
         }
 
-        public void Write(string message, IComponent sender, Alert l)
+        public void Write(string message, Node sender, Alert l)
         {
             //Find out if our alert is not high enough to publish
             if (l.Rank < HighestAlertLevel.Rank)
                 return;
 
             string sendersname;
-            if (sender is Entity)
-                sendersname = sender.Parent.Name + "->" + sender.Name;
+            if (sender.IsRoot)
+                sendersname = "[R]" + sender.Name;
             else if (sender is Component)
             {
-                Component c = (Component)sender;
-                sendersname = c.Parent.Name + "->" + c.Name;
+                sendersname = "[C]" + sender.Parent.Name + "->" + sender.Name;
             }
             else if (sender is Service)
             {
-                sendersname = sender.Parent.Name + "->" + sender.Name;
-            }
+                sendersname = "[S]" + sender.Parent.Name + "->" + sender.Name;
+            } 
             else
             {
-                sendersname = sender.Name;
+                sendersname = "[N]" + sender.Name;
             }
             string logline =
                 "[" + DateTime.Now.Month + "-" + DateTime.Now.Day + " : " + DateTime.Now.Hour + ":" +
@@ -146,6 +145,31 @@ namespace EntityEngineV4.Engine.Debugging
             _file.WriteLine(logline);
             _file.Flush();
         }
+
+        public void Write(string message, IComponent sender, Alert l)
+        {
+            //Find out if our alert is not high enough to publish
+            if (l.Rank < HighestAlertLevel.Rank)
+                return;
+
+            string logline =
+                "[" + DateTime.Now.Month + "-" + DateTime.Now.Day + " : " + DateTime.Now.Hour + ":" +
+                DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond +
+                //[Month-Day : HH:MM:SS:MS]
+                DateTime.Now.Millisecond + "]" + " - [" + l + "]" +
+                " - [Sender: " + sender.Name + "] - " + message;
+
+            if (CheckLogSize())
+            {
+                Id++;
+                LogName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" +
+                          DateTime.Now.Second + "-" + DateTime.Now.Millisecond + "_Log" + Id;
+            }
+
+            _file.WriteLine(logline);
+            _file.Flush();
+        }
+
 
         public bool CheckLogSize()
         {

@@ -15,7 +15,7 @@ namespace EntityEngineV4.Components.Rendering
             get
             {
                 Vector2 position;
-                position = GetLink<Body>(DEPENDENCY_BODY).Position;
+                position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle((int)position.X, (int)position.Y, (int)(Bounds.X), (int)(Bounds.Y));
             }
         }
@@ -25,14 +25,14 @@ namespace EntityEngineV4.Components.Rendering
             get { return new Vector2(Font.MeasureString(Text).X * Scale.X, Font.MeasureString(Text).Y * Scale.Y); }
         }
 
-        public TextRender(Entity entity, string name)
-            : base(entity, name)
+        public TextRender(Node node, string name)
+            : base(node, name)
         {
            
         }
 
-        public TextRender(Entity entity, string name, SpriteFont font, string text)
-            : base(entity, name)
+        public TextRender(Node node, string name, SpriteFont font, string text)
+            : base(node, name)
         {
             Text = text;
             Font = font;
@@ -40,8 +40,8 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            if (EntityGame.Camera.ScreenSpace.Intersects(DrawRect))
-                sb.DrawString(Font, Text, GetLink<Body>(DEPENDENCY_BODY).Position + Origin, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle, Origin, Scale, Flip, Layer);
+            if (EntityGame.ActiveCamera.ScreenSpace.Intersects(DrawRect))
+                sb.DrawString(Font, Text, GetDependency<Body>(DEPENDENCY_BODY).Position + GetDependency<Body>(DEPENDENCY_BODY).Origin, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle, GetDependency<Body>(DEPENDENCY_BODY).Origin, Scale, Flip, Layer);
         }
 
         public void LoadFont(string location)
@@ -51,10 +51,5 @@ namespace EntityEngineV4.Components.Rendering
 
         //dependencies
         public const int DEPENDENCY_BODY = 0;
-        public override void CreateDependencyList()
-        {
-            base.CreateDependencyList();
-            AddLinkType(DEPENDENCY_BODY, typeof(Body));
-        }
     }
 }

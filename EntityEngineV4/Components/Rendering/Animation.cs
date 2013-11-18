@@ -46,28 +46,28 @@ namespace EntityEngineV4.Components.Rendering
         {
             get
             {
-                Vector2 position = GetLink<Body>(DEPENDENCY_BODY).Position;
+                Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
-                    (int)(position.X + Origin.X * Scale.X),
-                    (int)(position.Y + Origin.Y * Scale.Y),
+                    (int)(position.X + GetDependency<Body>(DEPENDENCY_BODY).Origin.X * Scale.X),
+                    (int)(position.Y + GetDependency<Body>(DEPENDENCY_BODY).Origin.Y * Scale.Y),
                     (int)(TileSize.X * Scale.X),
                     (int)(TileSize.Y * Scale.Y));
             }
         }
 
-        public Animation(Entity e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond, Body body)
+        public Animation(Node e, string name, Texture2D texture, Vector2 tileSize, int framesPerSecond, Body body)
             : base(e, name, texture)
         {
             TileSize = tileSize;
             FramesPerSecond = framesPerSecond;
 
-            Origin = new Vector2(TileSize.X / 2.0f, TileSize.Y / 2.0f);
+            GetDependency<Body>(DEPENDENCY_BODY).Origin = new Vector2(TileSize.X / 2.0f, TileSize.Y / 2.0f);
 
             FrameTimer = new Timer(e, Name + ".FrameTimer") { Milliseconds = MillisecondsPerFrame };
             FrameTimer.LastEvent += AdvanceNextFrame;
         }
 
-        public Animation(Entity e, string name, Body body)
+        public Animation(Node e, string name, Body body)
             : base(e, name)
         {
             FrameTimer = new Timer(e, Name + ".FrameTimer");
@@ -86,8 +86,8 @@ namespace EntityEngineV4.Components.Rendering
 
         public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(Texture, DrawRect, CurrentFrameRect, Color * Alpha, GetLink<Body>(DEPENDENCY_BODY).Angle,
-                    Origin, Flip, Layer);
+            sb.Draw(Texture, DrawRect, CurrentFrameRect, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle,
+                    GetDependency<Body>(DEPENDENCY_BODY).Origin, Flip, Layer);
         }
 
         public void AdvanceNextFrame()

@@ -9,7 +9,7 @@ namespace EntityEngineV4.Input
         private readonly PlayerIndex _pi;
         private Buttons _button;
 
-        public GamepadInput(Entity e, string name, Buttons button, PlayerIndex pi)
+        public GamepadInput(Node e, string name, Buttons button, PlayerIndex pi)
             : base(e, name)
         {
             _button = button;
@@ -68,7 +68,7 @@ namespace EntityEngineV4.Input
 
 
 
-        public GamePadAnalog(Entity parent, string name, Sticks stick, PlayerIndex pi)
+        public GamePadAnalog(Node parent, string name, Sticks stick, PlayerIndex pi)
             : base(parent, name)
         {
             Stick = stick;
@@ -130,19 +130,20 @@ namespace EntityEngineV4.Input
     {
         public PlayerIndex PlayerIndex;
         public Triggers Trigger;
-        public float Threshold = .7f;
+        public float DownThreshold = .7f;
+        public float DeadZone = .1f;
 
         public float Value { get; private set; }
 
         private float _lastvalue;
 
-        public GamePadTrigger(Entity entity, string name)
-            : base(entity, name)
+        public GamePadTrigger(Node node, string name)
+            : base(node, name)
         {
         }
 
-        public GamePadTrigger(Entity entity, string name, Triggers trigger, PlayerIndex pi)
-            : base(entity, name)
+        public GamePadTrigger(Node node, string name, Triggers trigger, PlayerIndex pi)
+            : base(node, name)
         {
             Trigger = trigger;
             PlayerIndex = pi;
@@ -150,22 +151,22 @@ namespace EntityEngineV4.Input
 
         public override bool Released()
         {
-            return Up() && _lastvalue > Threshold;
+            return Up() && _lastvalue > DownThreshold;
         }
 
         public override bool Pressed()
         {
-            return Down() && _lastvalue <= Threshold;
+            return Down() && _lastvalue <= DownThreshold;
         }
 
         public override bool Down()
         {
-            return Value > Threshold;
+            return Value > DownThreshold;
         }
 
         public override bool Up()
         {
-            return Value <= Threshold;
+            return Value <= DownThreshold;
         }
 
         public override void Update(GameTime gt)

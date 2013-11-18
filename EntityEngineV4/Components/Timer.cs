@@ -43,7 +43,7 @@ namespace EntityEngineV4.Components
             {
                 if(value < 0)
                 {
-                    EntityGame.Log.Write("Milliseconds was attempted to get a negative value!", this, Alert.Warning);
+                    EntityGame.Log.Write("Milliseconds was attempted to set a negative value!", this, Alert.Warning);
                     _millseconds = 0;
                     return;
                 }
@@ -74,8 +74,8 @@ namespace EntityEngineV4.Components
         /// <summary>
         /// Initializes a new instance of the <see cref="Timer"/> class.
         /// </summary>
-        public Timer(IComponent e, string name)
-            : base(e, name)
+        public Timer(Node parent, string name)
+            : base(parent, name)
         {
             Alive = false;
         }
@@ -130,9 +130,13 @@ namespace EntityEngineV4.Components
         /// </summary>
         protected virtual void OnLast()
         {
-            if (LastEvent != null)
+            while (TickTime > Milliseconds)
             {
-                LastEvent();
+                TickTime -= Milliseconds;
+                if (LastEvent != null)
+                {
+                    LastEvent();
+                }
             }
         }
 
@@ -167,6 +171,17 @@ namespace EntityEngineV4.Components
             Alive = false;
             TickTime = 0;
             _lastseconds = EntityGame.GameTime.TotalGameTime.TotalMilliseconds;
+        }
+
+        public override void Reuse(Node parent, string name)
+        {
+            base.Reuse(parent, name);
+
+            TickEvent = null;
+            LastEvent = null;
+            TickTime = 0;
+            _lastseconds = 0;
+            Alive = false;
         }
     }
 }

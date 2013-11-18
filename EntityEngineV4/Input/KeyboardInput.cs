@@ -21,7 +21,7 @@ namespace EntityEngineV4.Input
             }
         }
 
-        public KeyboardInput(Entity parent, string name, Keys key)
+        public KeyboardInput(Node parent, string name, Keys key)
             : base(parent, name)
         {
             _key = key;
