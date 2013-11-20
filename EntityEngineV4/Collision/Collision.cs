@@ -14,7 +14,7 @@ namespace EntityEngineV4.Collision
     public class Collision : Component
     {
         //Delegates and events
-        public delegate void CollisionEventHandler(Collision c);
+        public delegate void CollisionEventHandler(Manifold m);
 
         public event CollisionEventHandler CollideEvent;
 
@@ -165,24 +165,11 @@ namespace EntityEngineV4.Collision
             base.Draw(sb);
         }
 
-        public void OnCollision(Collision c)
+        public void OnCollision(Manifold m)
         {
-            _collidedWith.Add(c);
+            _collidedWith.Add(m.A != this ? m.A : m.B);
             if (CollideEvent != null)
-                CollideEvent(c);
-        }
-
-        public override void Recycle()
-        {
-            base.Recycle();
-
-            _collisionHandler.RemoveCollision(this);
-        }
-
-        public override void Reuse(Node parent, string name)
-        {
-            base.Reuse(parent, name);
-            _collisionHandler.AddCollision(this);
+                CollideEvent(m);
         }
 
         //Public dependencies

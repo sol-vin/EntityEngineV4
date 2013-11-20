@@ -7,7 +7,7 @@ namespace EntityEngineV4.GUI
 {
     public class Label : Control
     {
-        public Color Color = Color.Black;
+        public Color Color { get { return Render.Color; } set { Render.Color = value; }}
 
         public string Text
         {

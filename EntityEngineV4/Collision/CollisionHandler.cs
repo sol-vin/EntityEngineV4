@@ -54,8 +54,8 @@ namespace EntityEngineV4.Collision
             BroadPhase();
             foreach (var manifold in _manifolds)
             {
-                manifold.A.OnCollision(manifold.B);
-                manifold.B.OnCollision(manifold.A);
+                manifold.A.OnCollision(manifold);
+                manifold.B.OnCollision(manifold);
 
                 //TODO: Fix Resolution!
 
@@ -175,12 +175,9 @@ namespace EntityEngineV4.Collision
             //    }
             //}
 
-            foreach (var pair in _pairs)
-            {
-                Manifold m = CheckCollision(pair.A, pair.B);
-                if (m.AreColliding)
-                    _manifolds.Add(m);
-            }
+            
+            _manifolds = ReturnManifolds();
+            
         }
 
         //Static methods
@@ -394,6 +391,39 @@ namespace EntityEngineV4.Collision
                 throw new Exception("No existing methods for this kind of collision!");
 
             return manifold;
+        }
+
+        /// <summary>
+        /// Returns a list of colliding manifolds on all active pairs. The tests are run on this call.
+        /// </summary>
+        /// <returns>a list of colliding manifolds on all active pairs.</returns>
+        public HashSet<Manifold> ReturnManifolds()
+        {
+            var answer = new HashSet<Manifold>();
+            foreach (var pair in _pairs.Where(p => p.A.Active && p.B.Active && !p.A.Recycled && !p.B.Recycled))
+            {
+                Manifold m = CheckCollision(pair.A, pair.B);
+                if (m.AreColliding)
+                    answer.Add(m);
+            }
+            return answer;
+        }
+
+        /// <summary>
+        /// returns a list of colliding manifolds where `collision` is a member of the pairing. The tests are run on this call.
+        /// </summary>
+        /// <param name="collision"></param>
+        /// <returns>a list of colliding manifolds where `collision` is a member of the pairing.</returns>
+        public HashSet<Manifold> ReturnManifolds(Collision collision)
+        {
+            var answer = new HashSet<Manifold>();
+            foreach (var pair in _pairs.Where(p => p.A.Active && p.B.Active && !p.A.Recycled && !p.B.Recycled && (p.A == collision || p.B == collision)))
+            {
+                Manifold m = CheckCollision(pair.A, pair.B);
+                if (m.AreColliding)
+                    answer.Add(m);
+            }
+            return answer;
         }
     }
 }

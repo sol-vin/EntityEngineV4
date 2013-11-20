@@ -123,7 +123,7 @@ namespace EntityEngineV4.GUI
 
         public virtual void OnFocusChange(Control c)
         {
-            if (c.Equals(this))
+            if (c == this)
                 OnFocusGain(this);
             else
                 OnFocusLost(c);

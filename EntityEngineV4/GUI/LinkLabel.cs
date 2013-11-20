@@ -5,6 +5,7 @@ namespace EntityEngineV4.GUI
 {
     public class LinkLabel : Label
     {
+        public Color UnselectedColor = Color.Black;
         public Color SelectedColor = Color.Red;
 
         public LinkLabel(Node parent, string name)
@@ -16,7 +17,7 @@ namespace EntityEngineV4.GUI
         public override void OnFocusLost(Control c)
         {
             base.OnFocusLost(c);
-            Render.Color = Color;
+            Render.Color = UnselectedColor;
         }
 
         public override void OnFocusGain(Control c)
