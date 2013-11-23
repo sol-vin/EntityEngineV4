@@ -47,10 +47,41 @@ namespace EntityEngineV4.Engine
         public bool Recycled { get; private set; }
 
         /// <summary>
-        /// Whether or not this node is can be recycled
+        /// Finds if this node will have it's update called
         /// </summary>
-        public virtual bool Recyclable {get { return false; }}
-        
+        public bool IsActive
+        {
+            get
+            {
+                if (IsObject) return Active; //If it is an object then it's activeness is determined by itself
+                if (!Active) return false;   //If this node isn't active, none of it's children are, unless they are objects
+                if(Parent != null)           //ensure the parent isn't null
+                {
+                    return Parent.IsActive;  //Recurrsivly call up the parental chain
+                }
+                return true; //if we ever get here then the entire parental chain has been evaluated and all were active.
+            }
+        }
+
+        /// <summary>
+        /// Finds if this node will have it's draw called
+        /// </summary>
+        public bool IsVisible
+        {
+            get
+            {
+                if (IsObject) return Visible; //If it is an object then it's activeness is determined by itself
+                if (!Visible)
+                    return false; //If this node isn't active, none of it's children are, unless they are objects
+                if (Parent != null) //ensure the parent isn't null
+                {
+                    return Parent.IsVisible; //Recurrsivly call up the parental chain
+                }
+                return true; //For some reason parent was null and was not root so therefore this isn't (or shouldnt) be drawn
+            }
+        }
+
+
         /// <summary>
         /// Sets the 
         /// </summary>

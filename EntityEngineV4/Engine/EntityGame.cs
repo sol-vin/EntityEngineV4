@@ -93,7 +93,7 @@ namespace EntityEngineV4.Engine
 
             //Inject debug info into active state
             StateChanged += state => LastID = 1;
-            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
+            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo"){Color = Color.Black};
             StateChanged += state => ActiveCamera = new Camera(state, "EntityEngineDefaultCamera");
 
             Log = new Log();
@@ -116,7 +116,7 @@ namespace EntityEngineV4.Engine
 
             //Inject debug info into active state
             StateChanged += state => LastID = 1;
-            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo");
+            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo") { Color = Color.Black };
             StateChanged += state => ActiveCamera = new Camera(state, "EntityEngineDefaultCamera");
             
 

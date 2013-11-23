@@ -8,7 +8,7 @@ using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace EntityEngineV4.Collision.Shapes
+namespace EntityEngineV4.CollisionEngine.Shapes
 {
     public class Circle : Shape
     {

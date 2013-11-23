@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EntityEngineV4.Collision.Shapes;
+using EntityEngineV4.CollisionEngine.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
@@ -9,7 +9,7 @@ using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace EntityEngineV4.Collision
+namespace EntityEngineV4.CollisionEngine
 {
     public class Collision : Component
     {
@@ -38,7 +38,7 @@ namespace EntityEngineV4.Collision
         /// <value>
         /// The group mask.
         /// </value>
-        public Bitmask GroupMask { get; protected set; }
+        public Bitmask Group { get; protected set; }
 
         /// <summary>
         /// The pair mask is the bit mask used to determine which groups the component will pair with.
@@ -47,12 +47,12 @@ namespace EntityEngineV4.Collision
         /// <value>
         /// The pair mask.
         /// </value>
-        public Bitmask PairMask { get; protected set; }
+        public Bitmask Pair { get; protected set; }
 
         /// <summary>
         /// The resolution mask is the bit mask which will determine which groups will physically collide with each other
         /// </summary>
-        public Bitmask ResolutionGroupMask { get; protected set; }
+        public Bitmask ResolutionGroup { get; protected set; }
 
         public Color DebugColor = Color.Magenta;
 
@@ -102,17 +102,21 @@ namespace EntityEngineV4.Collision
         public Collision(Node parent, string name)
             : base(parent, name)
         {
-            _collisionHandler = GetRoot<State>().GetService<CollisionHandler>();
+            if (!GetRoot<State>().CheckService<CollisionHandler>())
+                _collisionHandler = new CollisionHandler(GetRoot<State>()); //If the collision handler doesn't exist add it.
+            else
+                _collisionHandler = GetRoot<State>().GetService<CollisionHandler>();
+            
 
             GetRoot<State>().PreUpdateEvent += _collidedWith.Clear;
 
-            GroupMask = new Bitmask();
-            GroupMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
+            Group = new Bitmask();
+            Group.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
-            PairMask = new Bitmask();
-            PairMask.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
+            Pair = new Bitmask();
+            Pair.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
 
-            ResolutionGroupMask = new Bitmask();
+            ResolutionGroup = new Bitmask();
 
             _collisionHandler.AddCollision(this);
         }
@@ -122,31 +126,13 @@ namespace EntityEngineV4.Collision
             base.Initialize();
             try
             {
-                GetDependency<Physics>(DEPENDENCY_PHYSICS);
-            }
-            catch
-            {
-                throw new Exception("Physics does not exist in the dependency list for " + Name);
-            }
-
-            try
-            {
                  GetDependency<Shape>(DEPENDENCY_SHAPE);
             }
             catch (Exception)
             {
                 throw new Exception("Shape does not exist in the dependency list for " + Name);
-
             }
-            //Make sure shape and physics are on the same body.
-            if (GetDependency(DEPENDENCY_PHYSICS).GetDependency(Physics.DEPENDENCY_BODY).Id !=
-                GetDependency(DEPENDENCY_SHAPE).GetDependency(Shape.DEPENDENCY_BODY).Id)
-            {
-                EntityGame.Log.Write("Shape and Physics dependencies do not have the same body dependency", this, Alert.Error);
-                throw new Exception("Shape and Physics do not share the same body");
-            }
-
-            LinkDependency(DEPENEDENCY_BODY, GetDependency(DEPENDENCY_PHYSICS).GetDependency(Physics.DEPENDENCY_BODY));
+            LinkDependency(DEPENEDENCY_BODY, GetDependency(DEPENDENCY_SHAPE).GetDependency(Shape.DEPENDENCY_BODY));
         }
 
         public override void Destroy(IComponent sender = null)

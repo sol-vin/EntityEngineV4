@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace EntityEngineV4.Collision
+namespace EntityEngineV4.CollisionEngine
 {
     public struct Manifold
     {

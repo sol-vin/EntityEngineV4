@@ -49,17 +49,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Collision\Shapes\Circle.cs" />
+    <Compile Include="CollisionEngine\Shapes\Circle.cs" />
     <Compile Include="Components\VectorComponent.cs" />
     <Compile Include="Components\Rendering\Primitives\Primitive.cs" />
     <Compile Include="Components\Rendering\SourceAnimation.cs" />
     <Compile Include="Data\Bitmask.cs" />
-    <Compile Include="Collision\Collision.cs" />
-    <Compile Include="Collision\CollisionHandler.cs" />
-    <Compile Include="Collision\Manifold.cs" />
-    <Compile Include="Collision\Pair.cs" />
-    <Compile Include="Collision\Shapes\AABB.cs" />
-    <Compile Include="Collision\Shapes\Shape.cs" />
+    <Compile Include="CollisionEngine\Collision.cs" />
+    <Compile Include="CollisionEngine\CollisionHandler.cs" />
+    <Compile Include="CollisionEngine\Manifold.cs" />
+    <Compile Include="CollisionEngine\Pair.cs" />
+    <Compile Include="CollisionEngine\Shapes\AABB.cs" />
+    <Compile Include="CollisionEngine\Shapes\Shape.cs" />
     <Compile Include="Data\Camera.cs" />
     <Compile Include="Data\Color.cs" />
     <Compile Include="Engine\Debugging\DebugInfo.cs" />
@@ -67,6 +67,8 @@
     <Compile Include="Engine\Node.cs" />
     <Compile Include="Engine\Services\AssetCollector.cs" />
     <Compile Include="GUI\Button.cs" />
+    <Compile Include="GUI\Page.cs" />
+    <Compile Include="GUI\TabModifier.cs" />
     <Compile Include="GUI\TextButton.cs" />
     <Compile Include="Input\MouseInput.cs" />
     <Compile Include="PowerTools\Collections\Shufflebag.cs" />

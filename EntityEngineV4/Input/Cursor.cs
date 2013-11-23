@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using EntityEngineV4.CollisionEngine;
+using EntityEngineV4.CollisionEngine.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
@@ -13,15 +15,16 @@ namespace EntityEngineV4.Input
 {
     public abstract class Cursor : Node
     {
-        public override bool IsObject
-        {
-            get { return true; }
-        }
-
+        public const int MouseCollisionGroup = 31; //Max group number in bit mask.
+    
         //Hidden because we don't want people messing with it all willy nilly
         protected Body Body;
 
         public Render Render;
+
+        public Collision Collision;
+        private AABB _boundingBox;
+        private Body _collisionBody;
 
         public Vector2 Position
         {
@@ -64,6 +67,25 @@ namespace EntityEngineV4.Input
             Render.Color = Color.Black;
 
             Body.Bounds = Render.Scale;
+
+            _collisionBody = new Body(this, "CollisionBody");
+            _collisionBody.Bounds = Vector2.One;
+
+            _boundingBox = new AABB(this, "AABB");
+            _boundingBox.LinkDependency(AABB.DEPENDENCY_BODY, _collisionBody);
+
+            Collision = new Collision(this, "Collision");
+            Collision.Group.AddMask(MouseCollisionGroup);
+            Collision.Pair.AddMask(MouseCollisionGroup);
+            Collision.LinkDependency(Collision.DEPENDENCY_SHAPE, _boundingBox);
+            _boundingBox.LinkDependency(AABB.DEPENDENCY_COLLISION, Collision);
+
+        }
+
+        public override void Update(GameTime gt)
+        {
+            base.Update(gt);
+            _collisionBody.Position = Body.Position;
         }
 
         public override void Draw(SpriteBatch sb)

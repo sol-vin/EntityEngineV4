@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Security.AccessControl;
-using EntityEngineV4.Collision.Shapes;
+using EntityEngineV4.CollisionEngine.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace EntityEngineV4.Collision
+namespace EntityEngineV4.CollisionEngine
 {
     /// <summary>
     /// A state-side service for handling collisions and dealing with the resolution of those collisions.
@@ -56,8 +56,6 @@ namespace EntityEngineV4.Collision
             {
                 manifold.A.OnCollision(manifold);
                 manifold.B.OnCollision(manifold);
-
-                //TODO: Fix Resolution!
 
                 if (CanObjectsResolve(manifold.A, manifold.B) || CanObjectsResolve(manifold.B, manifold.A))
                 {
@@ -190,13 +188,13 @@ namespace EntityEngineV4.Collision
         /// <returns>Whether or not the the two objects should be paired</returns>
         public static bool CanObjectsPair(Collision a, Collision b)
         {
-            return (a.GroupMask.HasMatchingBit(b.PairMask) || //Compare the pair masks to the group masks.
-                    a.PairMask.HasMatchingBit(b.GroupMask)) && a.Enabled && b.Enabled;
+            return (a.Group.HasMatchingBit(b.Pair) || //Compare the pair masks to the group masks.
+                    a.Pair.HasMatchingBit(b.Group)) && a.Enabled && b.Enabled;
         }
 
         public static bool CanObjectsResolve(Collision resolver, Collision other)
         {
-            return resolver.ResolutionGroupMask.HasMatchingBit(other.ResolutionGroupMask) //Compare the pair mask one sided.
+            return resolver.ResolutionGroup.HasMatchingBit(other.ResolutionGroup) //Compare the pair mask one sided.
                 && resolver.Enabled && other.Enabled && !resolver.Immovable;
         }
 
@@ -275,8 +273,8 @@ namespace EntityEngineV4.Collision
                         manifold.AreColliding = true;
 
                         //TODO: Finish collision code
-                        /// Need to find the axis of deepest penetration and only display flags from that side
-                        /// UNLESS the penetration depth on the other sides are more than half the width. 
+                        //Need to find the axis of deepest penetration and only display flags from that side
+                        //UNLESS the penetration depth on the other sides are more than half the width. 
                         //A First
                         if (a.Top > b.Top && a.Top < b.Bottom && manifold.A.AllowCollisionDirection.HasMatchingBit(UP))
                             manifold.A.CollisionDirection.CombineMask(UP);
@@ -400,7 +398,7 @@ namespace EntityEngineV4.Collision
         public HashSet<Manifold> ReturnManifolds()
         {
             var answer = new HashSet<Manifold>();
-            foreach (var pair in _pairs.Where(p => p.A.Active && p.B.Active && !p.A.Recycled && !p.B.Recycled))
+            foreach (var pair in _pairs.Where(p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled))
             {
                 Manifold m = CheckCollision(pair.A, pair.B);
                 if (m.AreColliding)
@@ -417,7 +415,7 @@ namespace EntityEngineV4.Collision
         public HashSet<Manifold> ReturnManifolds(Collision collision)
         {
             var answer = new HashSet<Manifold>();
-            foreach (var pair in _pairs.Where(p => p.A.Active && p.B.Active && !p.A.Recycled && !p.B.Recycled && (p.A == collision || p.B == collision)))
+            foreach (var pair in _pairs.Where(p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled && (p.A == collision || p.B == collision)))
             {
                 Manifold m = CheckCollision(pair.A, pair.B);
                 if (m.AreColliding)

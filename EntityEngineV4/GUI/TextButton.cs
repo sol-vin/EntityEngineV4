@@ -37,7 +37,7 @@ namespace EntityEngineV4.GUI
             set { _bodyImage.Color = value; }
         }
         
-        public TextButton(Node parent, string name, Vector2 position, RGBColor color) :base(parent, name)
+        public TextButton(Page parent, string name, Point tabPosition, Vector2 position, RGBColor color) :base(parent, name, tabPosition)
         {
             Body.Position = position;
 
@@ -67,16 +67,6 @@ namespace EntityEngineV4.GUI
             _textBody.Bounds = TextRender.Bounds;
             _textBody.Position = new Vector2(Body.Position.X + Body.Bounds.X / 2 - _textBody.Bounds.X / 2,
              Body.Position.Y + Body.Bounds.Y / 2 - _textBody.Bounds.Y / 2);
-        }
-
-        public override void OnFocusGain(Control c)
-        {
-            base.OnFocusGain(c);
-        }
-
-        public override void OnFocusLost(Control c)
-        {
-            base.OnFocusLost(c);
         }
 
         public override void Down()

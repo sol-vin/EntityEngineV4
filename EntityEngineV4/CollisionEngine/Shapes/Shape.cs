@@ -2,7 +2,7 @@
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
-namespace EntityEngineV4.Collision.Shapes
+namespace EntityEngineV4.CollisionEngine.Shapes
 {
     public abstract class Shape : Component
     {

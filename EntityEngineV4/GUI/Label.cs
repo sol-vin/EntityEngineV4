@@ -23,8 +23,8 @@ namespace EntityEngineV4.GUI
         //Components
         public TextRender Render;
 
-        public Label(Node parent, string name)
-            : base(parent, name)
+        public Label(Page parent, string name, Point tabPosition)
+            : base(parent, name, tabPosition)
         {
             Render = new TextRender(this, "Render", Assets.Font, name);
             Render.LinkDependency(TextRender.DEPENDENCY_BODY, Body);

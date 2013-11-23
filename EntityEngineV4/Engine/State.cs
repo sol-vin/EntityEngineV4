@@ -69,6 +69,8 @@ namespace EntityEngineV4.Engine
                 }
                 else
                 {
+                    if(Services.Count(service => service.GetType() == s.GetType()) != 0) 
+                         throw new Exception("Service " + s.GetType() + " already exists in this state!");
                     Services.Add(s);
                 }
                 if (ServiceAdded != null) ServiceAdded(s); 

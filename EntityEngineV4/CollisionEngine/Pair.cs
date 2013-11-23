@@ -1,4 +1,4 @@
-﻿namespace EntityEngineV4.Collision
+﻿namespace EntityEngineV4.CollisionEngine
 {
     public class Pair
     {
