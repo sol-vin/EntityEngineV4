@@ -68,10 +68,6 @@ namespace EntityEngineV4.CollisionEngine
         public override void Draw(SpriteBatch sb)
         {
             _manifolds.Clear();
-            foreach (var collideable in _collideables)
-            {
-                collideable.CollisionDirection.Mask = NONE;
-            }
         }
 
         public void AddCollision(Collision c)
@@ -189,13 +185,13 @@ namespace EntityEngineV4.CollisionEngine
         public static bool CanObjectsPair(Collision a, Collision b)
         {
             return (a.Group.HasMatchingBit(b.Pair) || //Compare the pair masks to the group masks.
-                    a.Pair.HasMatchingBit(b.Group)) && a.Enabled && b.Enabled;
+                    a.Pair.HasMatchingBit(b.Group));
         }
 
         public static bool CanObjectsResolve(Collision resolver, Collision other)
         {
             return resolver.ResolutionGroup.HasMatchingBit(other.ResolutionGroup) //Compare the pair mask one sided.
-                && resolver.Enabled && other.Enabled && !resolver.Immovable;
+                && !resolver.Immovable;
         }
 
         public static void ResolveCollision(Manifold m)
@@ -271,29 +267,6 @@ namespace EntityEngineV4.CollisionEngine
 
                         manifold.Normal = Physics.GetNormal(a.Position, b.Position) * faceNormal.X;
                         manifold.AreColliding = true;
-
-                        //TODO: Finish collision code
-                        //Need to find the axis of deepest penetration and only display flags from that side
-                        //UNLESS the penetration depth on the other sides are more than half the width. 
-                        //A First
-                        if (a.Top > b.Top && a.Top < b.Bottom && manifold.A.AllowCollisionDirection.HasMatchingBit(UP))
-                            manifold.A.CollisionDirection.CombineMask(UP);
-                        if (a.Bottom < b.Bottom && a.Bottom > b.Top && manifold.A.AllowCollisionDirection.HasMatchingBit(DOWN))
-                            manifold.A.CollisionDirection.CombineMask(DOWN);
-                        if (a.Left > b.Left && a.Left < b.Right && manifold.A.AllowCollisionDirection.HasMatchingBit(LEFT))
-                            manifold.A.CollisionDirection.CombineMask(LEFT);
-                        if (a.Right < b.Right && a.Right > b.Left && manifold.A.AllowCollisionDirection.HasMatchingBit(RIGHT))
-                            manifold.A.CollisionDirection.CombineMask(RIGHT);
-
-                        //B next
-                        if (b.Top > a.Top && b.Top < a.Bottom && manifold.B.AllowCollisionDirection.HasMatchingBit(UP))
-                            manifold.B.CollisionDirection.CombineMask(UP);
-                        if (b.Bottom < a.Bottom && b.Bottom > a.Top && manifold.B.AllowCollisionDirection.HasMatchingBit(DOWN))
-                            manifold.B.CollisionDirection.CombineMask(DOWN);
-                        if (b.Left > a.Left && b.Left < a.Right && manifold.B.AllowCollisionDirection.HasMatchingBit(LEFT))
-                            manifold.B.CollisionDirection.CombineMask(LEFT);
-                        if (b.Right < a.Right && b.Right > a.Left && manifold.B.AllowCollisionDirection.HasMatchingBit(RIGHT))
-                            manifold.B.CollisionDirection.CombineMask(RIGHT);
                         return true;
                     }
                         //Collision happening on X axis
@@ -307,32 +280,10 @@ namespace EntityEngineV4.CollisionEngine
                         manifold.Normal = Physics.GetNormal(a.Position, b.Position) * faceNormal.Y;
                         manifold.PenetrationDepth = yExtent;
                         manifold.AreColliding = true;
-
-                        //A First
-                        if (a.Top > b.Top && a.Top < b.Bottom && manifold.A.AllowCollisionDirection.HasMatchingBit(UP))
-                            manifold.A.CollisionDirection.CombineMask(UP);
-                        if (a.Bottom < b.Bottom && a.Bottom > b.Top && manifold.A.AllowCollisionDirection.HasMatchingBit(DOWN))
-                            manifold.A.CollisionDirection.CombineMask(DOWN);
-                        if (a.Left > b.Left && a.Left < b.Right && manifold.A.AllowCollisionDirection.HasMatchingBit(LEFT))
-                            manifold.A.CollisionDirection.CombineMask(LEFT);
-                        if (a.Right < b.Right && a.Right > b.Left && manifold.A.AllowCollisionDirection.HasMatchingBit(RIGHT))
-                            manifold.A.CollisionDirection.CombineMask(RIGHT);
-
-                        //B First
-                        if (b.Top > a.Top && b.Top < a.Bottom && manifold.B.AllowCollisionDirection.HasMatchingBit(UP))
-                            manifold.B.CollisionDirection.CombineMask(UP);
-                        if (b.Bottom < a.Bottom && b.Bottom > a.Top && manifold.B.AllowCollisionDirection.HasMatchingBit(DOWN))
-                            manifold.B.CollisionDirection.CombineMask(DOWN);
-                        if (b.Left > a.Left && b.Left < a.Right && manifold.B.AllowCollisionDirection.HasMatchingBit(LEFT))
-                            manifold.B.CollisionDirection.CombineMask(LEFT);
-                        if (b.Right < a.Right && b.Right > a.Left && manifold.B.AllowCollisionDirection.HasMatchingBit(RIGHT))
-                            manifold.B.CollisionDirection.CombineMask(RIGHT);
-                        return true;
                     }
                 }
-                return false;
             }
-            return false;
+            return manifold.AreColliding;
         }
 
         public static bool CircleVSCircle(Circle a, Circle b, ref Manifold manifold)

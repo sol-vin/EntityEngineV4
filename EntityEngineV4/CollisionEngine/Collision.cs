@@ -18,10 +18,6 @@ namespace EntityEngineV4.CollisionEngine
 
         public event CollisionEventHandler CollideEvent;
 
-        public Bitmask CollisionDirection = new Bitmask();
-
-        public Bitmask AllowCollisionDirection = new Bitmask(CollisionHandler.ALL);
-
         private List<Collision> _collidedWith = new List<Collision>();
 
         public List<Collision> CollidedWith
@@ -55,20 +51,6 @@ namespace EntityEngineV4.CollisionEngine
         public Bitmask ResolutionGroup { get; protected set; }
 
         public Color DebugColor = Color.Magenta;
-
-        private bool _enabled = true;
-
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set
-            {
-                if (_enabled == value) return; //Opt out if the value isn't actually changing
-
-                _enabled = value;
-                _collisionHandler.ReconfigurePairs(this);
-            }
-        }
 
         /// <summary>
         /// Decides how the resolution will work, if there will be any at all.

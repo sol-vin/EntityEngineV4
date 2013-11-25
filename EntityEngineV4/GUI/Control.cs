@@ -50,8 +50,6 @@ namespace EntityEngineV4.GUI
             _tabPosition = tabPosition;
 
             Body = new Body(this, "Body");
-
-
         }
 
         public override void Draw(SpriteBatch sb)

@@ -25,6 +25,8 @@ namespace EntityEngineV4.GUI
             Collision.CollideEvent += OnMouseCollide;
             Collision.LinkDependency(Collision.DEPENDENCY_SHAPE, BoundingBox);
             BoundingBox.LinkDependency(AABB.DEPENDENCY_COLLISION, Collision);
+
+            BoundingBox.Debug = true;
         }
 
         public override void OnFocusLost(Control c)
