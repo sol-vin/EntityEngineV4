@@ -13,6 +13,7 @@ namespace EntityEngineV4.Components.Rendering
         public Color Color = Color.White;
         public SpriteEffects Flip = SpriteEffects.None;
         public Vector2 Scale = Vector2.One;
+        public Vector2 Offset = Vector2.Zero;
 
         //public Vector2 Origin;
 
@@ -24,7 +25,7 @@ namespace EntityEngineV4.Components.Rendering
         /// <summary>
         /// Source rectangle of the texture if there is one
         /// </summary>
-        public virtual Rectangle SourceRect { get; set; }
+        public Rectangle SourceRect { get; set; }
 
         /// <summary>
         /// Bounds of the DrawRect

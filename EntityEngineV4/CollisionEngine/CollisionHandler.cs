@@ -260,14 +260,12 @@ namespace EntityEngineV4.CollisionEngine
                     if (xExtent > yExtent)
                     {
                         if (manifold.Normal.X < 0)
-                            faceNormal = -Vector2.UnitX;
+                            faceNormal = -Vector2.UnitX;    
                         else
                             faceNormal = Vector2.UnitX;
                         manifold.PenetrationDepth = xExtent;
-
-                        manifold.Normal = Physics.GetNormal(a.Position, b.Position) * faceNormal.X;
-                        manifold.AreColliding = true;
-                        return true;
+                        manifold.Normal = Physics.GetNormal(a.Position, b.Position);
+                        manifold.Normal.X *= faceNormal.X;
                     }
                         //Collision happening on X axis
                     else
@@ -277,10 +275,12 @@ namespace EntityEngineV4.CollisionEngine
                         else
                             faceNormal = Vector2.UnitY;
 
-                        manifold.Normal = Physics.GetNormal(a.Position, b.Position) * faceNormal.Y;
                         manifold.PenetrationDepth = yExtent;
-                        manifold.AreColliding = true;
+                        manifold.Normal = Physics.GetNormal(a.Position, b.Position);
+                        manifold.Normal.Y *= faceNormal.Y;
                     }
+                    manifold.AreColliding = true;
+
                 }
             }
             return manifold.AreColliding;

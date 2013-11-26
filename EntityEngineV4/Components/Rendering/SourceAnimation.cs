@@ -11,6 +11,7 @@ namespace EntityEngineV4.Components.Rendering
 {
     public class SourceAnimation : ImageRender
     {
+        //TODO: Write frame class, to use with offset/rotation origin for each frame. VERY IMPORTANT!
         private Rectangle[] _sourcerectangles;
 
         public Rectangle[] SourceRectangles
@@ -47,21 +48,11 @@ namespace EntityEngineV4.Components.Rendering
             {
                 Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position;
                 return new Rectangle(
-                    (int)(position.X + Origin.X * Scale.X),
-                    (int)(position.Y + Origin.Y * Scale.Y),
+                    (int)(position.X + GetDependency<Body>(DEPENDENCY_BODY).Origin.X),
+                    (int)(position.Y + GetDependency<Body>(DEPENDENCY_BODY).Origin.Y),
                     (int)(SourceRect.Width * Scale.X),
                     (int)(SourceRect.Height * Scale.Y));
             }
-        }
-
-        public new Vector2 Origin
-        {
-            get { return new Vector2(_sourcerectangles[CurrentFrame].Width / 2f, _sourcerectangles[CurrentFrame].Height / 2f); }
-        }
-
-        public override Rectangle SourceRect
-        {
-            get { return _sourcerectangles[CurrentFrame]; }
         }
 
         public SourceAnimation(Node e, string name)
@@ -99,7 +90,7 @@ namespace EntityEngineV4.Components.Rendering
         {
             Rectangle sourcerect = _sourcerectangles[CurrentFrame];
             sb.Draw(Texture, DrawRect, sourcerect, Color * Alpha, GetDependency<Body>(DEPENDENCY_BODY).Angle,
-                    Origin, Flip, Layer);
+                    GetDependency<Body>(DEPENDENCY_BODY).Origin, Flip, Layer);
         }
 
         public void AdvanceNextFrame()
@@ -107,6 +98,7 @@ namespace EntityEngineV4.Components.Rendering
             CurrentFrame++;
             if (CurrentFrame >= TimelineSize)
                 CurrentFrame = 0;
+            SourceRect = _sourcerectangles[CurrentFrame];
         }
 
         public void AdvanceLastFrame()
@@ -114,6 +106,7 @@ namespace EntityEngineV4.Components.Rendering
             CurrentFrame--;
             if (CurrentFrame < 0)
                 CurrentFrame = TimelineSize;
+            SourceRect = _sourcerectangles[CurrentFrame];
         }
 
         public void Start()

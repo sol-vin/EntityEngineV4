@@ -19,7 +19,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
 
             public static void DrawLine(SpriteBatch sb, Vector2 p1, Vector2 p2, float thickness, float layer, Color color)
             {
-                float angle = (float)System.Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
+                float angle = (float)Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
                 float length = Vector2.Distance(p1, p2);
 
                 sb.Draw(Assets.Pixel, p1, null, color,

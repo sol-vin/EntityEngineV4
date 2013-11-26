@@ -1,4 +1,5 @@
 ﻿using System;
+using EntityEngineV4.Data;
 
 namespace EntityEngineV4.PowerTools
 {
@@ -48,6 +49,16 @@ namespace EntityEngineV4.PowerTools
         public static float NextGaussian(float average, float variation)
         {
             return average + 2.0f * ((float)_random.NextDouble() - 0.5f) * variation;
+        }
+
+        public static int NextInt(int min, int max)
+        {
+            return _random.Next(min, max);
+        }
+
+        public static HSVColor RandomHue()
+        {
+            return new HSVColor(GetFloat(), 1f, 1f, 1f);
         }
     }
 }

@@ -29,12 +29,6 @@ namespace EntityEngineV4.Components.Rendering
             }
         }
 
-        public override Rectangle SourceRect
-        {
-            get { return new Rectangle(0, 0, Texture.Width, Texture.Height); }
-        }
-
-
         public ImageRender(Node e, string name)
             : base(e, name)
         {
@@ -65,6 +59,7 @@ namespace EntityEngineV4.Components.Rendering
         public void SetTexture(Texture2D texture)
         {
             Texture = texture;
+            SourceRect = new Rectangle(0, 0, texture.Width, texture.Height);
         }
 
         //Dependencies

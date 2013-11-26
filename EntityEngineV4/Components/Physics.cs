@@ -8,7 +8,8 @@ namespace EntityEngineV4.Components
     {
         public float AngularVelocity;
         public float AngularDrag = 1f;
-
+        public float AngularForce { get; private set; }
+        public float AngularAcceleration;
         /// <summary>
         /// The velcocity if the object measured in px/frame
         /// </summary>
@@ -16,20 +17,9 @@ namespace EntityEngineV4.Components
 
         public float Drag = 1f;
         public Vector2 Acceleration = Vector2.Zero;
-        private Vector2 _force = Vector2.Zero;
 
-        public Vector2 Force
-        {
-            get { return _force; }
-            set { _force = value; }
-        }
+        public Vector2 Force { get; private set; }
 
-        private float _angularForce = 0f;
-        public float AngularForce
-        {
-            get { return _angularForce; }
-            set { _angularForce = value; }
-        }
 
         //// <summary>
         /// Backing field for Mass.
@@ -75,33 +65,34 @@ namespace EntityEngineV4.Components
         public Physics(Node parent, string name)
             : base(parent, name)
         {
+            Force = Vector2.Zero;
+            AngularForce = 0f;
         }
 
         public override void Update(GameTime gt)
         {
-            Velocity += Acceleration;
-            Velocity += _force;
-            _force = Vector2.Zero;
+            Velocity += Acceleration * gt.ElapsedGameTime.Seconds;
+            Velocity += Force;
+            Force = Vector2.Zero;
             Velocity *= Drag;
 
-            AngularVelocity += _angularForce;
+            AngularVelocity += AngularAcceleration;
+            AngularVelocity += AngularForce;
             AngularVelocity *= AngularDrag;
-            _angularForce = 0f;
+            AngularForce = 0f;
 
-            GetDependency<Body>(DEPENDENCY_BODY).Position += Velocity;
-            GetDependency<Body>(DEPENDENCY_BODY).Angle += AngularVelocity;
+            GetDependency<Body>(DEPENDENCY_BODY).Position += Velocity * (float)gt.ElapsedGameTime.TotalSeconds;
+            GetDependency<Body>(DEPENDENCY_BODY).Angle += AngularVelocity * (float)gt.ElapsedGameTime.TotalSeconds;
         }
 
         public void Thrust(float power)
         {
-            var angle = GetDependency<Body>(DEPENDENCY_BODY).Angle;
-            Thrust(power, angle);
+            Thrust(power, GetDependency<Body>(DEPENDENCY_BODY).Angle);
         }
 
         public void Thrust(float power, float angle)
         {
-            Velocity.X -= (float)Math.Sin(-angle) * power;
-            Velocity.Y -= (float)Math.Cos(-angle) * power;
+            AddForce((float)Math.Sin(angle) * power, (float)Math.Cos(angle) * -power);
         }
 
         public void FaceVelocity()
@@ -116,7 +107,12 @@ namespace EntityEngineV4.Components
 
         public void AddForce(Vector2 force)
         {
-            _force += force;
+            Force += force;
+        }
+
+        public void AddForce(float x, float y)
+        {
+            Force = new Vector2(Force.X + x, Force.Y + y);
         }
 
         public Physics Clone()
@@ -133,7 +129,7 @@ namespace EntityEngineV4.Components
 
         public void AddAngularForce(float force)
         {
-            _angularForce += force;
+            AngularForce += force;
         }
 
         public override void Reuse(Node parent, string name)

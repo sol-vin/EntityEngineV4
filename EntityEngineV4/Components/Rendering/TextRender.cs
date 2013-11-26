@@ -14,9 +14,10 @@ namespace EntityEngineV4.Components.Rendering
         {
             get
             {
-                Vector2 position;
-                position = GetDependency<Body>(DEPENDENCY_BODY).Position;
-                return new Rectangle((int)position.X, (int)position.Y, (int)(Bounds.X), (int)(Bounds.Y));
+                Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position +  
+                    GetDependency<Body>(DEPENDENCY_BODY).Origin + Offset;
+                return new Rectangle((int)position.X, (int)position.Y, 
+                    (int)(Bounds.X), (int)(Bounds.Y));
             }
         }
 
