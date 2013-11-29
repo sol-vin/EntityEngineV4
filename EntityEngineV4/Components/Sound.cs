@@ -97,7 +97,7 @@ namespace EntityEngineV4.Components
 
         public SoundEffect LoadSound(string location)
         {
-            return EntityGame.Game.Content.Load<SoundEffect>(location);
+            return EntityGame.Self.Content.Load<SoundEffect>(location);
         }
     }
 }

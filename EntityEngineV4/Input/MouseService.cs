@@ -60,7 +60,7 @@ namespace EntityEngineV4.Input
             Flush();
             _mousestate = Mouse.GetState();
 
-            if (LockMouse && EntityGame.Game.IsActive)
+            if (LockMouse && EntityGame.Self.IsActive)
             {
                 //After we get our states, we can reset the Mouse with no problems!
                 SetPosition(_lockx, _locky);

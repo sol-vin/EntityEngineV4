@@ -47,7 +47,7 @@ namespace EntityEngineV4.Components.Rendering
 
         public void LoadFont(string location)
         {
-            Font = EntityGame.Game.Content.Load<SpriteFont>(location);
+            Font = EntityGame.Self.Content.Load<SpriteFont>(location);
         }
 
         //dependencies

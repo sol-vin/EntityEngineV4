@@ -20,7 +20,7 @@ namespace EntityEngineV4.Data
 
             Font = game.Content.Load<SpriteFont>(@"EntityEngine/font");
 
-            Circle = EntityGame.Game.Content.Load<Texture2D>(@"EntityEngine/circle");
+            Circle = game.Content.Load<Texture2D>(@"EntityEngine/circle");
         }
     }
 }

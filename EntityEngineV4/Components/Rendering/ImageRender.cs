@@ -53,7 +53,7 @@ namespace EntityEngineV4.Components.Rendering
 
         public void LoadTexture(string location)
         {
-            Texture = EntityGame.Game.Content.Load<Texture2D>(location);
+            Texture = EntityGame.Self.Content.Load<Texture2D>(location);
         }
 
         public void SetTexture(Texture2D texture)

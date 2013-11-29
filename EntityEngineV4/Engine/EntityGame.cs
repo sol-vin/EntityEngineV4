@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
-    public class EntityGame : IComponent
+    public class EntityGame : Game
     {
         /// <summary>
         /// The active camera
@@ -46,11 +46,7 @@ namespace EntityEngineV4.Engine
 
         public static bool Paused { get; protected set; }
 
-        /// <summary>
-        /// XNA game reference
-        /// </summary>
-        public static Game Game { get; private set; }
-
+        public static GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
         public static GameTime GameTime { get; private set; }
         /// <summary>
         /// Used for logging operations
@@ -58,42 +54,36 @@ namespace EntityEngineV4.Engine
         public static Log Log { get; private set; }
 
         public static SpriteBatch SpriteBatch { get; private set; }
-        public static Rectangle Viewport { get; set; }
+        public static Rectangle Viewport { get; private set; }
 
         /// <summary>
         /// LastID set through GetID
         /// </summary>
         public static int LastID { get; private set; }
 
-        public event EventHandler DestroyEvent;
-        public static event State.EventHandler StateChanged;
+        public delegate void GameEvent(Game game);
 
-        public string Name { get; private set; }
-        public int Id { get; private set; }
-        public bool Active { get; set; }
-        public bool Visible { get; set; }
-        public bool Debug { get; set; }
-        public bool Initialized { get; private set; }
-        public bool Destroyed { get; private set; }
-        public float Order { get; set; }
-        public float Layer { get; set; }
+        public event GameEvent DestroyEvent;
+        public static event State.EventHandler StateChanged;
 
         /// <summary>
         /// Singleton instance
         /// </summary>
         public static EntityGame Self { get; private set; }
 
-        private EntityGame(Game game, SpriteBatch spriteBatch)
+        public EntityGame(Rectangle viewPort)
         {
-            Game = game;
-            Game.Exiting += (sender, args) => Exit();
+            //Game1 settings
+            GraphicsDeviceManager = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
 
-            SpriteBatch = spriteBatch;
-            Assets.LoadConent(game);
+            Viewport = viewPort;
+            Exiting += (sender, args) => Exit();
+
 
             //Inject debug info into active state
             StateChanged += state => LastID = 1;
-            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo"){Color = Color.Black};
+            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo") { Color = Color.Black };
             StateChanged += state => ActiveCamera = new Camera(state, "EntityEngineDefaultCamera");
 
             Log = new Log();
@@ -103,70 +93,27 @@ namespace EntityEngineV4.Engine
             Process p = Process.GetCurrentProcess();
             _ramCounter = new PerformanceCounter("Process", "Working Set", p.ProcessName);
             _cpuCounter = new PerformanceCounter("Process", "% Processor Time", p.ProcessName);
+
+
+            Self = this;
         }
 
-        private EntityGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)
+        protected override void Initialize()
         {
-            Game = game;
-            Game.Exiting += (sender, args) => Exit();
-
-            SpriteBatch = spriteBatch;
-            Viewport = viewport;
-            Assets.LoadConent(game);
-
-            //Inject debug info into active state
-            StateChanged += state => LastID = 1;
-            StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo") { Color = Color.Black };
-            StateChanged += state => ActiveCamera = new Camera(state, "EntityEngineDefaultCamera");
-            
-
-            Log = new Log();
-            Process p = Process.GetCurrentProcess();
-            _ramCounter = new PerformanceCounter("Process", "Working Set", p.ProcessName);
-            _cpuCounter = new PerformanceCounter("Process", "% Processor Time", p.ProcessName);
-
-            MakeWindow(g, viewport);
+            base.Initialize();
         }
 
-        public void Initialize()
+        protected override void LoadContent()
         {
-            Initialized = true;
-        }
+            base.LoadContent();
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
+            Assets.LoadConent(this);
 
-        public void Reset()
-        {
-            Initialized = false;
-        }
-
-        /// <summary>
-        /// Used to initalize EntityGame singleton
-        /// </summary>
-        /// <param name="game"></param>
-        /// <param name="g"></param>
-        /// <param name="spriteBatch"></param>
-        /// <param name="viewport"></param>
-        public static void MakeGame(Game game, GraphicsDeviceManager g, SpriteBatch spriteBatch, Rectangle viewport)
-        {
-            Self = new EntityGame(game, g, spriteBatch, viewport);
-            Self.Name = "EntityGame";
-            Self.Id = 0;
-        }
-
-        /// <summary>
-        /// Used to initialize EntityGame singleton
-        /// </summary>
-        /// <param name="game"></param>
-        /// <param name="spriteBatch"></param>
-        public static void MakeGame(Game game, SpriteBatch spriteBatch)
-        {
-            Self = new EntityGame(game, spriteBatch);
-            Self.Name = "EntityGame";
-            Self.Id = 0;
+            MakeWindow(Viewport);
         }
 
         public void Destroy(IComponent sender = null)
         {
-            Game = null;
             GameTime = null;
             ActiveCamera = null;
             Log.Dispose();
@@ -176,7 +123,7 @@ namespace EntityEngineV4.Engine
         }
 
 
-        public virtual void Update(GameTime gt)
+        protected override void Update(GameTime gt)
         {
             GameTime = gt;
             ActiveCamera.Update(gt);
@@ -223,11 +170,11 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public virtual void Draw(SpriteBatch sb = null)
+        protected override void Draw(GameTime gameTime)
         {
             _frameCounter++;
 
-            Game.GraphicsDevice.Clear(BackgroundColor);
+            GraphicsDevice.Clear(BackgroundColor);
 
             StartDrawing(ActiveCamera);
             ActiveCamera.Draw(SpriteBatch);
@@ -257,12 +204,12 @@ namespace EntityEngineV4.Engine
             SpriteBatch.End();
         }
 
-        public static void Exit()
+        protected override void OnExiting(object sender, EventArgs args)
         {
-            Log.Write("Beginning Exit", Self, Alert.Info);
+            base.OnExiting(sender, args);
+            Log.Write("[EntityGame] Beginning Exit", Alert.Info);
             ActiveState.Destroy();
-            Game.Exit();
-            Log.Write("Exited", Self, Alert.Info);
+            Log.Write("[EntityGame] Exited", Alert.Info);
         }
 
         /// <summary>
@@ -270,16 +217,16 @@ namespace EntityEngineV4.Engine
         /// </summary>
         /// <param name="g"></param>
         /// <param name="r"></param>
-        public static void MakeWindow(GraphicsDeviceManager g, Rectangle r)
+        public static void MakeWindow(Rectangle r)
         {
             if ((r.Width > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width) ||
                 (r.Height > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height)) return;
-            g.PreferredBackBufferWidth = r.Width;
-            g.PreferredBackBufferHeight = r.Height;
-            g.IsFullScreen = false;
-            g.ApplyChanges();
+            GraphicsDeviceManager.PreferredBackBufferWidth = r.Width;
+            GraphicsDeviceManager.PreferredBackBufferHeight = r.Height;
+            GraphicsDeviceManager.IsFullScreen = false;
+            GraphicsDeviceManager.ApplyChanges();
 
-            Log.Write("Created window with params " + r.ToString(), Alert.Info);
+            Log.Write("[EntityGame]Created window with params " + r, Alert.Info);
         }
 
         /// <summary>

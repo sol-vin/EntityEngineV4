@@ -23,7 +23,7 @@ namespace EntityEngineV4.Engine.Services
             //Check if our asset is of XNA data types
             if (typeof (T) == typeof (Texture2D) || typeof (T) == typeof (SoundEffect))
             {
-                _assets.Add(name, EntityGame.Game.Content.Load<T>(location));
+                _assets.Add(name, EntityGame.Self.Content.Load<T>(location));
             }
             else if (typeof (T) == typeof (XDocument)) //Check if the requested type is a XML file
             {
