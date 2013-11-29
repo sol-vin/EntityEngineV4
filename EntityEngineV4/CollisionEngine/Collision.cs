@@ -25,6 +25,8 @@ namespace EntityEngineV4.CollisionEngine
             get { return _collidedWith.ToList(); }
         }
 
+        public bool AllowResolution = true;
+
         public bool IsColliding { get { return CollidedWith.Count > 0; } }
 
         /// <summary>
@@ -50,7 +52,6 @@ namespace EntityEngineV4.CollisionEngine
         /// </summary>
         public Bitmask ResolutionGroup { get; protected set; }
 
-        public Color DebugColor = Color.Magenta;
 
         /// <summary>
         /// Decides how the resolution will work, if there will be any at all.
@@ -110,11 +111,20 @@ namespace EntityEngineV4.CollisionEngine
             {
                  GetDependency<Shape>(DEPENDENCY_SHAPE);
             }
-            catch (Exception)
+            catch (KeyNotFoundException)
             {
                 throw new Exception("Shape does not exist in the dependency list for " + Name);
             }
             LinkDependency(DEPENEDENCY_BODY, GetDependency(DEPENDENCY_SHAPE).GetDependency(Shape.DEPENDENCY_BODY));
+
+            try
+            {
+                GetDependency<Physics>(DEPENDENCY_PHYSICS);
+            }
+            catch (KeyNotFoundException)
+            {
+                AllowResolution = false;
+            }
         }
 
         public override void Destroy(IComponent sender = null)

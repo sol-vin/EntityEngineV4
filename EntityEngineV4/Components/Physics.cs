@@ -71,7 +71,7 @@ namespace EntityEngineV4.Components
 
         public override void Update(GameTime gt)
         {
-            Velocity += Acceleration * gt.ElapsedGameTime.Seconds;
+            Velocity += Acceleration;
             Velocity += Force;
             Force = Vector2.Zero;
             Velocity *= Drag;

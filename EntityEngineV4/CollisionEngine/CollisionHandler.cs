@@ -18,13 +18,6 @@ namespace EntityEngineV4.CollisionEngine
     public class CollisionHandler : Service
     {
         //TODO: Fix AABBvsAABB collision bug
-        public const int OVERLAP_BIAS = 4;
-        public const int NONE = 0x0;
-        public const int UP = 0x1;
-        public const int DOWN = 0x10;
-        public const int LEFT = 0x100;
-        public const int RIGHT = 0x1000;
-        public const int ALL = 0x1111;
 
         /// <summary>
         /// List of colliding members on this state.
@@ -191,7 +184,7 @@ namespace EntityEngineV4.CollisionEngine
         public static bool CanObjectsResolve(Collision resolver, Collision other)
         {
             return resolver.ResolutionGroup.HasMatchingBit(other.ResolutionGroup) //Compare the pair mask one sided.
-                && !resolver.Immovable;
+                && !resolver.Immovable && resolver.AllowResolution;
         }
 
         public static void ResolveCollision(Manifold m)
@@ -199,7 +192,7 @@ namespace EntityEngineV4.CollisionEngine
             Vector2 relVelocity = m.B.Velocity - m.A.Velocity;
             //Finds out if the objects are moving towards each other.
             //We only need to resolve collisions that are moving towards, not away.
-            float velAlongNormal = relVelocity.X * m.Normal.X + relVelocity.Y * m.Normal.Y;
+            float velAlongNormal = Physics.DotProduct(relVelocity, m.Normal);
             if (velAlongNormal > 0)
                 return;
             float e = Math.Min(m.A.Restitution, m.B.Restitution);
@@ -214,8 +207,8 @@ namespace EntityEngineV4.CollisionEngine
                 m.B.Velocity += m.B.InvertedMass * impulse;
         }
 
-        public const float SLOP = 0.01f;
-        public const float PERCENT = 0.2f;
+        public const float SLOP = 0.05f;
+        public const float PERCENT = 0.6f;
         public static void PositionalCorrection(Manifold m)
         {
             Vector2 correction = Math.Max(m.PenetrationDepth - SLOP, 0.0f) / (m.A.InvertedMass + m.B.InvertedMass) * PERCENT * m.Normal;
@@ -259,10 +252,7 @@ namespace EntityEngineV4.CollisionEngine
                     //Collision is happening on Y axis
                     if (xExtent > yExtent)
                     {
-                        if (manifold.Normal.X < 0)
-                            faceNormal = -Vector2.UnitX;    
-                        else
-                            faceNormal = Vector2.UnitX;
+                        faceNormal = manifold.Normal.X < 0 ? -Vector2.UnitX : Vector2.UnitX;
                         manifold.PenetrationDepth = xExtent;
                         manifold.Normal = Physics.GetNormal(a.Position, b.Position);
                         manifold.Normal.X *= faceNormal.X;
@@ -270,17 +260,13 @@ namespace EntityEngineV4.CollisionEngine
                         //Collision happening on X axis
                     else
                     {
-                        if (manifold.Normal.Y < 0)
-                            faceNormal = -Vector2.UnitY;
-                        else
-                            faceNormal = Vector2.UnitY;
+                        faceNormal = manifold.Normal.Y < 0 ? -Vector2.UnitY : Vector2.UnitY;
 
                         manifold.PenetrationDepth = yExtent;
                         manifold.Normal = Physics.GetNormal(a.Position, b.Position);
                         manifold.Normal.Y *= faceNormal.Y;
                     }
                     manifold.AreColliding = true;
-
                 }
             }
             return manifold.AreColliding;
