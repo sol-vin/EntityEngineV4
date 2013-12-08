@@ -95,9 +95,9 @@ namespace EntityEngineV4.Components
             IsPaused = false;
         }
 
-        public SoundEffect LoadSound(string location)
+        public void LoadSound(string location)
         {
-            return EntityGame.Self.Content.Load<SoundEffect>(location);
+            SoundEffect = EntityGame.Self.Content.Load<SoundEffect>(location).CreateInstance();
         }
     }
 }

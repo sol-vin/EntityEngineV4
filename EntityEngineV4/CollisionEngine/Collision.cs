@@ -5,7 +5,6 @@ using EntityEngineV4.CollisionEngine.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
-using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -78,6 +77,8 @@ namespace EntityEngineV4.CollisionEngine
         public float InvertedMass { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).InvertedMass; } }
         public Vector2 Delta { get { return GetDependency<Body>(DEPENEDENCY_BODY).Delta; } }
 
+
+        public HashSet<Collision> Exclusions = new HashSet<Collision>();
 
         //Dependencies
         private CollisionHandler _collisionHandler;

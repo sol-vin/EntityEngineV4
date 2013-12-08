@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Security.AccessControl;
 using EntityEngineV4.CollisionEngine.Shapes;
 using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
-using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -32,7 +29,9 @@ namespace EntityEngineV4.CollisionEngine
         /// <summary>
         /// The pairs that have already collided and generated a manifold as a result.
         /// </summary>
-        private HashSet<Manifold> _manifolds;
+        private HashSet<Manifold> _manifolds; 
+
+        public int CollisionsThisFrame { get { return _manifolds.Count; } }
 
         public CollisionHandler(State stateref)
             : base(stateref, "CollisionHandler")
@@ -335,7 +334,10 @@ namespace EntityEngineV4.CollisionEngine
         public HashSet<Manifold> ReturnManifolds()
         {
             var answer = new HashSet<Manifold>();
-            foreach (var pair in _pairs.Where(p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled))
+            foreach (var pair in _pairs.Where(
+                p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled 
+                    && !p.A.Exclusions.Contains(p.B) && !p.B.Exclusions.Contains(p.A)))
+                    //Only check pairs who are active, not recycled, and not excluded from collisions
             {
                 Manifold m = CheckCollision(pair.A, pair.B);
                 if (m.AreColliding)
@@ -352,7 +354,10 @@ namespace EntityEngineV4.CollisionEngine
         public HashSet<Manifold> ReturnManifolds(Collision collision)
         {
             var answer = new HashSet<Manifold>();
-            foreach (var pair in _pairs.Where(p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled && (p.A == collision || p.B == collision)))
+            foreach (var pair in _pairs.Where(
+                p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled 
+                    && !p.A.Exclusions.Contains(p.B) && !p.B.Exclusions.Contains(p.A)
+                    && (p.A == collision || p.B == collision)))
             {
                 Manifold m = CheckCollision(pair.A, pair.B);
                 if (m.AreColliding)

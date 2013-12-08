@@ -2,13 +2,12 @@
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Components.Rendering.Primitives;
 using EntityEngineV4.Data;
-using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.GUI
 {
     //TODO: Fix buttons
-    public class TextButton : Control
+    public class TextButton : Button
     {
         private Body _textBody;
         public TextRender TextRender;
@@ -37,7 +36,7 @@ namespace EntityEngineV4.GUI
             set { _bodyImage.Color = value; }
         }
         
-        public TextButton(Page parent, string name, Point tabPosition, Vector2 position, RGBColor color) :base(parent, name, tabPosition)
+        public TextButton(Page parent, string name, Point tabPosition, Vector2 position, RGBColor color) :base(parent, name, tabPosition, position, new Vector2(0,0), color)
         {
             Body.Position = position;
 

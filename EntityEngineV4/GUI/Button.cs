@@ -2,7 +2,6 @@
 using EntityEngineV4.CollisionEngine.Shapes;
 using EntityEngineV4.Components.Rendering.Primitives;
 using EntityEngineV4.Data;
-using EntityEngineV4.Engine;
 using EntityEngineV4.Input;
 using Microsoft.Xna.Framework;
 
@@ -20,6 +19,10 @@ namespace EntityEngineV4.GUI
             set { _bodyImage.Color = value; }
         }
 
+        public RGBColor DownColor;
+        public RGBColor UpColor;
+        public RGBColor HoverColor;
+
         public Button(Page parent, string name, Point tabPosition, Vector2 position, Vector2 bounds, RGBColor color) 
             : base(parent, name, tabPosition)
         {
@@ -33,7 +36,7 @@ namespace EntityEngineV4.GUI
 
             BoundingBox = new AABB(this, "AABB");
             BoundingBox.LinkDependency(AABB.DEPENDENCY_BODY, Body);
-
+            BoundingBox.Debug = true;
             Collision = new Collision(this, "Collision");
             Collision.Pair.AddMask(Cursor.MouseCollisionGroup);
             Collision.CollideEvent += OnMouseCollide;
@@ -57,10 +60,12 @@ namespace EntityEngineV4.GUI
         {
             if(!HasFocus)
                 (Parent as Page).FocusOn(this);
-
-            if (MouseService.Cursor.Pressed()) Press();
-            else if (MouseService.Cursor.Down()) Down();
-            if (MouseService.Cursor.Released()) Release();
+            if(HasFocus)
+            {
+                if (MouseService.Cursor.Pressed()) Press();
+                else if (MouseService.Cursor.Down()) Down();
+                if (MouseService.Cursor.Released()) Release();
+            }
         }
     }
 }

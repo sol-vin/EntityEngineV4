@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine.Debugging;
-using EntityEngineV4.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
