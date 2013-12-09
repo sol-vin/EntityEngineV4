@@ -275,10 +275,10 @@ namespace EntityEngineV4.Engine
 
             Clear();
         }
-
+        
         public virtual void Update(GameTime gt)
         {
-            if (!Initialized) Initialize();
+            if (!Initialized && !Destroyed) Initialize();
         }
 
         public virtual void Draw(SpriteBatch sb)
@@ -299,6 +299,7 @@ namespace EntityEngineV4.Engine
 
         public void DrawChildren(SpriteBatch sb)
         {
+            if (Count == 0) return;
             foreach (var child in this.Where(c => c.Visible && !c.IsObject && !c.Destroyed))
             {
                 child.Draw(sb);
@@ -337,7 +338,7 @@ namespace EntityEngineV4.Engine
             }
 
             //Always remove from parent to prevent memory leaks
-            if (!IsRoot)
+            if (!IsRoot && !IsObject)
             {
                 if (Parent.UpdatingChildren)
                 {
@@ -367,8 +368,6 @@ namespace EntityEngineV4.Engine
         public virtual void Recycle()
         {
             if (IsRoot) throw new Exception("Cannot call Recycle on root node!");
-            //if(!Recyclable)throw new Exception("Cannot call Recycle on a non-recyclable node!");
-            //if (!IsObject) throw new Exception("Cannot call Recycle on non-objects!");
 
             foreach (var child in this.ToArray().Where(c => !c.IsObject))
             {
