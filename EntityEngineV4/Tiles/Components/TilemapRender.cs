@@ -49,7 +49,7 @@ namespace EntityEngineV4.Tiles.Components
         public Tile GetTileByPosition(Vector2 position)
         {
             position /= Scale;
-            int x = (int)Math.Floor(position.X/TileSize.X);
+            int x = (int)Math.Floor(position.X / TileSize.X);
             int y = (int)Math.Floor(position.Y / TileSize.Y);
 
             if (x > Size.X || y > Size.Y)
@@ -111,7 +111,7 @@ namespace EntityEngineV4.Tiles.Components
             {
                 for (int y = 0; y < Size.Y; y++)
                 {
-                    SetTile(x,y, new Tile(index));
+                    SetTile(x, y, new Tile(index));
                 }
             }
         }
@@ -126,6 +126,7 @@ namespace EntityEngineV4.Tiles.Components
                 }
             }
         }
+
         public Texture2D Texture { get; private set; }
 
         public int Columns { get { return (int)(Texture.Width / TileSize.X); } }
@@ -137,9 +138,9 @@ namespace EntityEngineV4.Tiles.Components
             get
             {
                 return new Rectangle(
-                    (int)GetDependency<Body>(DEPENDENCY_BODY).X, 
-                    (int)GetDependency<Body>(DEPENDENCY_BODY).Y, 
-                    (int)(GetDependency<Body>(DEPENDENCY_BODY).Width * Scale.X), 
+                    (int)GetDependency<Body>(DEPENDENCY_BODY).X,
+                    (int)GetDependency<Body>(DEPENDENCY_BODY).Y,
+                    (int)(GetDependency<Body>(DEPENDENCY_BODY).Width * Scale.X),
                     (int)(GetDependency<Body>(DEPENDENCY_BODY).Height * Scale.Y));
             }
         }
@@ -149,7 +150,6 @@ namespace EntityEngineV4.Tiles.Components
             base.Update(gt);
             GetDependency<Body>(DEPENDENCY_BODY).Width = TileSize.X * (_tiles.GetUpperBound(0) + 1);
             GetDependency<Body>(DEPENDENCY_BODY).Height = TileSize.Y * (_tiles.GetUpperBound(1) + 1);
-
         }
 
         public override void Draw(SpriteBatch sb)

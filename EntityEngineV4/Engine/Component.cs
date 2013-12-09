@@ -1,9 +1,5 @@
 using System;
 using System.Collections.Generic;
-using EntityEngineV4.Data;
-using EntityEngineV4.Engine.Debugging;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngineV4.Engine
 {
@@ -11,22 +7,18 @@ namespace EntityEngineV4.Engine
     {
         public delegate void EventHandler(Component i);
 
-        public Component(Node parent, string name) : base(parent, name)
+        public Component(Node parent, string name)
+            : base(parent, name)
         {
             GetRoot<State>().PreUpdateEvent += SubscribePreUpdate;
 
             CreateDependencyList();
         }
 
-        public override void Destroy(IComponent sender = null)
-        {
-            GetRoot<State>().PreUpdateEvent -= SubscribePreUpdate;
-        }
-
         private void SubscribePreUpdate()
         {
             //Initialize
-            if(!Initialized) Initialize();
+            if (!Initialized && !Destroyed) Initialize();
             GetRoot<State>().PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
         }
 
@@ -35,8 +27,8 @@ namespace EntityEngineV4.Engine
         /// <summary>
         /// List of links to this component
         /// </summary>
-        private Dictionary<int,Component> _links = new Dictionary<int, Component>();
- 
+        private Dictionary<int, Component> _links = new Dictionary<int, Component>();
+
         /// <summary>
         /// The last component which was grabbed using GetDependency. Useful for faster returns on the same object
         /// </summary>
@@ -54,7 +46,7 @@ namespace EntityEngineV4.Engine
         /// <param name="component"></param>
         public void LinkDependency(int index, Component component)
         {
-            if(index < 0) throw new IndexOutOfRangeException();
+            if (index < 0) throw new IndexOutOfRangeException();
             //First check if the type of component is the expected type
             if (!(component.GetType() == GetExpectedDependencyType(index) ||
                 component.GetType().IsSubclassOf(GetExpectedDependencyType(index))))
@@ -84,12 +76,12 @@ namespace EntityEngineV4.Engine
         /// <returns></returns>
         public T GetDependency<T>(int index) where T : Component
         {
-            if(index < 0) throw new IndexOutOfRangeException();
+            if (index < 0) throw new IndexOutOfRangeException();
             //Check our link cache
             if (index == _cachedIndex) return _cachedLink as T;
 
             var component = _links[index] as T;
-            if(component == null) throw new Exception("Component does not exist or is not of this type");
+            if (component == null) throw new Exception("Component does not exist or is not of this type");
 
             //Change out cache
             _cachedLink = component;
@@ -138,13 +130,12 @@ namespace EntityEngineV4.Engine
 
         public Type GetExpectedDependencyType(int index)
         {
-            if(_linkTypes[index] == null) throw new IndexOutOfRangeException();
+            if (_linkTypes[index] == null) throw new IndexOutOfRangeException();
             return _linkTypes[index];
         }
 
         public virtual void CreateDependencyList()
         {
-            
         }
     }
 }

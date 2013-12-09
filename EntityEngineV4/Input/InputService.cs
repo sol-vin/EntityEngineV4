@@ -64,7 +64,7 @@ namespace EntityEngineV4.Input
             foreach (PlayerIndex index in Enum.GetValues(typeof(PlayerIndex)))
                 _gamePadStates[(int)index] = GamePad.GetState(index);
 
-            _lastGamePadStates = (GamePadState[]) _gamePadStates.Clone();
+            _lastGamePadStates = (GamePadState[])_gamePadStates.Clone();
         }
 
         #endregion Constructor Region

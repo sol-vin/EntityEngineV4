@@ -1,4 +1,3 @@
-using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
@@ -38,10 +37,13 @@ namespace EntityEngineV4.Components
         /// Milliseconds before the timer should reset.
         /// </summary>
         private int _millseconds;
-        public int Milliseconds { get { return _millseconds; } 
+
+        public int Milliseconds
+        {
+            get { return _millseconds; }
             set
             {
-                if(value < 0)
+                if (value < 0)
                 {
                     EntityGame.Log.Write("Milliseconds was attempted to set a negative value!", this, Alert.Warning);
                     _millseconds = 0;
@@ -53,10 +55,10 @@ namespace EntityEngineV4.Components
 
         public int CurrentMilliseconds
         {
-           get
-           {
-               return (int)( EntityGame.GameTime.ElapsedGameTime.TotalMilliseconds - _lastseconds);
-           }
+            get
+            {
+                return (int)(EntityGame.GameTime.ElapsedGameTime.TotalMilliseconds - _lastseconds);
+            }
         }
 
         private bool _tr;
@@ -68,7 +70,7 @@ namespace EntityEngineV4.Components
 
         public float Progress
         {
-            get { return MathHelper.Clamp((float)CurrentMilliseconds/Milliseconds, 0, 1); }
+            get { return MathHelper.Clamp((float)CurrentMilliseconds / Milliseconds, 0, 1); }
         }
 
         /// <summary>
@@ -159,7 +161,7 @@ namespace EntityEngineV4.Components
         {
             //TODO: Fix the pause method, it needs to actually pause it, the timer is still running and
             //when un paused will immeadiately fire
-          
+
             Alive = false;
         }
 

@@ -29,30 +29,38 @@ namespace EntityEngineV4.Engine
         private TimeSpan _cpuCounterTimer = TimeSpan.Zero;
 
         private int _frameCounter;
+
         public static int FrameRate { get; private set; }
-        public static float RamUsage {get { return _ramCounter.NextValue(); }}
+
+        public static float RamUsage { get { return _ramCounter.NextValue(); } }
+
         public static float CpuUsage { get; private set; }
 
         private static List<float> _cpuUsages = new List<float>();
 
         //Find the cpu and ram usage
         private static Process _selfProcess = Process.GetCurrentProcess();
+
         private static PerformanceCounter _cpuCounter, _ramCounter;
         private DebugInfo _debugInfo;
-        public static DebugInfo DebugInfo {get { return Self._debugInfo; }}
+
+        public static DebugInfo DebugInfo { get { return Self._debugInfo; } }
 
         public static Color BackgroundColor = Color.Silver;
 
         public static bool Paused { get; protected set; }
 
         public static GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
+
         public static GameTime GameTime { get; private set; }
+
         /// <summary>
         /// Used for logging operations
         /// </summary>
         public static Log Log { get; private set; }
 
         public static SpriteBatch SpriteBatch { get; private set; }
+
         public static Rectangle Viewport { get; private set; }
 
         /// <summary>
@@ -63,6 +71,7 @@ namespace EntityEngineV4.Engine
         public delegate void GameEvent(Game game);
 
         public event GameEvent DestroyEvent;
+
         public static event State.EventHandler StateChanged;
 
         /// <summary>
@@ -79,7 +88,6 @@ namespace EntityEngineV4.Engine
             Viewport = viewPort;
             Exiting += (sender, args) => Exit();
 
-
             //Inject debug info into active state
             StateChanged += state => LastID = 1;
             StateChanged += state => _debugInfo = new DebugInfo(state, "DebugInfo") { Color = Color.Black };
@@ -92,7 +100,6 @@ namespace EntityEngineV4.Engine
             Process p = Process.GetCurrentProcess();
             _ramCounter = new PerformanceCounter("Process", "Working Set", p.ProcessName);
             _cpuCounter = new PerformanceCounter("Process", "% Processor Time", p.ProcessName);
-
 
             Self = this;
         }
@@ -121,13 +128,12 @@ namespace EntityEngineV4.Engine
                 DestroyEvent(this);
         }
 
-
         protected override void Update(GameTime gt)
         {
             GameTime = gt;
             ActiveCamera.Update(gt);
 
-            if(!ActiveState.Destroyed)
+            if (!ActiveState.Destroyed)
             {
                 ActiveState.PreUpdate();
                 ActiveState.Update(gt);
@@ -145,7 +151,6 @@ namespace EntityEngineV4.Engine
                 FrameRate = _frameCounter;
                 _frameCounter = 0;
             }
-            
 
             if (_cpuCounterTimer > TimeSpan.FromSeconds(3))
             {
@@ -163,7 +168,7 @@ namespace EntityEngineV4.Engine
                 CpuUsage = average / _cpuUsages.Count;
             }
 
-            if(_debugInfo != null)
+            if (_debugInfo != null)
             {
                 _debugInfo.Visible = ShowDebugInfo;
             }
@@ -243,6 +248,8 @@ namespace EntityEngineV4.Engine
         /// <param name="state"></param>
         public static void SwitchState(State state)
         {
+            if (ActiveState != null)
+                ActiveState.Destroy();
             ActiveState = state;
 
             if (StateChanged != null)

@@ -120,7 +120,6 @@ namespace EntityEngineV4.Components
         {
             base.Destroy(sender);
             EntityGame.ActiveState.PreUpdateEvent -= UpdateLast;
-
         }
 
         public void FaceDelta(float offset = 0)

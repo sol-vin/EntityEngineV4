@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using EntityEngineV4.CollisionEngine;
 using EntityEngineV4.CollisionEngine.Shapes;
 using EntityEngineV4.Components;
@@ -6,7 +5,6 @@ using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
 using EntityEngineV4.Engine;
 using EntityEngineV4.Engine.Debugging;
-using EntityEngineV4.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,7 +14,7 @@ namespace EntityEngineV4.Input
     public abstract class Cursor : Node
     {
         public const int MouseCollisionGroup = 31; //Max group number in bit mask.
-    
+
         //Hidden because we don't want people messing with it all willy nilly
         protected Body Body;
 
@@ -37,18 +35,21 @@ namespace EntityEngineV4.Input
 
         public delegate void CursorEventHandler(Cursor c);
 
-        public event CursorEventHandler GotFocus , LostFocus;
+        public event CursorEventHandler GotFocus, LostFocus;
 
         public bool HasFocus
         {
-            get; protected set;
+            get;
+            protected set;
         }
 
         public abstract bool Down();
-        public abstract bool Pressed();
-        public abstract bool Released();
-        public abstract bool Up();
 
+        public abstract bool Pressed();
+
+        public abstract bool Released();
+
+        public abstract bool Up();
 
         public Cursor(Node parent, string name)
             : base(parent, name)
@@ -79,7 +80,6 @@ namespace EntityEngineV4.Input
             Collision.Pair.AddMask(MouseCollisionGroup);
             Collision.LinkDependency(Collision.DEPENDENCY_SHAPE, _boundingBox);
             _boundingBox.LinkDependency(AABB.DEPENDENCY_COLLISION, Collision);
-
         }
 
         public override void Update(GameTime gt)
@@ -98,7 +98,7 @@ namespace EntityEngineV4.Input
             if (GotFocus != null) GotFocus(this);
 
             //Get the Cursor's position and set it to our own for seamless changing.
-            if(MouseService.Cursor != null)
+            if (MouseService.Cursor != null)
             {
                 Position = MouseService.Cursor.Position;
                 MouseService.Cursor.LoseFocus();
@@ -143,9 +143,9 @@ namespace EntityEngineV4.Input
         public GamePadAnalog AnalogStick;
 
         public GamepadInput UpKey, DownKey, LeftKey, RightKey;
-        public Vector2 MovementSpeed = new Vector2(3,3);
-        
-        public enum MovementInput { Analog, Buttons}
+        public Vector2 MovementSpeed = new Vector2(3, 3);
+
+        public enum MovementInput { Analog, Buttons }
 
         /// <summary>
         /// What the controlling input should be.
@@ -170,6 +170,7 @@ namespace EntityEngineV4.Input
             Input = MovementInput.Analog;
             MakeDefault();
         }
+
         public ControllerCursor(Node parent, string name, MovementInput input)
             : base(parent, name)
         {
@@ -181,18 +182,16 @@ namespace EntityEngineV4.Input
         public override void Update(GameTime gt)
         {
             if (AutoSwitchInputs) //Switch the inputs
-                if(Input != MovementInput.Analog && AnalogStickMoved())
+                if (Input != MovementInput.Analog && AnalogStickMoved())
                 {
                     Input = MovementInput.Analog;
                     EntityGame.Log.Write("Input switched to Analog", this, Alert.Info);
                 }
-                else if(Input != MovementInput.Buttons && ButtonPressed())
+                else if (Input != MovementInput.Buttons && ButtonPressed())
                 {
                     Input = MovementInput.Buttons;
                     EntityGame.Log.Write("Input switched to Buttons", this, Alert.Info);
                 }
-            
-            
 
             switch (Input)
             {
@@ -202,8 +201,8 @@ namespace EntityEngineV4.Input
                     if (HasFocus)
                     {
                         //TODO: Use normalized positition for this.
-                        Position = new Vector2(Position.X + AnalogStick.Position.X*MovementSpeed.X,
-                                               Position.Y - AnalogStick.Position.Y*MovementSpeed.Y);
+                        Position = new Vector2(Position.X + AnalogStick.Position.X * MovementSpeed.X,
+                                               Position.Y - AnalogStick.Position.Y * MovementSpeed.Y);
 
                         //Move it with the camera.
                         //Position += EntityGame.Camera.Delta;
@@ -220,6 +219,7 @@ namespace EntityEngineV4.Input
                             Body.Position.Y = EntityGame.ActiveCamera.ScreenSpace.Bottom - Body.Bounds.Y;
                     }
                     break;
+
                 case MovementInput.Buttons:
                     if (!HasFocus && ButtonPressed() || SelectKey.Down())
                         GetFocus(this);
@@ -294,16 +294,16 @@ namespace EntityEngineV4.Input
 
     public class MouseCursor : Cursor
     {
-        public MouseCursor(Node parent, string name) : base(parent, name)
+        public MouseCursor(Node parent, string name)
+            : base(parent, name)
         {
-
         }
 
         public override void Update(GameTime gt)
         {
-            if(!HasFocus && (MouseService.Delta != Point.Zero || MouseService.IsMouseButtonDown(MouseButton.LeftButton)))
+            if (!HasFocus && (MouseService.Delta != Point.Zero || MouseService.IsMouseButtonDown(MouseButton.LeftButton)))
                 GetFocus(this);
-            if(HasFocus)
+            if (HasFocus)
             {
                 Position = new Vector2(Position.X - MouseService.Delta.X, Position.Y - MouseService.Delta.Y);
 
@@ -344,7 +344,7 @@ namespace EntityEngineV4.Input
         }
 
         public override void Draw(SpriteBatch sb)
-        {            
+        {
             base.Draw(sb);
         }
     }

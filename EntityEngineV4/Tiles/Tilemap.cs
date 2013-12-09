@@ -18,7 +18,7 @@ namespace EntityEngineV4.Tiles
 
         public Point Size { get { return Render.Size; } }
 
-        public float Width {get { return Render.TileSize.X * Render.Size.X; }}
+        public float Width { get { return Render.TileSize.X * Render.Size.X; } }
         public float Height { get { return Render.TileSize.Y * Render.Size.Y; } }
 
         public Tilemap(Node parent, string name, Texture2D tileTexture, Tile[,] tiles, Point tileSize)
@@ -54,7 +54,7 @@ namespace EntityEngineV4.Tiles
 
         public Tile GetTileByPosition(Vector2 position)
         {
-            if (!Render.DrawRect.Contains(new Point((int) position.X, (int) position.Y)))
+            if (!Render.DrawRect.Contains(new Point((int)position.X, (int)position.Y)))
                 return new Tile(Tile.EMPTY);
             else
             {
@@ -79,7 +79,7 @@ namespace EntityEngineV4.Tiles
 
         public void SetTile(int x, int y, Tile t)
         {
-            Render.SetTile(x,y,t);
+            Render.SetTile(x, y, t);
         }
 
         public void SetTile(int x, int y, short index)

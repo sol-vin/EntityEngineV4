@@ -66,7 +66,6 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                 base.Draw(sb);
                 sb.Draw(Assets.Pixel, DrawRect, null, Color * Alpha, Angle, new Vector2(DrawRect.Width / 2f, DrawRect.Height / 2f), Flip, Layer);
             }
-
         }
 
         public class Line : Primitive
@@ -87,7 +86,7 @@ namespace EntityEngineV4.Components.Rendering.Primitives
                     DrawRect.Right > EntityGame.ActiveCamera.ScreenSpace.Y ||
                     DrawRect.Left < EntityGame.ActiveCamera.ScreenSpace.Width)
                 {
-                    float angle = (float) Math.Atan2(Point2.Y - Point1.Y, Point2.X - Point1.X);
+                    float angle = (float)Math.Atan2(Point2.Y - Point1.Y, Point2.X - Point1.X);
                     float length = Vector2.Distance(Point1, Point2);
 
                     sb.Draw(Assets.Pixel, Point1, null, Color,
@@ -172,7 +171,6 @@ namespace EntityEngineV4.Components.Rendering.Primitives
             {
                 Fill = fill;
             }
-
 
             public override void Draw(SpriteBatch sb = null)
             {

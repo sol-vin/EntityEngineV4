@@ -12,29 +12,36 @@ namespace EntityEngineV4.PowerTools
         private ShapeTypes.Rectangle _fgBar, _bgBar;
 
         //Properties
-        public Vector2 Position { get { return _bgBarBody.Position; } 
-            set 
-            { 
+        public Vector2 Position
+        {
+            get { return _bgBarBody.Position; }
+            set
+            {
                 _fgBarBody.Position = value;
                 _bgBarBody.Position = value;
-            } 
+            }
         }
 
-        public float Angle { get { return _bgBarBody.Angle; } 
-            set 
-            { 
+        public float Angle
+        {
+            get { return _bgBarBody.Angle; }
+            set
+            {
                 _bgBarBody.Angle = value;
                 _fgBarBody.Angle = value;
             }
         }
 
-        public float Layer { get { return _bgBar.Layer; } 
-            set 
+        public float Layer
+        {
+            get { return _bgBar.Layer; }
+            set
             {
                 _bgBar.Layer = value;
                 _fgBar.Layer = value + .001f;
             }
         }
+
         public Color FillColor { get { return _fgBar.Color; } set { _fgBar.Color = value; } }
 
         public Color BarColor
@@ -46,17 +53,18 @@ namespace EntityEngineV4.PowerTools
         public float Value = 100;
         public float MaxValue = 100;
 
-        public float Percent { get { return Value / MaxValue; } set { Value = MaxValue*value; } }
+        public float Percent { get { return Value / MaxValue; } set { Value = MaxValue * value; } }
 
         public enum FillType
         {
-            XFillLeft, XFillRight, YFillUp, YFillDown, XFillMiddleInwards, XFillMiddleOutwards, 
+            XFillLeft, XFillRight, YFillUp, YFillDown, XFillMiddleInwards, XFillMiddleOutwards,
             YFillMiddleInwards, YFillMiddleOutwards
         }
 
         public FillType Fill;
 
-        public SimpleBar(Node parent, string name, Body body) : base(parent, name)
+        public SimpleBar(Node parent, string name, Body body)
+            : base(parent, name)
         {
             _bgBarBody = body;
             _fgBarBody = new Body(this, "FGBarBody");
@@ -71,7 +79,6 @@ namespace EntityEngineV4.PowerTools
 
             _bgBar = new ShapeTypes.Rectangle(this, "BGBar", true);
             _bgBar.LinkDependency(ShapeTypes.Rectangle.DEPENDENCY_BODY, _bgBarBody);
-
         }
     }
 }

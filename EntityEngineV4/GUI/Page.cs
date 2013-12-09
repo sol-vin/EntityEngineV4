@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using EntityEngineV4.Engine;
 using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace EntityEngineV4.GUI
 {
     public class Page : Node
     {
         public delegate void ControlEventHandler(Control c);
-        private Control[,] _controls = new Control[1,1];
+        private Control[,] _controls = new Control[1, 1];
 
         public int MaxTabX
         {
@@ -39,9 +35,10 @@ namespace EntityEngineV4.GUI
             get { return _controls[_currentcontrol.X, _currentcontrol.Y]; }
         }
 
-        private Stack<Control> _processContols = new Stack<Control>(); 
+        private Stack<Control> _processContols = new Stack<Control>();
 
-        public Page(Node parent, string name) : base(parent, name)
+        public Page(Node parent, string name)
+            : base(parent, name)
         {
             //Check is ControlHandler is in this state, if not add it
             if (!GetRoot<State>().CheckService<ControlHandler>())
@@ -72,12 +69,12 @@ namespace EntityEngineV4.GUI
             _controls[c.TabPosition.X, c.TabPosition.Y] = c;
 
             EntityGame.Log.Write("Control " + c.Name + " added", this, Alert.Info);
-                
+
         }
 
         public override bool RemoveChild(Node node)
         {
-            bool wasRemoved =  base.RemoveChild(node);
+            bool wasRemoved = base.RemoveChild(node);
             if (wasRemoved && node is Control)
             {
                 var c = node as Control;
@@ -111,11 +108,11 @@ namespace EntityEngineV4.GUI
             }
             else
             {
-                if(LastControl != null)
+                if (LastControl != null)
                     LastControl.OnFocusLost(CurrentControl);
                 CurrentControl.OnFocusGain();
             }
-            
+
         }
 
         /// <summary>
@@ -128,7 +125,7 @@ namespace EntityEngineV4.GUI
             if (x >= _controls.GetUpperBound(1) || y >= _controls.GetUpperBound(1))
             {
                 var clone = (Control[,])_controls.Clone();
-                _controls = new Control[x,y];
+                _controls = new Control[x, y];
 
                 foreach (var c in clone)
                 {
@@ -167,7 +164,7 @@ namespace EntityEngineV4.GUI
                     }
 
                     //If it doesn't have a modifier, continue following...
-                    
+
                 }
             } while (CurrentControl == null || !CurrentControl.Selectable);
             OnFocusChange();
@@ -203,7 +200,7 @@ namespace EntityEngineV4.GUI
 
                 }
 
-                
+
             } while (CurrentControl == null || !CurrentControl.Selectable);
             OnFocusChange();
         }
@@ -278,7 +275,7 @@ namespace EntityEngineV4.GUI
 
                 }
 
-                
+
             } while (CurrentControl == null || !CurrentControl.Selectable);
             OnFocusChange();
         }
@@ -309,7 +306,7 @@ namespace EntityEngineV4.GUI
 
         public void FocusOn(Control c)
         {
-            if(c.Parent != this) throw new Exception("Control cannot tell a page that is not it's parent to focus on it");
+            if (c.Parent != this) throw new Exception("Control cannot tell a page that is not it's parent to focus on it");
             _lastControl = _currentcontrol;
             _currentcontrol = c.TabPosition;
             OnFocusChange();
@@ -330,7 +327,7 @@ namespace EntityEngineV4.GUI
         {
             CurrentControl.Release();
         }
-        
+
         /// <summary>
         /// Holds down the current control
         /// </summary>

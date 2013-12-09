@@ -1,4 +1,3 @@
-using System.Xml.Serialization.Advanced;
 using EntityEngineV4.Engine;
 using EntityEngineV4.PowerTools;
 using Microsoft.Xna.Framework;
@@ -55,7 +54,7 @@ namespace EntityEngineV4.Components.Rendering
                 r.Thickness = 1;
                 r.Draw(sb);
 
-                var origin = new DrawingTools.Point((int)(GetDependency<Body>(DEPENDENCY_BODY).Origin.X + DrawRect.X), (int) (GetDependency<Body>(DEPENDENCY_BODY).Origin.Y + DrawRect.Y));
+                var origin = new DrawingTools.Point((int)(GetDependency<Body>(DEPENDENCY_BODY).Origin.X + DrawRect.X), (int)(GetDependency<Body>(DEPENDENCY_BODY).Origin.Y + DrawRect.Y));
                 origin.Color = Color.Orange;
                 origin.Draw(sb);
             }

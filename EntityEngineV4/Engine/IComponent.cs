@@ -1,5 +1,3 @@
-using System;
-using EntityEngineV4.Engine.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -46,7 +44,7 @@ namespace EntityEngineV4.Engine
         /// <summary>
         /// If the Initialize() method has been called since it's creation
         /// </summary>
-        bool Initialized { get;}
+        bool Initialized { get; }
 
         /// <summary>
         /// Called when destroyed

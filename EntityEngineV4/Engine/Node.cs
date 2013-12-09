@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+
 //using System.Threading;
 using EntityEngineV4.Engine.Debugging;
-using EntityEngineV4.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -17,14 +15,23 @@ namespace EntityEngineV4.Engine
 
         //IComponent fields
         public string Name { get; protected set; }
+
         public int Id { get; private set; }
+
         public bool Active { get; set; }
+
         public bool Visible { get; set; }
+
         public bool Debug { get; set; }
+
         public bool Initialized { get; private set; }
+
         public bool Destroyed { get; private set; }
+
         public float Layer { get; set; }
+
         public float Order { get; set; }
+
         public event Engine.EventHandler DestroyEvent;
 
         //Node fields
@@ -32,14 +39,16 @@ namespace EntityEngineV4.Engine
         /// Parent node to this Node, if IsRoot is true this will be null!
         /// </summary>
         public Node Parent { get; private set; }
+
         /// <summary>
         /// Whether or not this node is the root of it's tree
         /// </summary>
-        public virtual bool IsRoot {get { return false; }}
+        public virtual bool IsRoot { get { return false; } }
+
         /// <summary>
         /// Whether or not this node should be in the Update/Draw pool.
         /// </summary>
-        public virtual bool IsObject {get { return false; }}
+        public virtual bool IsObject { get { return false; } }
 
         /// <summary>
         /// Whether or not this node is recycled
@@ -55,7 +64,7 @@ namespace EntityEngineV4.Engine
             {
                 if (IsObject) return Active; //If it is an object then it's activeness is determined by itself
                 if (!Active) return false;   //If this node isn't active, none of it's children are, unless they are objects
-                if(Parent != null)           //ensure the parent isn't null
+                if (Parent != null)           //ensure the parent isn't null
                 {
                     return Parent.IsActive;  //Recurrsivly call up the parental chain
                 }
@@ -81,55 +90,6 @@ namespace EntityEngineV4.Engine
             }
         }
 
-
-        /// <summary>
-        /// Sets the 
-        /// </summary>
-        public virtual void Recycle()
-        {
-            if(IsRoot) throw new Exception("Cannot call Recycle on root node!");
-            //if(!Recyclable)throw new Exception("Cannot call Recycle on a non-recyclable node!");
-            //if (!IsObject) throw new Exception("Cannot call Recycle on non-objects!");
-
-            foreach (var child in this.ToArray().Where(c => !c.IsObject))
-            {
-                child.Recycle();
-            }
-
-            Recycled = true;
-        }
-
-        public void Reuse()
-        {
-            Reuse(Parent, Name);
-        }
-
-        public void Reuse(Node parent)
-        {
-            Reuse(parent,Name);
-        }
-
-        /// <summary>
-        /// Called when a node is recycled to put it back into use
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="name"></param>
-        public virtual void Reuse(Node parent, string name)
-        {
-            //if (!Recyclable) throw new Exception("Cannot call Reuse on a non-recyclable node!");
-            
-            Name = name;
-            if(parent != Parent)
-                SetParent(parent); //Doesn't re-add the object because Recycled == true at the time of calling.
-            //Reuse/reset all child nodes
-            foreach (var child in this.ToArray().Where(c => !c.IsObject))
-            {
-                child.Reuse(this);
-            }
-
-            Recycled = false; //Now we can safely set Recycled because the parent operations have already completed.
-        }
-
         /// <summary>
         /// If the children of this node are being updated. Used to prevent collection modification during a foreach
         /// </summary>
@@ -138,7 +98,7 @@ namespace EntityEngineV4.Engine
         /// <summary>
         /// Called when AddChild and RemoveChild are called respectively.
         /// </summary>
-        public event EventHandler ChildAdded , ChildRemoved; //Called only if this node had AddChild called
+        public event EventHandler ChildAdded, ChildRemoved; //Called only if this node had AddChild called
 
         public Node(Node parent, string name)
         {
@@ -146,9 +106,17 @@ namespace EntityEngineV4.Engine
             Name = name;
             Active = true;
             Visible = true;
-            SetParent(parent); //This virtual member call in the constructor is OK because we only use members initialized in this class.
+            SetParent(parent);
 
             Recycled = false;
+        }
+
+        /// <summary>
+        /// Finalizer for node. Only called if the GC wills it.
+        /// </summary>
+        ~Node()
+        {
+            this.Destroy();
         }
 
         /// <summary>
@@ -157,7 +125,7 @@ namespace EntityEngineV4.Engine
         /// <param name="node"></param>
         public virtual void AddChild(Node node)
         {
-            if(node == null) throw new NullReferenceException("Node can not be null when adding as a child!");
+            if (node == null) throw new NullReferenceException("Node can not be null when adding as a child!");
             if (node.IsRoot) throw new Exception("Child node cannot be a root node!");
             if (node.IsObject && !node.Recycled)
             {
@@ -199,6 +167,7 @@ namespace EntityEngineV4.Engine
                 return Remove(node);
             }
         }
+
         /// <summary>
         /// Removes a child node by it's id
         /// </summary>
@@ -208,6 +177,7 @@ namespace EntityEngineV4.Engine
         {
             return RemoveChild(GetChild(id));
         }
+
         /// <summary>
         /// Removes achild node by it's name
         /// </summary>
@@ -226,7 +196,7 @@ namespace EntityEngineV4.Engine
         public Node GetChild(int id)
         {
             Node node = this.FirstOrDefault(c => c.Id == id);
-            if(node == null) throw new Exception("Node's id was not found in children!");
+            if (node == null) throw new Exception("Node's id was not found in children!");
             return node;
         }
 
@@ -258,16 +228,16 @@ namespace EntityEngineV4.Engine
 
         public T GetChild<T>() where T : Node
         {
-            Node node = this.FirstOrDefault(c => c.GetType() == typeof (T));
-            if (node == null) throw new Exception("Node of type " + typeof (T) + " was not found in children!");
+            Node node = this.FirstOrDefault(c => c.GetType() == typeof(T));
+            if (node == null) throw new Exception("Node of type " + typeof(T) + " was not found in children!");
             return (T)node;
         }
 
-        public virtual void SetParent(Node node)
+        public void SetParent(Node node)
         {
-            if(IsRoot && node != null) throw new Exception("Root cannot have a parent");
+            if (IsRoot && node != null) throw new Exception("Root cannot have a parent");
             if (IsRoot) return;
-            if(node == null) throw new NullReferenceException("Parent node cannot be null!");
+            if (node == null) throw new NullReferenceException("Parent node cannot be null!");
 
             if (Parent != null) //Unhook before we do anything
             {
@@ -287,7 +257,7 @@ namespace EntityEngineV4.Engine
             return Parent.GetRoot(); //Resursively call up the chain until we find the root
         }
 
-        public T GetRoot<T>()where T : Node
+        public T GetRoot<T>() where T : Node
         {
             if (IsRoot) return this as T; //We found the root, return it.
             if (Parent == null) throw new Exception(String.Format("{0} is not root but, has a null parent.", Name));
@@ -338,11 +308,10 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent sender = null)
         {
-            if(Destroyed) return; //Dont let destroyed nodes be destroyed again.
+            if (Destroyed) return; //Dont let destroyed nodes be destroyed again.
             //Prevent recycled nodes from being destroyed.
             if (!Recycled)
             {
-
                 if (UpdatingChildren)
                 {
                     GetRoot<State>().Requests.Push(new ActionRequest(null, this, NodeAction.Destroy));
@@ -361,6 +330,9 @@ namespace EntityEngineV4.Engine
                 ChildRemoved = null;
 
                 Destroyed = true;
+
+                if (!IsRoot) Reset();
+
                 EntityGame.Log.Write("Destroyed", this, Alert.Trivial);
             }
 
@@ -376,6 +348,9 @@ namespace EntityEngineV4.Engine
                     Parent.RemoveChild(this);
                 }
             }
+
+            //Stop our finalizer from running, impacting performance.
+            GC.SuppressFinalize(this);
         }
 
         public void DestroyChildren()
@@ -384,6 +359,54 @@ namespace EntityEngineV4.Engine
             {
                 child.Destroy(this);
             }
+        }
+
+        /// <summary>
+        /// Sets the
+        /// </summary>
+        public virtual void Recycle()
+        {
+            if (IsRoot) throw new Exception("Cannot call Recycle on root node!");
+            //if(!Recyclable)throw new Exception("Cannot call Recycle on a non-recyclable node!");
+            //if (!IsObject) throw new Exception("Cannot call Recycle on non-objects!");
+
+            foreach (var child in this.ToArray().Where(c => !c.IsObject))
+            {
+                child.Recycle();
+            }
+
+            Recycled = true;
+        }
+
+        public void Reuse()
+        {
+            Reuse(Parent, Name);
+        }
+
+        public void Reuse(Node parent)
+        {
+            Reuse(parent, Name);
+        }
+
+        /// <summary>
+        /// Called when a node is recycled to put it back into use
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="name"></param>
+        public virtual void Reuse(Node parent, string name)
+        {
+            //if (!Recyclable) throw new Exception("Cannot call Reuse on a non-recyclable node!");
+
+            Name = name;
+            if (parent != Parent)
+                SetParent(parent); //Doesn't re-add the object because Recycled == true at the time of calling.
+            //Reuse/reset all child nodes
+            foreach (var child in this.ToArray().Where(c => !c.IsObject))
+            {
+                child.Reuse(this);
+            }
+
+            Recycled = false; //Now we can safely set Recycled because the parent operations have already completed.
         }
 
         //Object methods
@@ -404,6 +427,7 @@ namespace EntityEngineV4.Engine
             if ((object)a == null ^ (object)b == null) return false;
             return a.Id == b.Id;
         }
+
         public static bool operator !=(Node a, Node b)
         {
             return !(a == b);

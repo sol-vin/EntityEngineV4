@@ -66,8 +66,6 @@ namespace EntityEngineV4.Input
         public Sticks Stick;
         public float Threshold;
 
-
-
         public GamePadAnalog(Node parent, string name, Sticks stick, PlayerIndex pi)
             : base(parent, name)
         {
@@ -78,6 +76,7 @@ namespace EntityEngineV4.Input
         public Vector2 Delta { get { return LastPosition - Position; } }
 
         public Vector2 LastPosition { get; private set; }
+
         public Vector2 Position { get; private set; }
 
         public bool Left

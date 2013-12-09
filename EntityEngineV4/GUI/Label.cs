@@ -1,13 +1,12 @@
 ﻿using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
-using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.GUI
 {
     public class Label : Control
     {
-        public Color Color { get { return Render.Color; } set { Render.Color = value; }}
+        public Color Color { get { return Render.Color; } set { Render.Color = value; } }
 
         public string Text
         {

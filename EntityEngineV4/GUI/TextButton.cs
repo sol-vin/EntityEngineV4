@@ -14,7 +14,7 @@ namespace EntityEngineV4.GUI
         private ShapeTypes.Rectangle _bodyImage;
         private ShapeTypes.Rectangle _bodyOutline;
 
-        public Vector2 Spacing = new Vector2(5,1);
+        public Vector2 Spacing = new Vector2(5, 1);
 
         public string Text
         {
@@ -35,8 +35,9 @@ namespace EntityEngineV4.GUI
             get { return _bodyImage.Color.ToRGBColor(); }
             set { _bodyImage.Color = value; }
         }
-        
-        public TextButton(Page parent, string name, Point tabPosition, Vector2 position, RGBColor color) :base(parent, name, tabPosition, position, new Vector2(0,0), color)
+
+        public TextButton(Page parent, string name, Point tabPosition, Vector2 position, RGBColor color)
+            : base(parent, name, tabPosition, position, new Vector2(0, 0), color)
         {
             Body.Position = position;
 
@@ -49,7 +50,7 @@ namespace EntityEngineV4.GUI
             _textBody.Bounds = TextRender.Bounds;
             Body.Bounds = TextRender.Bounds + Spacing;
 
-            _textBody.Position = new Vector2(Body.Position.X + Body.Bounds.X / 2 - _textBody.Bounds.X / 2, 
+            _textBody.Position = new Vector2(Body.Position.X + Body.Bounds.X / 2 - _textBody.Bounds.X / 2,
                 Body.Position.Y + Body.Bounds.Y / 2 - _textBody.Bounds.Y / 2);
 
             //Make our rectangles

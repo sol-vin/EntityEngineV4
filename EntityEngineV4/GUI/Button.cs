@@ -23,7 +23,7 @@ namespace EntityEngineV4.GUI
         public RGBColor UpColor;
         public RGBColor HoverColor;
 
-        public Button(Page parent, string name, Point tabPosition, Vector2 position, Vector2 bounds, RGBColor color) 
+        public Button(Page parent, string name, Point tabPosition, Vector2 position, Vector2 bounds, RGBColor color)
             : base(parent, name, tabPosition)
         {
             Body.Position = position;
@@ -50,7 +50,7 @@ namespace EntityEngineV4.GUI
         public void MakeDefault()
         {
             _bodyImage.Color = Color.White.ToRGBColor();
-            
+
             FocusLost += c => RGBColor = Color.White.ToRGBColor();
             FocusGain += c => RGBColor = Color.Red.ToRGBColor();
             OnDown += c => RGBColor = Color.Green.ToRGBColor();
@@ -58,9 +58,9 @@ namespace EntityEngineV4.GUI
 
         private void OnMouseCollide(Manifold m)
         {
-            if(!HasFocus)
+            if (!HasFocus)
                 (Parent as Page).FocusOn(this);
-            if(HasFocus)
+            if (HasFocus)
             {
                 if (MouseService.Cursor.Pressed()) Press();
                 else if (MouseService.Cursor.Down()) Down();

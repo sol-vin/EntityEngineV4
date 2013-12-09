@@ -10,7 +10,7 @@ namespace EntityEngineV4.Input
 
         public delegate void EventHandler(Input i);
 
-        public event EventHandler PressedEvent , ReleasedEvent , DownEvent , UpEvent;
+        public event EventHandler PressedEvent, ReleasedEvent, DownEvent, UpEvent;
 
         public Input(Node node, string name)
             : base(node, name)

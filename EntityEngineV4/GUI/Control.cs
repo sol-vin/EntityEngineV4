@@ -1,14 +1,7 @@
-﻿using System;
-using System.Security.Cryptography.X509Certificates;
-using EntityEngineV4.CollisionEngine.Shapes;
-using EntityEngineV4.Components;
-using EntityEngineV4.Data;
+﻿using EntityEngineV4.Components;
 using EntityEngineV4.Engine;
-using EntityEngineV4.Engine.Debugging;
-using EntityEngineV4.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using EntityEngineV4.CollisionEngine;
 
 namespace EntityEngineV4.GUI
 {
@@ -16,9 +9,7 @@ namespace EntityEngineV4.GUI
     {
         public delegate void EventHandler(Control b);
 
-
         public Body Body;
-        
 
         /// <summary>
         /// This is the position where the GUI control resdies on the page when tabbing through.
@@ -63,34 +54,39 @@ namespace EntityEngineV4.GUI
         }
 
         public event EventHandler FocusLost;
+
         public virtual void OnFocusLost(Control c)
         {
             HasFocus = false;
-            if(FocusLost != null)
-                FocusLost(c); 
+            if (FocusLost != null)
+                FocusLost(c);
         }
 
         public event EventHandler FocusGain;
+
         public virtual void OnFocusGain()
         {
             HasFocus = true;
-            if(FocusGain != null)
+            if (FocusGain != null)
                 FocusGain(this);
         }
 
         public event EventHandler OnPressed;
+
         public virtual void Press()
         {
             if (OnPressed != null) OnPressed(this);
         }
 
         public event EventHandler OnReleased;
+
         public virtual void Release()
         {
-            if(OnReleased != null) OnReleased(this);
+            if (OnReleased != null) OnReleased(this);
         }
 
         public event EventHandler OnDown;
+
         public virtual void Down()
         {
             if (OnDown != null) OnDown(this);

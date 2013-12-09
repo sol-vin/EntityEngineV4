@@ -123,7 +123,7 @@ namespace EntityEngineV4.Engine.Debugging
             else if (sender is Service)
             {
                 sendersname = "[S]" + sender.Parent.Name + "->" + sender.Name;
-            } 
+            }
             else
             {
                 sendersname = "[N]" + sender.Name;
@@ -170,7 +170,6 @@ namespace EntityEngineV4.Engine.Debugging
             _file.Flush();
         }
 
-
         public bool CheckLogSize()
         {
             long size = 0;
@@ -186,6 +185,5 @@ namespace EntityEngineV4.Engine.Debugging
         {
             _file.Close();
         }
-
     }
 }

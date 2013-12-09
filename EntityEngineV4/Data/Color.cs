@@ -7,6 +7,7 @@ namespace EntityEngineV4.Data
     {
         DoNothing, ThrowError, WrapAround, Clamp
     }
+
     public interface PolyColor
     {
         /// <summary>
@@ -32,11 +33,11 @@ namespace EntityEngineV4.Data
         public float H
         {
             get { return _h; }
-            set{_h = CheckValue(value);}
+            set { _h = CheckValue(value); }
         }
 
-
         private float _s;
+
         /// <summary>
         /// Saturation
         /// </summary>
@@ -46,8 +47,8 @@ namespace EntityEngineV4.Data
             set { _s = CheckValue(value); }
         }
 
-
         private float _v;
+
         /// <summary>
         /// Value
         /// </summary>
@@ -88,10 +89,8 @@ namespace EntityEngineV4.Data
                 S = _s;
                 V = _v;
                 Alpha = _alpha;
-                
             }
         }
-
 
         public static implicit operator Color(HSVColor a)
         {
@@ -104,7 +103,7 @@ namespace EntityEngineV4.Data
             _s = s;
             _v = v;
             _alpha = alpha;
-            
+
             _action = action;
         }
 
@@ -112,13 +111,15 @@ namespace EntityEngineV4.Data
         {
             switch (_action)
             {
-                case(ColorOutOfBoundsAction.DoNothing):
+                case (ColorOutOfBoundsAction.DoNothing):
                     return value;
-                case(ColorOutOfBoundsAction.ThrowError):
-                    if(value > maxvalue || value < minvalue)
+
+                case (ColorOutOfBoundsAction.ThrowError):
+                    if (value > maxvalue || value < minvalue)
                         throw new ArgumentOutOfRangeException("value was outside the range!");
                     return value;
-                case(ColorOutOfBoundsAction.WrapAround):
+
+                case (ColorOutOfBoundsAction.WrapAround):
                     if (value > maxvalue)
                     {
                         value -= (float)Math.Floor(value);
@@ -128,7 +129,8 @@ namespace EntityEngineV4.Data
                         value += maxvalue - (float)Math.Ceiling(Math.Abs(value));
                     }
                     return value;
-                case(ColorOutOfBoundsAction.Clamp):
+
+                case (ColorOutOfBoundsAction.Clamp):
                     return MathHelper.Clamp(value, minvalue, maxvalue);
             }
             throw new Exception("Something went horribly wrong....");
@@ -148,6 +150,7 @@ namespace EntityEngineV4.Data
     public struct RGBColor : PolyColor
     {
         private float _r;
+
         public float R
         {
             get { return _r; }
@@ -162,8 +165,8 @@ namespace EntityEngineV4.Data
             set { _g = CheckValue(value); }
         }
 
-
         private float _b;
+
         public float B
         {
             get { return _b; }
@@ -171,11 +174,12 @@ namespace EntityEngineV4.Data
         }
 
         private float _alpha;
+
         public float Alpha
         {
-            get { return _alpha; }set { _alpha = CheckValue(value); }
+            get { return _alpha; }
+            set { _alpha = CheckValue(value); }
         }
-
 
         /// <summary>
         /// Backing field for Action
@@ -197,7 +201,6 @@ namespace EntityEngineV4.Data
                 G = _g;
                 B = _b;
                 Alpha = _alpha;
-
             }
         }
 
@@ -222,10 +225,12 @@ namespace EntityEngineV4.Data
             {
                 case (ColorOutOfBoundsAction.DoNothing):
                     return value;
+
                 case (ColorOutOfBoundsAction.ThrowError):
                     if (value > maxvalue || value < minvalue)
                         throw new ArgumentOutOfRangeException("Value was outside the range!");
                     return value;
+
                 case (ColorOutOfBoundsAction.WrapAround):
                     if (value > maxvalue)
                     {
@@ -236,12 +241,12 @@ namespace EntityEngineV4.Data
                         value += maxvalue - (float)Math.Ceiling(Math.Abs(value));
                     }
                     return value;
+
                 case (ColorOutOfBoundsAction.Clamp):
                     return MathHelper.Clamp(value, minvalue, maxvalue);
             }
             throw new Exception("Something went horribly wrong....");
         }
-
 
         public Color ToColor()
         {
@@ -266,12 +271,16 @@ namespace EntityEngineV4.Data
         public const float ZLIMIT = 108.883f;
 
         public float X { get { return _x; } set { _x = CheckValue(value, 0, XLIMIT); } }
+
         public float Y { get { return _y; } set { _y = CheckValue(value, 0, YLIMIT); } }
+
         public float Z { get { return _z; } set { _z = CheckValue(value, 0, ZLIMIT); } }
+
         public float Alpha { get { return _alpha; } set { _alpha = CheckValue(value, 0, 1f); } }
 
         public ColorOutOfBoundsAction _action;
-        public ColorOutOfBoundsAction Action 
+
+        public ColorOutOfBoundsAction Action
         {
             get { return _action; }
             set
@@ -286,7 +295,7 @@ namespace EntityEngineV4.Data
         }
 
         public XYZColor White { get { return new XYZColor(95.047f, 100f, 108.883f, 1f); } }
-        
+
         public XYZColor(float x, float y, float z, float alpha, ColorOutOfBoundsAction action = ColorOutOfBoundsAction.DoNothing)
         {
             _x = x;
@@ -297,16 +306,18 @@ namespace EntityEngineV4.Data
             _action = action;
         }
 
-        public float CheckValue(float value,float minvalue, float maxvalue)
+        public float CheckValue(float value, float minvalue, float maxvalue)
         {
-            switch(_action)
+            switch (_action)
             {
                 case (ColorOutOfBoundsAction.DoNothing):
                     return value;
+
                 case (ColorOutOfBoundsAction.ThrowError):
                     if (value > maxvalue || value < minvalue)
                         throw new ArgumentOutOfRangeException("Value was outside the range!");
                     return value;
+
                 case (ColorOutOfBoundsAction.WrapAround):
                     if (value > maxvalue)
                     {
@@ -317,6 +328,7 @@ namespace EntityEngineV4.Data
                         value += maxvalue - (float)Math.Ceiling(Math.Abs(value));
                     }
                     return value;
+
                 case (ColorOutOfBoundsAction.Clamp):
                     return MathHelper.Clamp(value, minvalue, maxvalue);
             }
@@ -374,7 +386,8 @@ namespace EntityEngineV4.Data
             }
         }
 
-        public CieLabColor(float l, float a, float b, ColorOutOfBoundsAction action = ColorOutOfBoundsAction.DoNothing) : this()
+        public CieLabColor(float l, float a, float b, ColorOutOfBoundsAction action = ColorOutOfBoundsAction.DoNothing)
+            : this()
         {
             _l = l;
             _a = a;
@@ -384,14 +397,16 @@ namespace EntityEngineV4.Data
 
         public float CheckValue(float value, float minvalue, float maxvalue)
         {
-            switch(_action)
+            switch (_action)
             {
                 case (ColorOutOfBoundsAction.DoNothing):
                     return value;
+
                 case (ColorOutOfBoundsAction.ThrowError):
                     if (value > maxvalue || value < minvalue)
                         throw new ArgumentOutOfRangeException("Value was outside the range!");
                     return value;
+
                 case (ColorOutOfBoundsAction.WrapAround):
                     if (value > maxvalue)
                     {
@@ -402,6 +417,7 @@ namespace EntityEngineV4.Data
                         value += maxvalue - (float)Math.Ceiling(Math.Abs(value));
                     }
                     return value;
+
                 case (ColorOutOfBoundsAction.Clamp):
                     return MathHelper.Clamp(value, minvalue, maxvalue);
             }
@@ -415,7 +431,6 @@ namespace EntityEngineV4.Data
 
         public float L, C, H;
     }
-
 
     public static class ColorMath
     {
@@ -455,7 +470,7 @@ namespace EntityEngineV4.Data
 
             if (Math.Abs(max - rgb.R) < .0001f)
             {
-                hsv.H = 1f/6f * (rgb.G - rgb.B);
+                hsv.H = 1f / 6f * (rgb.G - rgb.B);
                 if (hsv.H < 0)
                 {
                     hsv.H += 1f;
@@ -463,11 +478,11 @@ namespace EntityEngineV4.Data
             }
             else if (Math.Abs(max - rgb.G) < .0001f)
             {
-                hsv.H = 2f/6f + 1f/6f * (rgb.B - rgb.R);
+                hsv.H = 2f / 6f + 1f / 6f * (rgb.B - rgb.R);
             }
             else /* rgb_max == rgb.b */
             {
-                hsv.H = 4f/6f + 1f/6f * (rgb.R - rgb.G);
+                hsv.H = 4f / 6f + 1f / 6f * (rgb.R - rgb.G);
             }
 
             hsv.Alpha = rgb.Alpha;
@@ -528,8 +543,8 @@ namespace EntityEngineV4.Data
             r += min;
             g += min;
             b += min;
-            
-            return new RGBColor(r,g,b,hsv.Alpha);
+
+            return new RGBColor(r, g, b, hsv.Alpha);
         }
 
         public static XYZColor RGBtoXYZ(RGBColor rgb)
@@ -541,21 +556,20 @@ namespace EntityEngineV4.Data
             g = rgb.G;
             b = rgb.B;
 
-
-            if (r > 0.04045f) r = (float)Math.Pow((r + 0.055)/1.055, 2.4);
+            if (r > 0.04045f) r = (float)Math.Pow((r + 0.055) / 1.055, 2.4);
             else r = r / 12.92f;
-            if (g > 0.04045) g =(float)Math.Pow((g + 0.055f)/1.055f , 2.4f);
-            else g = g/12.92f;
-            if (b > 0.04045f) b = (float)Math.Pow((b + 0.055f)/1.055f , 2.4f);
-            else b = b/12.92f;
+            if (g > 0.04045) g = (float)Math.Pow((g + 0.055f) / 1.055f, 2.4f);
+            else g = g / 12.92f;
+            if (b > 0.04045f) b = (float)Math.Pow((b + 0.055f) / 1.055f, 2.4f);
+            else b = b / 12.92f;
 
             r *= 100;
             g *= 100;
             b *= 100;
 
-            xyz.X = r*0.4124f + g*0.3576f + b*0.1805f;
-            xyz.Y = r*0.2126f + g*0.7152f + b*0.0722f;
-            xyz.Z = r*0.0193f + g*0.1192f + b*0.9505f;
+            xyz.X = r * 0.4124f + g * 0.3576f + b * 0.1805f;
+            xyz.Y = r * 0.2126f + g * 0.7152f + b * 0.0722f;
+            xyz.Z = r * 0.0193f + g * 0.1192f + b * 0.9505f;
 
             xyz.Alpha = rgb.Alpha;
             return xyz;
@@ -564,23 +578,23 @@ namespace EntityEngineV4.Data
         public static RGBColor XYZtoRGB(XYZColor xyz)
         {
             float x, y, z;
-            
-            x = xyz.X/100;        //X from 0 to  95.047      (Observer = 2°, Illuminant = D65)
-            y = xyz.Y/100;        //Y from 0 to 100.000
-            z = xyz.Z/100;     //Z from 0 to 108.883
+
+            x = xyz.X / 100;        //X from 0 to  95.047      (Observer = 2°, Illuminant = D65)
+            y = xyz.Y / 100;        //Y from 0 to 100.000
+            z = xyz.Z / 100;     //Z from 0 to 108.883
 
             float r, g, b;
 
-            r = x*3.2406f + y*-1.5372f + z*-0.4986f;
-            g = x*-0.9689f + y*1.8758f + z*0.0415f;
-            b = x*0.0557f + y*-0.2040f + z*1.0570f;
+            r = x * 3.2406f + y * -1.5372f + z * -0.4986f;
+            g = x * -0.9689f + y * 1.8758f + z * 0.0415f;
+            b = x * 0.0557f + y * -0.2040f + z * 1.0570f;
 
-            if (r > 0.0031308f) r = 1.055f*(float)Math.Pow(r, (1/2.4f)) - 0.055f;
-            else r = 12.92f*r;
-            if (g > 0.0031308f) g = 1.055f*(float)Math.Pow(g ,(1/2.4f)) - 0.055f;
-            else g = 12.92f*g;
-            if (b > 0.0031308f) b = 1.055f*(float)Math.Pow(b, (1/2.4f)) - 0.055f;
-            else b = 12.92f*b;
+            if (r > 0.0031308f) r = 1.055f * (float)Math.Pow(r, (1 / 2.4f)) - 0.055f;
+            else r = 12.92f * r;
+            if (g > 0.0031308f) g = 1.055f * (float)Math.Pow(g, (1 / 2.4f)) - 0.055f;
+            else g = 12.92f * g;
+            if (b > 0.0031308f) b = 1.055f * (float)Math.Pow(b, (1 / 2.4f)) - 0.055f;
+            else b = 12.92f * b;
 
             //clamp values before making it a RGBColor
 
@@ -588,19 +602,18 @@ namespace EntityEngineV4.Data
             g = MathHelper.Clamp(g, 0, 1);
             b = MathHelper.Clamp(b, 0, 1);
 
-
-            return new RGBColor(r,g,b,xyz.Alpha);
+            return new RGBColor(r, g, b, xyz.Alpha);
         }
 
         //TODO: Test XYZtoLAB
         public static CieLabColor XYZtoLAB(XYZColor xyz)
         {
-            float var_x = xyz.X/XYZColor.XLIMIT;
-            float var_y = xyz.Y/XYZColor.YLIMIT;
-            float var_z = xyz.Z/XYZColor.ZLIMIT;
+            float var_x = xyz.X / XYZColor.XLIMIT;
+            float var_y = xyz.Y / XYZColor.YLIMIT;
+            float var_z = xyz.Z / XYZColor.ZLIMIT;
 
-            if (var_x > 0.008856) var_x = (float) Math.Pow(var_x, (1/3f));
-            else var_x = (7.787f*var_x) + (16f/116f);
+            if (var_x > 0.008856) var_x = (float)Math.Pow(var_x, (1 / 3f));
+            else var_x = (7.787f * var_x) + (16f / 116f);
 
             if (var_y > 0.008856) var_y = (float)Math.Pow(var_y, (1 / 3f));
             else var_y = (7.787f * var_y) + (16f / 116f);
@@ -612,14 +625,13 @@ namespace EntityEngineV4.Data
             float var_a = 500 * (var_x - var_y);
             float var_b = 200 * (var_y - var_z);
 
-            return new CieLabColor(var_l, var_a, var_b) { Alpha = xyz.Alpha};
+            return new CieLabColor(var_l, var_a, var_b) { Alpha = xyz.Alpha };
         }
 
         public static XYZColor LABtoXYZ(CieLabColor lab)
         {
             throw new NotImplementedException();
         }
-    
 
         //Extensions
         public static RGBColor ToRGBColor(this Color c)

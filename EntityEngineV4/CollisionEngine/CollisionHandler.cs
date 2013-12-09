@@ -29,7 +29,7 @@ namespace EntityEngineV4.CollisionEngine
         /// <summary>
         /// The pairs that have already collided and generated a manifold as a result.
         /// </summary>
-        private HashSet<Manifold> _manifolds; 
+        private HashSet<Manifold> _manifolds;
 
         public int CollisionsThisFrame { get { return _manifolds.Count; } }
 
@@ -84,7 +84,7 @@ namespace EntityEngineV4.CollisionEngine
         {
             var output = new HashSet<Collision>();
 
-            foreach (var manifold in  _manifolds)
+            foreach (var manifold in _manifolds)
             {
                 output.Add(manifold.A);
                 output.Add(manifold.B);
@@ -161,9 +161,7 @@ namespace EntityEngineV4.CollisionEngine
             //    }
             //}
 
-            
             _manifolds = ReturnManifolds();
-            
         }
 
         //Static methods
@@ -208,6 +206,7 @@ namespace EntityEngineV4.CollisionEngine
 
         public const float SLOP = 0.05f;
         public const float PERCENT = 0.6f;
+
         public static void PositionalCorrection(Manifold m)
         {
             Vector2 correction = Math.Max(m.PenetrationDepth - SLOP, 0.0f) / (m.A.InvertedMass + m.B.InvertedMass) * PERCENT * m.Normal;
@@ -235,8 +234,8 @@ namespace EntityEngineV4.CollisionEngine
             if (xExtent > 0)
             {
                 //Calculate half widths
-                aExtent = a.Height/2f;
-                bExtent = b.Height/2f;
+                aExtent = a.Height / 2f;
+                bExtent = b.Height / 2f;
 
                 //Calculate overlap
                 float yExtent = aExtent + bExtent - Math.Abs(manifold.Normal.Y);
@@ -256,7 +255,7 @@ namespace EntityEngineV4.CollisionEngine
                         manifold.Normal = Physics.GetNormal(a.Position, b.Position);
                         manifold.Normal.X *= faceNormal.X;
                     }
-                        //Collision happening on X axis
+                    //Collision happening on X axis
                     else
                     {
                         faceNormal = manifold.Normal.Y < 0 ? -Vector2.UnitY : Vector2.UnitY;
@@ -315,7 +314,7 @@ namespace EntityEngineV4.CollisionEngine
             aShape = a.GetDependency<Shape>(Collision.DEPENDENCY_SHAPE);
             bShape = b.GetDependency<Shape>(Collision.DEPENDENCY_SHAPE);
 
-            Manifold manifold = new Manifold(a,b);
+            Manifold manifold = new Manifold(a, b);
 
             if (aShape is AABB && bShape is AABB)
                 AABBvsAABB((AABB)aShape, (AABB)bShape, ref manifold);
@@ -335,9 +334,9 @@ namespace EntityEngineV4.CollisionEngine
         {
             var answer = new HashSet<Manifold>();
             foreach (var pair in _pairs.Where(
-                p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled 
+                p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled
                     && !p.A.Exclusions.Contains(p.B) && !p.B.Exclusions.Contains(p.A)))
-                    //Only check pairs who are active, not recycled, and not excluded from collisions
+            //Only check pairs who are active, not recycled, and not excluded from collisions
             {
                 Manifold m = CheckCollision(pair.A, pair.B);
                 if (m.AreColliding)
@@ -355,7 +354,7 @@ namespace EntityEngineV4.CollisionEngine
         {
             var answer = new HashSet<Manifold>();
             foreach (var pair in _pairs.Where(
-                p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled 
+                p => p.A.IsActive && p.B.IsActive && !p.A.Recycled && !p.B.Recycled
                     && !p.A.Exclusions.Contains(p.B) && !p.B.Exclusions.Contains(p.A)
                     && (p.A == collision || p.B == collision)))
             {

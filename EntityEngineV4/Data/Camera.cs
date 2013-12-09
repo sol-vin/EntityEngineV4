@@ -9,7 +9,7 @@ namespace EntityEngineV4.Data
     public class Camera : Node
     {
         //TODO: Add rotation to camera
-        //TODO: Add collision detection to OBB for camera 
+        //TODO: Add collision detection to OBB for camera
         //      ^to test if it should render an object or not
 
         public readonly Vector2 DEFAULTVIEW = new Vector2(EntityGame.Viewport.Width / 2f, EntityGame.Viewport.Height / 2f);
@@ -56,8 +56,8 @@ namespace EntityEngineV4.Data
                     {
                         X = (int)(Position.X - EntityGame.Viewport.Width / 2f),
                         Y = (int)(Position.Y - EntityGame.Viewport.Height / 2f),
-                        Width = (int)(EntityGame.Viewport.Width * 1f/Zoom),
-                        Height = (int)(EntityGame.Viewport.Height * 1f/Zoom)
+                        Width = (int)(EntityGame.Viewport.Width * 1f / Zoom),
+                        Height = (int)(EntityGame.Viewport.Height * 1f / Zoom)
                     };
                 return r;
             }

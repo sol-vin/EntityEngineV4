@@ -51,7 +51,6 @@ namespace EntityEngineV4.CollisionEngine
         /// </summary>
         public Bitmask ResolutionGroup { get; protected set; }
 
-
         /// <summary>
         /// Decides how the resolution will work, if there will be any at all.
         /// </summary>
@@ -62,21 +61,21 @@ namespace EntityEngineV4.CollisionEngine
         {
             get { return GetDependency<Body>(DEPENEDENCY_BODY).Position; }
             set { GetDependency<Body>(DEPENEDENCY_BODY).Position = value; }
-
         }
 
         public Vector2 Velocity
         {
             get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).Velocity; }
             set { GetDependency<Physics>(DEPENDENCY_PHYSICS).Velocity = value; }
-
         }
 
         public float Restitution { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).Restitution; } }
-        public float Mass { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).Mass; }}
-        public float InvertedMass { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).InvertedMass; } }
-        public Vector2 Delta { get { return GetDependency<Body>(DEPENEDENCY_BODY).Delta; } }
 
+        public float Mass { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).Mass; } }
+
+        public float InvertedMass { get { return GetDependency<Physics>(DEPENDENCY_PHYSICS).InvertedMass; } }
+
+        public Vector2 Delta { get { return GetDependency<Body>(DEPENEDENCY_BODY).Delta; } }
 
         public HashSet<Collision> Exclusions = new HashSet<Collision>();
 
@@ -90,7 +89,6 @@ namespace EntityEngineV4.CollisionEngine
                 _collisionHandler = new CollisionHandler(GetRoot<State>()); //If the collision handler doesn't exist add it.
             else
                 _collisionHandler = GetRoot<State>().GetService<CollisionHandler>();
-            
 
             GetRoot<State>().PreUpdateEvent += _collidedWith.Clear;
 
@@ -110,7 +108,7 @@ namespace EntityEngineV4.CollisionEngine
             base.Initialize();
             try
             {
-                 GetDependency<Shape>(DEPENDENCY_SHAPE);
+                GetDependency<Shape>(DEPENDENCY_SHAPE);
             }
             catch (KeyNotFoundException)
             {
@@ -153,6 +151,7 @@ namespace EntityEngineV4.CollisionEngine
 
         //Public dependencies
         public const int DEPENDENCY_PHYSICS = 0;
+
         public const int DEPENDENCY_SHAPE = 1;
 
         //Private Dependencies

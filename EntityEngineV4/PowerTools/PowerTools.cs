@@ -206,10 +206,9 @@ namespace EntityEngineV4.PowerTools
 
     public static class MathTools
     {
-        
         public static float Lerp(float x, float y, float time)
         {
-            return x + (y - x)*time;
+            return x + (y - x) * time;
         }
     }
 }

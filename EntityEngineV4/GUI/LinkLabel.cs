@@ -1,6 +1,5 @@
 ﻿using EntityEngineV4.CollisionEngine;
 using EntityEngineV4.CollisionEngine.Shapes;
-using EntityEngineV4.Engine;
 using EntityEngineV4.Input;
 using Microsoft.Xna.Framework;
 
@@ -46,9 +45,9 @@ namespace EntityEngineV4.GUI
             if (!HasFocus)
                 (Parent as Page).FocusOn(this);
 
-            if(MouseService.Cursor.Pressed()) Press();
-            else if (MouseService.Cursor.Down()) Down(); 
-            if(MouseService.Cursor.Released()) Release();
+            if (MouseService.Cursor.Pressed()) Press();
+            else if (MouseService.Cursor.Down()) Down();
+            if (MouseService.Cursor.Released()) Release();
         }
     }
 }

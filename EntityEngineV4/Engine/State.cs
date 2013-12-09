@@ -1,9 +1,7 @@
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using EntityEngineV4.Components;
-using EntityEngineV4.Data;
 using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,16 +20,19 @@ namespace EntityEngineV4.Engine
         /// bypassing the scene tree's slow iteration time.
         /// </summary>
         private HashSet<Node> _objects = new HashSet<Node>();
- 
+
         public Stack<ActionRequest> Requests = new Stack<ActionRequest>();
 
         public event Timer.TimerEvent PreUpdateEvent;
+
         public event Timer.TimerEvent PostUpdateEvent;
 
         public event Service.EventHandler ServiceAdded;
+
         public event Service.EventHandler ServiceRemoved;
 
         public delegate void EventHandler(State state);
+
         public event EventHandler ShownEvent;
 
         public HashSet<Service> Services = new HashSet<Service>();
@@ -51,12 +52,21 @@ namespace EntityEngineV4.Engine
             }
         }
 
-        public State(string name) : base(null, name)
+        /// <summary>
+        /// Creates a new State object.
+        /// </summary>
+        /// <param name="name">Name of State</param>
+        public State(string name)
+            : base(null, name)
         {
             Active = true;
             Visible = true;
         }
 
+        /// <summary>
+        /// Adds a new child to this state.
+        /// </summary>
+        /// <param name="node">The node to remove.</param>
         public override void AddChild(Node node)
         {
             //Check if it is a service first
@@ -69,11 +79,11 @@ namespace EntityEngineV4.Engine
                 }
                 else
                 {
-                    if(Services.Count(service => service.GetType() == s.GetType()) != 0) 
-                         throw new Exception("Service " + s.GetType() + " already exists in this state!");
+                    if (Services.Count(service => service.GetType() == s.GetType()) != 0)
+                        throw new Exception("Service " + s.GetType() + " already exists in this state!");
                     Services.Add(s);
                 }
-                if (ServiceAdded != null) ServiceAdded(s); 
+                if (ServiceAdded != null) ServiceAdded(s);
             }
             else
             {
@@ -81,6 +91,11 @@ namespace EntityEngineV4.Engine
             }
         }
 
+        /// <summary>
+        /// Removes a child from this state.
+        /// </summary>
+        /// <param name="node">The node to remove</param>
+        /// <returns>If the node was removed. If it wasn't, it never existed in the first place.</returns>
         public override bool RemoveChild(Node node)
         {
             Service s = node as Service;
@@ -98,15 +113,19 @@ namespace EntityEngineV4.Engine
             return base.RemoveChild(node);
         }
 
+        /// <summary>
+        /// Adds an object to this state's object pool.
+        /// </summary>
+        /// <param name="n">The object node to add.</param>
         public void AddObject(Node n)
         {
-            if(!n.IsObject) throw new Exception("Node tried to AddObject despite having Node.IsObject == false.");
+            if (!n.IsObject) throw new Exception("Node tried to AddObject despite having Node.IsObject being false.");
 
             //Decide whether object is already in list if recycleable
             //If it is there we need to return to save performance
             if (n.Recycled && _objects.Contains(n)) return;
-            
-            if(UpdatingObjects)
+
+            if (UpdatingObjects)
             {
                 Requests.Push(new ActionRequest(null, n, NodeAction.AddObject));
             }
@@ -114,12 +133,17 @@ namespace EntityEngineV4.Engine
             {
                 _objects.Add(n);
             }
-        } 
+        }
 
+        /// <summary>
+        /// Remove an object from this state's object pool.
+        /// </summary>
+        /// <param name="n">The object to remove.</param>
+        /// <returns>If the object was removed. If it wasn't, it never existed in the first place.</returns>
         public bool RemoveObject(Node n)
         {
-            if(!n.IsObject) throw new Exception("Node tried to RemoveObject despite having Node.IsObject == false.");
-            if(UpdatingObjects)
+            if (!n.IsObject) throw new Exception("Node tried to RemoveObject despite having Node.IsObject == false.");
+            if (UpdatingObjects)
             {
                 Requests.Push(new ActionRequest(null, n, NodeAction.RemoveObject));
                 return false;
@@ -144,6 +168,7 @@ namespace EntityEngineV4.Engine
         {
             return (T)_objects.FirstOrDefault(o => o.GetType() == typeof(T));
         }
+
         public T GetObject<T>(int id) where T : Node
         {
             return (T)_objects.FirstOrDefault(o => o.Id == id && o.GetType() == typeof(T));
@@ -164,9 +189,12 @@ namespace EntityEngineV4.Engine
             var n = _objects.FirstOrDefault(o => o.Recycled && o.GetType() == typeof(T));
             if (n == null) return null;
             n.Reuse(parent, name);
-            return (T) n;
+            return (T)n;
         }
 
+        /// <summary>
+        /// Cleans recycled objects out of the object pool.
+        /// </summary>
         public void CleanRecycled()
         {
             foreach (var o in _objects.ToArray().Where(o => o.Recycled))
@@ -182,7 +210,6 @@ namespace EntityEngineV4.Engine
                 o.Destroy();
             }
         }
-
 
         public T GetService<T>() where T : Service
         {
@@ -227,12 +254,12 @@ namespace EntityEngineV4.Engine
             switch (InitializeActionOnShow)
             {
                 case InitializeAction.OnceInLife:
-                    if(!Initialized) Initialize();
+                    if (!Initialized) Initialize();
                     break;
+
                 case InitializeAction.OncePerShow:
                     Initialize();
                     break;
-
             }
 
             EntityGame.Log.Write("Shown", this, Alert.Info);
@@ -251,6 +278,7 @@ namespace EntityEngineV4.Engine
         }
 
         public bool UpdatingServices { get; private set; }
+
         public bool UpdatingObjects { get; private set; }
 
         public virtual void PreUpdate()
@@ -258,11 +286,9 @@ namespace EntityEngineV4.Engine
             if (PreUpdateEvent != null) PreUpdateEvent();
         }
 
-
         public override void Update(GameTime gt)
         {
             base.Update(gt);
-
 
             UpdatingServices = true;
             foreach (var service in Services.Where(s => s.Active))
@@ -275,6 +301,7 @@ namespace EntityEngineV4.Engine
             UpdateChildren(gt);
 
             UpdatingObjects = true;
+
             //Only update active and non-recycled objects
             foreach (var obj in _objects.Where(o => o.Active && !o.Recycled && !o.Destroyed))
             {
@@ -285,13 +312,12 @@ namespace EntityEngineV4.Engine
         }
 
         /// <summary>
-        /// Called after the Update has been completed. 
-        /// This method processes requests ffor additions/deletions 
+        /// Called after the Update has been completed.
+        /// This method processes requests ffor additions/deletions
         /// when the collections are not being accessed by a foreach
         /// </summary>
         public virtual void PostUpdate()
         {
-            if (PostUpdateEvent != null) PostUpdateEvent();
             RequestsProcessed = 0;
             while (Requests.Count != 0)
             {
@@ -301,21 +327,27 @@ namespace EntityEngineV4.Engine
                     case NodeAction.AddChild:
                         request.Parent.AddChild(request.Child);
                         break;
+
                     case NodeAction.RemoveChild:
                         request.Parent.RemoveChild(request.Child);
                         break;
+
                     case NodeAction.AddObject:
                         AddObject(request.Child);
                         break;
+
                     case NodeAction.RemoveObject:
                         RemoveObject(request.Child);
                         break;
+
                     case NodeAction.AddService:
                         AddChild(request.Child);
                         break;
+
                     case NodeAction.RemoveService:
                         AddChild(request.Child);
                         break;
+
                     case NodeAction.Destroy:
                         request.Child.Destroy(request.Parent);
                         break;
@@ -323,6 +355,7 @@ namespace EntityEngineV4.Engine
 
                 RequestsProcessed++;
             }
+            if (PostUpdateEvent != null) PostUpdateEvent();
         }
 
         public int RequestsProcessed { get; private set; }
@@ -350,9 +383,9 @@ namespace EntityEngineV4.Engine
         public override void Destroy(IComponent sender = null)
         {
             base.Destroy(sender);
-            PostUpdateEvent += Reset;
 
-            EntityGame.Log.Write("Destoyed", this, Alert.Info);
+            PostUpdateEvent += Reset;
+            GC.Collect();
         }
     }
 

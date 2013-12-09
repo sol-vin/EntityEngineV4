@@ -70,7 +70,7 @@ namespace EntityEngineV4.Data
             else if (_points.Count < 0) return;
 
             //get our first line, then automate the rest.
-            var point1 = new DrawingTools.Point((int) First.X, (int) First.Y);
+            var point1 = new DrawingTools.Point((int)First.X, (int)First.Y);
             point1.Thickness = 3;
             point1.Color = DebugPointColor;
             point1.Layer = 1;
@@ -81,7 +81,7 @@ namespace EntityEngineV4.Data
             line.Layer = 1f;
             line.Draw(sb);
 
-            var point2 = new DrawingTools.Point((int) _points[1].X, (int) _points[1].Y);
+            var point2 = new DrawingTools.Point((int)_points[1].X, (int)_points[1].Y);
             point2.Thickness = 3;
             point2.Color = DebugPointColor;
             point2.Layer = 1;
@@ -92,7 +92,7 @@ namespace EntityEngineV4.Data
             {
                 point1 = point2;
 
-                point2 = new DrawingTools.Point((int) _points[i].X, (int) _points[i].Y);
+                point2 = new DrawingTools.Point((int)_points[i].X, (int)_points[i].Y);
                 point2.Thickness = 3;
                 point2.Color = DebugPointColor;
                 point2.Layer = 1;
@@ -110,9 +110,15 @@ namespace EntityEngineV4.Data
         public float X, Y;
         public int Rank;
 
-        public Vector2 Position { get { return new Vector2(X, Y); } set { X = value.X;
-            Y = value.Y;
-        } }
+        public Vector2 Position
+        {
+            get { return new Vector2(X, Y); }
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
 
         public PathPoint(int x, int y)
         {

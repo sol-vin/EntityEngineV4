@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EntityEngineV4.Components.Rendering.Primitives;
-using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.GUI
@@ -29,7 +24,8 @@ namespace EntityEngineV4.GUI
                 }
             }
         }
-        protected TabModifier(Page parent, string name, Point tabPosition) : base(parent, name, tabPosition)
+        protected TabModifier(Page parent, string name, Point tabPosition)
+            : base(parent, name, tabPosition)
         {
         }
 
@@ -65,4 +61,4 @@ namespace EntityEngineV4.GUI
 
         Insanity = MoveUp | MoveDown | MoveRight | MoveLeft
     }
-} 
+}

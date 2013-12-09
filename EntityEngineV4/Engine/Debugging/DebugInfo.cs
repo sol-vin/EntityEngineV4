@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
 using EntityEngineV4.Components;
 using EntityEngineV4.Components.Rendering;
 using EntityEngineV4.Data;
-using EntityEngineV4.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,15 +10,16 @@ namespace EntityEngineV4.Engine.Debugging
     /// <summary>
     /// Node to display debugging info
     /// </summary>
-    public class DebugInfo : Node 
+    public class DebugInfo : Node
     {
         //TODO: Allow users to change position!
         private Body _body;
         private TextRender _render;
 
-        public Color Color {get { return _render.Color; } set { _render.Color = value; }}
+        public Color Color { get { return _render.Color; } set { _render.Color = value; } }
         public string Text { get { return _render.Text; } private set { _render.Text = value; } }
-        public DebugInfo(Node parent, string name) : base(parent, name)
+        public DebugInfo(Node parent, string name)
+            : base(parent, name)
         {
             _body = new Body(this, "Body");
             _render = new TextRender(this, "Render", Assets.Font, "");

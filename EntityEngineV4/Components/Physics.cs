@@ -8,8 +8,11 @@ namespace EntityEngineV4.Components
     {
         public float AngularVelocity;
         public float AngularDrag = 1f;
+
         public float AngularForce { get; private set; }
+
         public float AngularAcceleration;
+
         /// <summary>
         /// The velcocity if the object measured in px/frame
         /// </summary>
@@ -19,7 +22,6 @@ namespace EntityEngineV4.Components
         public Vector2 Acceleration = Vector2.Zero;
 
         public Vector2 Force { get; private set; }
-
 
         //// <summary>
         /// Backing field for Mass.
@@ -60,8 +62,6 @@ namespace EntityEngineV4.Components
         /// </summary>
         public float Restitution = 1f;
 
-
-        
         public Physics(Node parent, string name)
             : base(parent, name)
         {
@@ -148,6 +148,7 @@ namespace EntityEngineV4.Components
 
         //Dependencies
         public const int DEPENDENCY_BODY = 0;
+
         public override void CreateDependencyList()
         {
             base.CreateDependencyList();
@@ -210,6 +211,5 @@ namespace EntityEngineV4.Components
         {
             return (float)Math.Atan2(vector1.X - vector2.X, vector1.Y - vector2.Y);
         }
-
     }
 }

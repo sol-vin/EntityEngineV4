@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,9 +13,9 @@ namespace EntityEngineV4.Components.Rendering
         {
             get
             {
-                Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position +  
+                Vector2 position = GetDependency<Body>(DEPENDENCY_BODY).Position +
                     GetDependency<Body>(DEPENDENCY_BODY).Origin + Offset;
-                return new Rectangle((int)position.X, (int)position.Y, 
+                return new Rectangle((int)position.X, (int)position.Y,
                     (int)(Bounds.X), (int)(Bounds.Y));
             }
         }
@@ -29,7 +28,7 @@ namespace EntityEngineV4.Components.Rendering
         public TextRender(Node node, string name)
             : base(node, name)
         {
-           
+
         }
 
         public TextRender(Node node, string name, SpriteFont font, string text)

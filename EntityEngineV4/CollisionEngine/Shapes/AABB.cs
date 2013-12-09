@@ -16,7 +16,7 @@ namespace EntityEngineV4.CollisionEngine.Shapes
         public float X { get { return GetDependency<Body>(DEPENDENCY_BODY).X + Offset.X; } }
         public float Y { get { return GetDependency<Body>(DEPENDENCY_BODY).Y + Offset.Y; } }
 
-        public float Width {get { return GetDependency<Body>(DEPENDENCY_BODY).Width; }}
+        public float Width { get { return GetDependency<Body>(DEPENDENCY_BODY).Width; } }
         public float Height { get { return GetDependency<Body>(DEPENDENCY_BODY).Height; } }
 
         public float Top { get { return GetDependency<Body>(DEPENDENCY_BODY).Top + Offset.Y; } }
@@ -24,7 +24,8 @@ namespace EntityEngineV4.CollisionEngine.Shapes
         public float Left { get { return GetDependency<Body>(DEPENDENCY_BODY).Left + Offset.X; } }
         public float Right { get { return GetDependency<Body>(DEPENDENCY_BODY).Right + Offset.X; } }
 
-        public AABB(Node parent, string name) : base(parent, name)
+        public AABB(Node parent, string name)
+            : base(parent, name)
         {
         }
 

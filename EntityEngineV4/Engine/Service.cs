@@ -1,5 +1,3 @@
-using System;
-using EntityEngineV4.Data;
 using EntityEngineV4.Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +8,8 @@ namespace EntityEngineV4.Engine
     {
         public delegate void EventHandler(Service s);
 
-        protected Service(State state, string name) : base(state, name)
+        protected Service(State state, string name)
+            : base(state, name)
         {
             //Subscribe to the pre update ensuring it will initialize the component before hand,if not
             //it will defer intialization until the first Update.
@@ -19,14 +18,13 @@ namespace EntityEngineV4.Engine
 
         public void Initialize()
         {
-            
         }
 
         private void SubscribePreUpdate()
         {
             //Initialize
             if (!Initialized) Initialize();
-           GetRoot<State>().PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
+            GetRoot<State>().PreUpdateEvent -= SubscribePreUpdate; //Unsubscribe
         }
 
         public override void Update(GameTime gt)
@@ -42,17 +40,13 @@ namespace EntityEngineV4.Engine
 
         public virtual void Destroy(IComponent sender = null)
         {
+            base.Destroy();
+
             //Unsubscribe to the pre update ensuring it will not initialize the component
             if (EntityGame.ActiveState != null)
                 EntityGame.ActiveState.PreUpdateEvent -= SubscribePreUpdate;
 
             EntityGame.Log.Write("Destroyed", this, Alert.Info);
-        }
-
-        public override void SetParent(Node node)
-        {
-            //Make sure the only parent aservice can have is a State
-            base.SetParent(node.IsRoot ? node : node.GetRoot());
         }
     }
 }

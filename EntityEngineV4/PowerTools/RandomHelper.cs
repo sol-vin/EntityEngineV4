@@ -31,7 +31,7 @@ namespace EntityEngineV4.PowerTools
 
         public static float GetFloat()
         {
-            return (float) _random.NextDouble();
+            return (float)_random.NextDouble();
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace EntityEngineV4.PowerTools
         {
             return min + (max - min) * GetFloat();
         }
-        
+
         public static float NextGaussian(float average, float variation)
         {
             return average + 2.0f * ((float)_random.NextDouble() - 0.5f) * variation;
