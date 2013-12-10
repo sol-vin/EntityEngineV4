@@ -127,9 +127,9 @@ namespace EntityEngineV4.Engine
         {
             if (node == null) throw new NullReferenceException("Node can not be null when adding as a child!");
             if (node.IsRoot) throw new Exception("Child node cannot be a root node!");
-            if (node.IsObject && !node.Recycled)
+            if (node.IsObject)
             {
-                GetRoot<State>().AddObject(node);
+                GetRoot<State>().AddObject(node); //Will opt out if node is already in the set (recycled).
             }
 
             if (UpdatingChildren)
@@ -262,6 +262,15 @@ namespace EntityEngineV4.Engine
             if (IsRoot) return this as T; //We found the root, return it.
             if (Parent == null) throw new Exception(String.Format("{0} is not root but, has a null parent.", Name));
             return Parent.GetRoot<T>(); //Resursively call up the chain until we find the root
+        }
+
+        /// <summary>
+        /// Gets first object or root in the parental chain.
+        /// </summary>
+        /// <returns>Container</returns>
+        public Node GetContainer()
+        {
+            return IsRoot || IsObject ? this : Parent.GetContainer(); 
         }
 
         public virtual void Initialize()
@@ -408,7 +417,7 @@ namespace EntityEngineV4.Engine
             Recycled = false; //Now we can safely set Recycled because the parent operations have already completed.
         }
 
-        //Object methods
+        //object Methods
         public override int GetHashCode()
         {
             return Id; //Id is the same as hashcode,this will help to minimize hashset collisions, as well as prevent dupes
@@ -423,7 +432,7 @@ namespace EntityEngineV4.Engine
         public static bool operator ==(Node a, Node b)
         {
             if ((object)a == null && (object)b == null) return true;
-            if ((object)a == null ^ (object)b == null) return false;
+            if ((object)a == null || (object)b == null) return false;
             return a.Id == b.Id;
         }
 

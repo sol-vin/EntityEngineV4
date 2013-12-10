@@ -16,10 +16,6 @@ namespace EntityEngineV4.Engine
             state.PreUpdateEvent += SubscribePreUpdate;
         }
 
-        public void Initialize()
-        {
-        }
-
         private void SubscribePreUpdate()
         {
             //Initialize
@@ -30,7 +26,6 @@ namespace EntityEngineV4.Engine
         public override void Update(GameTime gt)
         {
             base.Update(gt);
-            if (!Initialized) Initialize();
         }
 
         public override void Draw(SpriteBatch sb)

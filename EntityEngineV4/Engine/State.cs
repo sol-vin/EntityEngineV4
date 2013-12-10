@@ -123,7 +123,7 @@ namespace EntityEngineV4.Engine
 
             //Decide whether object is already in list if recycleable
             //If it is there we need to return to save performance
-            if (n.Recycled && _objects.Contains(n)) return;
+            if (_objects.Contains(n)) return;
 
             if (UpdatingObjects)
             {
