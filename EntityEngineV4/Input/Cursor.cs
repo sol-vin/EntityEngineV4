@@ -77,7 +77,6 @@ namespace EntityEngineV4.Input
 
             Collision = new Collision(this, "Collision");
             Collision.Group.AddMask(MouseCollisionGroup);
-            Collision.Pair.AddMask(MouseCollisionGroup);
             Collision.LinkDependency(Collision.DEPENDENCY_SHAPE, _boundingBox);
             _boundingBox.LinkDependency(AABB.DEPENDENCY_COLLISION, Collision);
         }

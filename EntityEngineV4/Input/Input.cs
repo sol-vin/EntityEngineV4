@@ -1,4 +1,6 @@
-﻿using EntityEngineV4.Engine;
+﻿using EntityEngineV4.CollisionEngine;
+using EntityEngineV4.Data;
+using EntityEngineV4.Engine;
 using Microsoft.Xna.Framework;
 
 namespace EntityEngineV4.Input
@@ -6,7 +8,7 @@ namespace EntityEngineV4.Input
     public class Input : Component
     {
         private int _holdtime;
-        private double _rapidfire;
+        private int _rapidfire;
 
         public delegate void EventHandler(Input i);
 
@@ -15,23 +17,42 @@ namespace EntityEngineV4.Input
         public Input(Node node, string name)
             : base(node, name)
         {
+            if (!GetRoot<State>().CheckService<InputService>())
+                new InputService(GetRoot<State>());
+
         }
 
+        /// <summary>
+        /// Returns true if the input has just been released
+        /// </summary>
+        /// <returns></returns>
         public virtual bool Released()
         {
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the input has just been pressed
+        /// </summary>
+        /// <returns></returns>
         public virtual bool Pressed()
         {
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the input is down.
+        /// </summary>
+        /// <returns></returns>
         public virtual bool Down()
         {
             return false;
         }
 
+        /// <summary>
+        /// Returns true of the input is up.
+        /// </summary>
+        /// <returns></returns>
         public virtual bool Up()
         {
             return false;
@@ -45,9 +66,10 @@ namespace EntityEngineV4.Input
         public virtual bool RapidFire(int milliseconds)
         {
             _rapidfire = milliseconds;
-            if (Pressed())
+
+            if (Pressed()) //if the button has just been pressed
             {
-                if (_holdtime == 0)
+                if (_holdtime == 0) //if the timer has not been started
                 {
                     _holdtime = 1;
                     return true;

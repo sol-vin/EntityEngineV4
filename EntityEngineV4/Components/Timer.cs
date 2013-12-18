@@ -82,7 +82,7 @@ namespace EntityEngineV4.Components
             Alive = false;
         }
 
-        public void Reset()
+        public void ResetTimer()
         {
             TickTime = 0;
             _lastseconds = EntityGame.GameTime.TotalGameTime.TotalMilliseconds;
@@ -100,7 +100,7 @@ namespace EntityEngineV4.Components
             {
                 _tr = true;
                 OnLast();
-                Reset(); //TODO: Ensure that removing this is ok :)
+                ResetTimer(); //TODO: Ensure that removing this is ok :)
             }
             //TODO: Double check this works for timers still :)
             if (!Alive)

@@ -95,6 +95,21 @@ namespace EntityEngineV4.Engine
         /// </summary>
         public bool UpdatingChildren { get; private set; }
 
+        public int Tier
+        {
+            get
+            {
+                int tier = 0;
+                var n = this;
+                while (!n.IsRoot)
+                {
+                    n = n.Parent;
+                    tier++;
+                }
+                return tier;
+            }
+        }
+
         /// <summary>
         /// Called when AddChild and RemoveChild are called respectively.
         /// </summary>
@@ -135,7 +150,7 @@ namespace EntityEngineV4.Engine
             if (UpdatingChildren)
             {
                 //File a request
-                GetRoot<State>().Requests.Push(new ActionRequest(this, node, NodeAction.AddChild));
+                GetRoot<State>().Requests.Enqueue(new ActionRequest(this, node, NodeAction.AddChild));
             }
             else
                 Add(node);
@@ -158,7 +173,7 @@ namespace EntityEngineV4.Engine
             if (UpdatingChildren)
             {
                 //File a request
-                GetRoot<State>().Requests.Push(new ActionRequest(this, node, NodeAction.RemoveChild));
+                GetRoot<State>().Requests.Enqueue(new ActionRequest(this, node, NodeAction.RemoveChild));
                 return false;
             }
             else
@@ -324,7 +339,7 @@ namespace EntityEngineV4.Engine
             {
                 if (UpdatingChildren)
                 {
-                    GetRoot<State>().Requests.Push(new ActionRequest(null, this, NodeAction.Destroy));
+                    GetRoot<State>().Requests.Enqueue(new ActionRequest(null, this, NodeAction.Destroy));
                     return;
                 }
 
@@ -351,7 +366,7 @@ namespace EntityEngineV4.Engine
             {
                 if (Parent.UpdatingChildren)
                 {
-                    GetRoot<State>().Requests.Push(new ActionRequest(Parent, this, NodeAction.RemoveChild));
+                    GetRoot<State>().Requests.Enqueue(new ActionRequest(Parent, this, NodeAction.RemoveChild));
                 }
                 else
                 {
@@ -359,7 +374,7 @@ namespace EntityEngineV4.Engine
                 }
             }
 
-            //Stop our finalizer from running, impacting performance.
+            //Stop our finalizer from running, impacting performance and causing bugs.
             GC.SuppressFinalize(this);
         }
 

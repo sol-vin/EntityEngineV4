@@ -9,8 +9,6 @@ namespace EntityEngineV4.Tiles
 {
     public class Tilemap : Node
     {
-        //TODO: Finish Tilemap
-
         public Body Body;
         public TilemapRender Render;
 

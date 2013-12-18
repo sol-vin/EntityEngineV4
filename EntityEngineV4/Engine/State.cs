@@ -21,7 +21,7 @@ namespace EntityEngineV4.Engine
         /// </summary>
         private HashSet<Node> _objects = new HashSet<Node>();
 
-        public Stack<ActionRequest> Requests = new Stack<ActionRequest>();
+        public Queue<ActionRequest> Requests = new Queue<ActionRequest>();
 
         public event Timer.TimerEvent PreUpdateEvent;
 
@@ -75,7 +75,7 @@ namespace EntityEngineV4.Engine
             {
                 if (UpdatingServices)
                 {
-                    Requests.Push(new ActionRequest(null, node, NodeAction.AddService));
+                    Requests.Enqueue(new ActionRequest(null, node, NodeAction.AddService));
                 }
                 else
                 {
@@ -103,7 +103,7 @@ namespace EntityEngineV4.Engine
             {
                 if (UpdatingServices)
                 {
-                    Requests.Push(new ActionRequest(null, node, NodeAction.RemoveService));
+                    Requests.Enqueue(new ActionRequest(null, node, NodeAction.RemoveService));
                     return false;
                 }
                 bool removed = Services.Remove(s);
@@ -127,7 +127,7 @@ namespace EntityEngineV4.Engine
 
             if (UpdatingObjects)
             {
-                Requests.Push(new ActionRequest(null, n, NodeAction.AddObject));
+                Requests.Enqueue(new ActionRequest(null, n, NodeAction.AddObject));
             }
             else
             {
@@ -142,10 +142,10 @@ namespace EntityEngineV4.Engine
         /// <returns>If the object was removed. If it wasn't, it never existed in the first place.</returns>
         public bool RemoveObject(Node n)
         {
-            if (!n.IsObject) throw new Exception("Node tried to RemoveObject despite having Node.IsObject == false.");
+            if (!n.IsObject) throw new Exception("Node tried to RemoveObject despite having Node.IsObject being false.");
             if (UpdatingObjects)
             {
-                Requests.Push(new ActionRequest(null, n, NodeAction.RemoveObject));
+                Requests.Enqueue(new ActionRequest(null, n, NodeAction.RemoveObject));
                 return false;
             }
             else
@@ -154,15 +154,26 @@ namespace EntityEngineV4.Engine
             }
         }
 
+        /// <summary>
+        /// Gets an object from the pool by id
+        /// </summary>
+        /// <param name="id">ID of object</param>
+        /// <returns>An object</returns>
         public Node GetObject(int id)
         {
             return _objects.FirstOrDefault(o => o.Id == id);
         }
 
+        /// <summary>
+        /// Gets an object from the pool by name
+        /// </summary>
+        /// <param name="name">Name of object</param>
+        /// <returns>An object</returns>
         public Node GetObject(string name)
         {
             return _objects.FirstOrDefault(o => o.Name == name);
         }
+
 
         public T GetObject<T>() where T : Node
         {
@@ -203,6 +214,10 @@ namespace EntityEngineV4.Engine
             }
         }
 
+        /// <summary>
+        /// Cleans objects of a certain type from the object pool.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         public void CleanRecycled<T>()
         {
             foreach (var o in _objects.ToArray().Where(o => o.Recycled && o.GetType() == typeof(T)))
@@ -239,11 +254,9 @@ namespace EntityEngineV4.Engine
             return result != null;
         }
 
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
-
+        /// <summary>
+        /// Shows this state
+        /// </summary>
         public virtual void Show()
         {
             EntityGame.SwitchState(this);
@@ -277,8 +290,14 @@ namespace EntityEngineV4.Engine
             Requests.Clear();
         }
 
+        /// <summary>
+        /// If the services collection is being updated.
+        /// </summary>
         public bool UpdatingServices { get; private set; }
 
+        /// <summary>
+        /// If the object pool is being updated.
+        /// </summary>
         public bool UpdatingObjects { get; private set; }
 
         public virtual void PreUpdate()
@@ -321,7 +340,7 @@ namespace EntityEngineV4.Engine
             RequestsProcessed = 0;
             while (Requests.Count != 0)
             {
-                ActionRequest request = Requests.Pop();
+                ActionRequest request = Requests.Dequeue();
                 switch (request.Action)
                 {
                     case NodeAction.AddChild:
@@ -358,6 +377,9 @@ namespace EntityEngineV4.Engine
             if (PostUpdateEvent != null) PostUpdateEvent();
         }
 
+        /// <summary>
+        /// Amount of requests processed in this frame
+        /// </summary>
         public int RequestsProcessed { get; private set; }
 
         public override void Draw(SpriteBatch sb)

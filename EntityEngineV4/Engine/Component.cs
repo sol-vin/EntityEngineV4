@@ -12,7 +12,7 @@ namespace EntityEngineV4.Engine
         {
             GetRoot<State>().PreUpdateEvent += SubscribePreUpdate;
 
-            CreateDependencyList();
+            CreateDependencyList(); //This is ok because CreateDependencyList only uses members declared in this class.
         }
 
         private void SubscribePreUpdate()

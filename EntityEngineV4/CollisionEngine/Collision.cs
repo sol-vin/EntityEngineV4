@@ -19,6 +19,9 @@ namespace EntityEngineV4.CollisionEngine
 
         private List<Collision> _collidedWith = new List<Collision>();
 
+        /// <summary>
+        /// Collisions that collided with this collision in the last frame.
+        /// </summary>
         public List<Collision> CollidedWith
         {
             get { return _collidedWith.ToList(); }
@@ -80,27 +83,25 @@ namespace EntityEngineV4.CollisionEngine
         public HashSet<Collision> Exclusions = new HashSet<Collision>();
 
         //Dependencies
-        private CollisionHandler _collisionHandler;
+        //private CollisionHandler _collisionHandler;
 
         public Collision(Node parent, string name)
             : base(parent, name)
         {
             if (!GetRoot<State>().CheckService<CollisionHandler>())
-                _collisionHandler = new CollisionHandler(GetRoot<State>()); //If the collision handler doesn't exist add it.
-            else
-                _collisionHandler = GetRoot<State>().GetService<CollisionHandler>();
+                new CollisionHandler(GetRoot<State>()); //If the collision handler doesn't exist add it.
 
             GetRoot<State>().PreUpdateEvent += _collidedWith.Clear;
 
             Group = new Bitmask();
-            Group.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
+            Group.BitmaskChanged += bm => GetRoot<State>().GetService<CollisionHandler>().ReconfigurePairs(this);
 
             Pair = new Bitmask();
-            Pair.BitmaskChanged += bm => _collisionHandler.ReconfigurePairs(this);
+            Pair.BitmaskChanged += bm => GetRoot<State>().GetService<CollisionHandler>().ReconfigurePairs(this);
 
             ResolutionGroup = new Bitmask();
 
-            _collisionHandler.AddCollision(this);
+            GetRoot<State>().GetService<CollisionHandler>().AddCollision(this);
         }
 
         public override void Initialize()
@@ -128,8 +129,10 @@ namespace EntityEngineV4.CollisionEngine
 
         public override void Destroy(IComponent sender = null)
         {
+            if (GetRoot<State>().CheckService<CollisionHandler>())
+                GetRoot<State>().GetService<CollisionHandler>().RemoveCollision(this);
+
             base.Destroy(sender);
-            _collisionHandler.RemoveCollision(this);
         }
 
         public override void Update(GameTime gt)
@@ -144,6 +147,7 @@ namespace EntityEngineV4.CollisionEngine
 
         public void OnCollision(Manifold m)
         {
+            if (_collidedWith.Contains(m.A != this ? m.A : m.B)) return; //Don't collide if we already have it in the list.
             _collidedWith.Add(m.A != this ? m.A : m.B);
             if (CollideEvent != null)
                 CollideEvent(m);

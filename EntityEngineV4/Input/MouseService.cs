@@ -68,7 +68,7 @@ namespace EntityEngineV4.Input
                 //Be sure to calc delta by using the
                 Delta = new Point(_lockx - _mousestate.X, _locky - _mousestate.Y);
             }
-            else
+            else if(EntityGame.Self.IsActive)
             {
                 //Calc our Delta
                 Delta = new Point(_lastmousestate.X - _mousestate.X, _lastmousestate.Y - _mousestate.Y);

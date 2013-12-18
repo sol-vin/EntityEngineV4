@@ -49,14 +49,6 @@ namespace EntityEngineV4.Data
             }
         }
 
-        public void Insert(PathPoint p, int position)
-        {
-            if (position > _lastposition) _lastposition = position;
-            p.Rank = _lastposition++;
-            _points.Add(p);
-            _points = _points.OrderBy(point => point.Rank).ToList();
-        }
-
         public void DrawDebug(SpriteBatch sb)
         {
             if (_points.Count < 2 && _points.Count > 0)

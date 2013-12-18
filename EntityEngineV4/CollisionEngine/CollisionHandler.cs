@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using EntityEngineV4.CollisionEngine.Shapes;
 using EntityEngineV4.Components;
@@ -178,14 +179,27 @@ namespace EntityEngineV4.CollisionEngine
                     a.Pair.HasMatchingBit(b.Group));
         }
 
+        /// <summary>
+        /// Compares masks and checks to see if they should be allowed to resolve.
+        /// </summary>
+        /// <param name="resolver">Object being resolved</param>
+        /// <param name="other">Other object</param>
+        /// <returns></returns>
         public static bool CanObjectsResolve(Collision resolver, Collision other)
         {
             return resolver.ResolutionGroup.HasMatchingBit(other.ResolutionGroup) //Compare the pair mask one sided.
                 && !resolver.Immovable && resolver.AllowResolution;
         }
 
+        /// <summary>
+        /// Resolves a collision from the manifold speicifed. 
+        /// See this document http://gamedevelopment.tutsplus.com/tutorials/create-custom-2d-physics-engine-aabb-circle-impulse-resolution--gamedev-6331
+        /// </summary>
+        /// <param name="m"></param>
         public static void ResolveCollision(Manifold m)
         {
+            if (!m.AreColliding) return;
+
             Vector2 relVelocity = m.B.Velocity - m.A.Velocity;
             //Finds out if the objects are moving towards each other.
             //We only need to resolve collisions that are moving towards, not away.
@@ -207,6 +221,10 @@ namespace EntityEngineV4.CollisionEngine
         public const float SLOP = 0.05f;
         public const float PERCENT = 0.6f;
 
+        /// <summary>
+        /// Corrects position errors created by floating point miscalculations
+        /// </summary>
+        /// <param name="m"></param>
         public static void PositionalCorrection(Manifold m)
         {
             Vector2 correction = Math.Max(m.PenetrationDepth - SLOP, 0.0f) / (m.A.InvertedMass + m.B.InvertedMass) * PERCENT * m.Normal;
@@ -217,59 +235,55 @@ namespace EntityEngineV4.CollisionEngine
         }
 
         /// <summary>
-        /// Compares bounding boxes using Seperating Axis Thereom.
+        /// Tests for collision between two axis aligned bounding boxes.
         /// </summary>
+        /// <param name="a">An AABB</param>
+        /// <param name="b">An AABB</param>
+        /// <param name="manifold">A manifold to output to.</param>
+        /// <returns>If the two AABBs are colliding</returns>
         public static bool AABBvsAABB(AABB a, AABB b, ref Manifold manifold)
         {
             manifold.Normal = a.Position - b.Position;
 
-            //Calculate half widths
-            float aExtent = a.Width / 2f;
-            float bExtent = b.Width / 2f;
-
-            //Calculate the overlap.
-            float xExtent = aExtent + bExtent - Math.Abs(manifold.Normal.X);
-
-            //If the overlap is greater than 0
-            if (xExtent > 0)
+            //Check if colliding on X
+            if (!(a.Right < b.Left || a.Left > b.Right))
             {
-                //Calculate half widths
-                aExtent = a.Height / 2f;
-                bExtent = b.Height / 2f;
-
-                //Calculate overlap
-                float yExtent = aExtent + bExtent - Math.Abs(manifold.Normal.Y);
-
-                if (yExtent > 0)
+                //Check if colliding Y
+                if (!(a.Bottom < b.Top || a.Top > b.Bottom))
                 {
-                    //Variable to multiply the normal by to make the collision resolve
+                    float xPen = ((a.Left < b.Left) ? a.Width : b.Width) - Math.Abs(manifold.Normal.X);
+                    float yPen = ((a.Top < b.Top) ? a.Height : b.Height) - Math.Abs(manifold.Normal.Y);
                     Vector2 faceNormal;
 
-                    //Check to see which axis has the biggest "penetration" ;D
-
-                    //Collision is happening on Y axis
-                    if (xExtent > yExtent)
+                    if (xPen > yPen)
                     {
                         faceNormal = manifold.Normal.X < 0 ? -Vector2.UnitX : Vector2.UnitX;
-                        manifold.PenetrationDepth = xExtent;
+                        manifold.PenetrationDepth = xPen;
                         manifold.Normal = Physics.GetNormal(a.Position, b.Position);
                         manifold.Normal.X *= faceNormal.X;
                     }
-                    //Collision happening on X axis
                     else
                     {
                         faceNormal = manifold.Normal.Y < 0 ? -Vector2.UnitY : Vector2.UnitY;
 
-                        manifold.PenetrationDepth = yExtent;
+                        manifold.PenetrationDepth = yPen;
                         manifold.Normal = Physics.GetNormal(a.Position, b.Position);
                         manifold.Normal.Y *= faceNormal.Y;
                     }
                     manifold.AreColliding = true;
                 }
             }
+
             return manifold.AreColliding;
         }
 
+        /// <summary>
+        /// Tests for collision between two circles
+        /// </summary>
+        /// <param name="a">A circle</param>
+        /// <param name="b">A circle</param>
+        /// <param name="manifold">A manifold to output to.</param>
+        /// <returns>If the two circles are colliding or not.</returns>
         public static bool CircleVSCircle(Circle a, Circle b, ref Manifold manifold)
         {
             manifold.Normal = b.Position - a.Position;
@@ -302,6 +316,7 @@ namespace EntityEngineV4.CollisionEngine
         }
 
         //Collision resolver methods
+
         /// <summary>
         /// Uses a table to test collision between various shapes
         /// </summary>

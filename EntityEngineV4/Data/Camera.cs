@@ -43,7 +43,7 @@ namespace EntityEngineV4.Data
             }
         }
 
-        public bool IsActive
+        public bool IsActiveCamera
         {
             get { return EntityGame.ActiveCamera.Equals(this); }
         }
